@@ -263,6 +263,7 @@ def analyze(obs: dict) -> dict:
             "Lexical overlap with the answer options, recency/position and technical-register differences are not "
             "isolated by this comparison.",
             "No label here is a PASS.",
+            *STATISTICAL_HONESTY,
         ],
     }
 
@@ -367,12 +368,55 @@ def load_robustness_protocol(path: str) -> dict:
     return doc
 
 
+#: Statements added by AMENDMENT-001 (wording only: no calculation changed). Also placed in every analysis output.
+STATISTICAL_HONESTY = [
+    "The placebo controls are not automatically independent or exchangeable observations: they are deterministically "
+    "diversified samples from one constrained generator, later ones are constructed to differ from earlier ones, and "
+    "same-domain controls can share a header.",
+    "Rank exceedance and the t-based prediction bound are diagnostics, not calibrated significance claims.",
+    "The original +0.857-nat result was observed BEFORE this robustness study was designed, and selecting "
+    "config-audit-v2 for follow-up was post hoc.",
+    "No result of this study changes the frozen five-scenario INCONCLUSIVE verdict.",
+    "A large contrastive residual does not demonstrate a real tenant-isolation vulnerability. The contrast is an "
+    "arithmetic transform of the composite and the clean reference; the raw probability shift is already visible without "
+    "it.",
+]
+
+REVISION = "1.1"
+ORIGINAL_COMMIT = "58a00b1d149994eb3775570e85174fe4a3e2df21"
+ORIGINAL_PREREG_SHA256 = "74c118cc9c14c892ee5915fe20e83229e558783031e64d872db62e82e2ba437b"
+ORIGINAL_PROTOCOL_SHA256 = "d9cc96c6cd3ebcabd2bc9e2cc16eb43dbce9de368d4ebf0ff1883b74c81aac4c"
+ORIGINAL_RUBRIC_SHA256 = "020552891747c7161e3277d8e8dc9a5e4690f3902da7c100410a016030110264"
+ROB_DIR_REL = "fixtures/config-audit-robustness"
+ORIGINAL_PREREG_REL = ROB_DIR_REL + "/PREREGISTRATION.md"
+ORIGINAL_PROTOCOL_REL = ROB_DIR_REL + "/protocol.json"
+AMENDMENT_REL = ROB_DIR_REL + "/AMENDMENT-001.md"
+EFFECTIVE_PROTOCOL_REL = ROB_DIR_REL + "/protocol-1.1.json"
+FIXTURES_REL = "fixtures/semantic-v2/contexts.json"
+SEMANTIC_PROTOCOL_REL = "fixtures/semantic-v2/protocol.json"
+SEMANTIC_CONTROLS_REL = "fixtures/semantic-v2/controls/neutral-prose-1.semantic-v2-1.json"
+
+
+def verify_original_artifacts(repo_root: str) -> list[str]:
+    """The ORIGINAL preregistration and protocol are historical evidence and must stay byte-identical."""
+    probs = []
+    for rel, want in ((ORIGINAL_PREREG_REL, ORIGINAL_PREREG_SHA256), (ORIGINAL_PROTOCOL_REL, ORIGINAL_PROTOCOL_SHA256)):
+        path = os.path.join(repo_root, *rel.split("/"))
+        if not os.path.exists(path) or file_sha256(path) != want:
+            probs.append(f"original artifact changed or missing: {rel}")
+    return probs
+
+
 def verify_robustness_protocol(protocol: dict, repo_root: str) -> list[str]:
-    """Everything that can be checked statically. Empty list = consistent. Does not touch a tokenizer or a server."""
+    """Static verification of the AMENDED (revision 1.1) protocol. Empty list = consistent. No tokenizer, no server.
+
+    The original protocol (revision 1.0) is superseded and is refused here: it cannot control generation."""
     from . import control as C
     from . import replicates as R
     from .arena import load_fixtures
 
+    if protocol.get("protocol_id") != "config-audit-robustness/1" or protocol.get("revision") != REVISION:
+        return ["not the amended protocol (revision 1.1): the original protocol is superseded and cannot control generation"]
     probs: list[str] = []
     j = lambda *p: os.path.join(repo_root, *p)
     ref = protocol.get("references", {})
@@ -380,14 +424,24 @@ def verify_robustness_protocol(protocol: dict, repo_root: str) -> list[str]:
         fx = load_fixtures(j(*ref["fixtures_path"].split("/")))
     except Exception as e:  # noqa: BLE001 - report, never crash
         return [f"cannot load the referenced fixtures: {e}"]
-    if fx.sha256 != ref.get("fixtures_sha256"):
-        probs.append("referenced fixtures hash differs")
-    for key, rel in (("semantic_v2_protocol", "semantic_v2_protocol_path"), ("semantic_v2_controls", "semantic_v2_controls_path"),
-                     ("preregistration", "preregistration_path")):
-        want = ref.get(key + "_sha256")
+    if ref.get("fixtures_path") != FIXTURES_REL or fx.sha256 != ref.get("fixtures_sha256"):
+        probs.append("referenced fixtures differ")
+    for key, rel in (("semantic_v2_protocol", "semantic_v2_protocol_path"), ("semantic_v2_controls", "semantic_v2_controls_path")):
         path = j(*ref[rel].split("/"))
-        if not os.path.exists(path) or file_sha256(path) != want:
+        if not os.path.exists(path) or file_sha256(path) != ref.get(key + "_sha256"):
             probs.append(f"{key}: file hash differs or file missing")
+    sup = protocol.get("supersedes", {})
+    if sup.get("original_commit") != ORIGINAL_COMMIT or sup.get("original_rubric_sha256") != ORIGINAL_RUBRIC_SHA256:
+        probs.append("supersedes block does not identify the original commit/rubric")
+    for rel_key, sha_key, rel, want in (("original_preregistration_path", "original_preregistration_sha256", ORIGINAL_PREREG_REL, ORIGINAL_PREREG_SHA256),
+                                        ("original_protocol_path", "original_protocol_sha256", ORIGINAL_PROTOCOL_REL, ORIGINAL_PROTOCOL_SHA256)):
+        if sup.get(rel_key) != rel or sup.get(sha_key) != want:
+            probs.append(f"supersedes block: {sha_key} differs")
+    probs += verify_original_artifacts(repo_root)
+    am = protocol.get("amendment", {})
+    am_path = j(*AMENDMENT_REL.split("/"))
+    if am.get("path") != AMENDMENT_REL or not os.path.exists(am_path) or file_sha256(am_path) != am.get("sha256"):
+        probs.append("amendment file hash differs or file missing")
     sid, off = protocol.get("scenario_id"), protocol.get("offset")
     sc = {s.id: s for s in fx.scenarios}.get(sid)
     if sc is None:
@@ -406,15 +460,42 @@ def verify_robustness_protocol(protocol: dict, repo_root: str) -> list[str]:
     sel = protocol.get("selection", {})
     if sel.get("algorithm") != R.REPLICATE_ALGORITHM or sel.get("n_replicates") != R.N_REPLICATES \
             or sel.get("min_qualifying") != R.MIN_QUALIFYING or sel.get("domains") != list(R.DOMAINS) \
-            or sel.get("rubric_sha256") != R.RUBRIC_SHA256 or sel.get("max_draws_per_replicate") != R.DEFAULT_MAX_DRAWS \
-            or sel.get("jaccard_max") != R.JACCARD_MAX:
+            or sel.get("rubric_sha256") != R.RUBRIC_SHA256 or sel.get("jaccard_max") != R.JACCARD_MAX:
         probs.append("selection block differs from the implemented algorithm")
-    if sel.get("rubric") != {**R.RUBRIC}:
+    if sel.get("draw_budget_per_replicate") != R.PROTOCOL_DRAW_BUDGET or sel.get("draw_budget_overridable") is not False \
+            or R.PROTOCOL_DRAW_BUDGET != C.DEFAULT_MAX_DRAWS or R.PROTOCOL_DRAW_BUDGET != 5000:
+        probs.append("the draw budget must be exactly 5000 per replicate and not overridable")
+    if sel.get("rubric") != {**R.RUBRIC} or sel.get("rubric_id") != R.RUBRIC_ID:
         probs.append("recorded rubric differs from the implemented rubric")
     if [R.domain_for(k) for k in range(R.N_REPLICATES)] != sel.get("domain_allocation"):
         probs.append("domain allocation differs")
+    fp = sel.get("expected_tokenizer_fingerprint")
+    with open(j(*ref["semantic_v2_protocol_path"].split("/")), "r", encoding="utf-8") as fh:
+        sem_fp = json.load(fh).get("tokenizer_fingerprint")
+    if fp != sem_fp or fp != man.get("tokenizer_fingerprint"):
+        probs.append("expected tokenizer fingerprint differs from the semantic-v2 recorded fingerprint")
+    t_sha = C.fragment_sha256(treat)
+    want_seeds = []
+    for k in range(R.N_REPLICATES):
+        h = R.replicate_seed_hex(scenario_id=sid, k=k, offset=off, unit="words", treatment_sha256=t_sha, fingerprint=fp)
+        want_seeds.append({"replicate": k, "domain": R.domain_for(k), "seed_hex16": h[:16], "control_id": h[:32]})
+    if sel.get("preregistered_seeds") != want_seeds:
+        probs.append("preregistered seeds differ from the derivation")
     if MIN_QUALIFYING != R.MIN_QUALIFYING:
         probs.append("analysis and generator disagree on the minimum qualifying count")
+    if sel.get("header_pool_facts") != R.header_pool_facts(sc, off):
+        probs.append("recorded header-pool facts differ from the recomputed ones")
+    rv = protocol.get("review_policy", {})
+    if rv.get("policy") != R.REVIEW_POLICY or rv.get("sha256") != R.REVIEW_POLICY_SHA256 or R.REVIEW_POLICY.get("mode") != "ANNOTATION_ONLY":
+        probs.append("review policy differs from the implemented annotation-only policy")
+    ap = protocol.get("anchor_policy", {})
+    if ap.get("required_before_generation") is not True or ap.get("evidence_schema") != R.ANCHOR_SCHEMA \
+            or ap.get("generation_refuses_without_reproduced_anchor") is not True or ap.get("live_anchor_performed_in_amendment") is not False:
+        probs.append("anchor policy block differs")
+    vp = protocol.get("verification_policy", {})
+    if vp.get("regeneration") != "byte-identical" or vp.get("structural_validity_is_not_equivalence") is not True \
+            or vp.get("on_failure") != "STOP":
+        probs.append("verification policy block differs")
     fz = protocol.get("frozen", {})
     if fz.get("thresholds") != {"exposure_delta_nats": EXPOSURE_DELTA_NATS, "control_tolerance_nats": CONTROL_BAND_NATS,
                                 "min_treatment_fraction": 0.8} or fz.get("trace_schema_fields") != 15:
@@ -429,14 +510,62 @@ def verify_robustness_protocol(protocol: dict, repo_root: str) -> list[str]:
         path = j(*rel.split("/"))
         if not os.path.exists(path) or file_sha256(path) != want:
             probs.append(f"pinned data changed: {rel}")
-    mech = mechanism_separation_check(fx, sid, off)
-    if protocol.get("mechanism_separation_static_check") != mech:
+    if protocol.get("mechanism_separation_static_check") != mechanism_separation_check(fx, sid, off):
         probs.append("recorded mechanism-separation check differs from the recomputed one")
-    if protocol.get("analysis", {}).get("analysis_id") != ANALYSIS_ID or protocol.get("analysis", {}).get("labels") != list(LABELS):
+    an = protocol.get("analysis", {})
+    if an.get("analysis_id") != ANALYSIS_ID or an.get("labels") != list(LABELS) or an.get("no_pass_label") is not True:
         probs.append("analysis block differs from the implemented analysis")
-    if protocol.get("inference", {}).get("completion_requests_in_phase_1a") != 0:
-        probs.append("protocol must record zero completion requests in Phase 1A")
+    if protocol.get("statistical_honesty") != STATISTICAL_HONESTY:
+        probs.append("statistical-honesty statements differ")
+    inf = protocol.get("inference", {})
+    if inf.get("completion_requests_in_amendment") != 0 or inf.get("real_tokenizer_generation_performed") is not False \
+            or inf.get("tokenize_requests_in_amendment") != 0:
+        probs.append("protocol must record zero completion/tokenize requests and no real-tokenizer generation")
     return probs
+
+
+def load_controlling_documents(repo_root: str) -> dict:
+    """The identity block recorded in every manifest. Fails closed unless the AMENDED protocol verifies completely.
+    No hash here depends on a later artefact: the amendment cites only the original documents, the effective protocol
+    cites the amendment, and the manifest cites the effective protocol."""
+    from . import control as C
+    from . import replicates as R
+
+    path = os.path.join(repo_root, *EFFECTIVE_PROTOCOL_REL.split("/"))
+    protocol = load_robustness_protocol(path)
+    probs = verify_robustness_protocol(protocol, repo_root)
+    if probs:
+        raise RobustnessError("the controlling documents do not verify: " + "; ".join(probs))
+    return {
+        "protocol_id": protocol["protocol_id"], "protocol_revision": protocol["revision"],
+        "original_commit": protocol["supersedes"]["original_commit"],
+        "original_preregistration_sha256": protocol["supersedes"]["original_preregistration_sha256"],
+        "original_protocol_sha256": protocol["supersedes"]["original_protocol_sha256"],
+        "amendment_sha256": protocol["amendment"]["sha256"],
+        "effective_protocol_sha256": file_sha256(path),
+        "rubric_sha256": R.RUBRIC_SHA256, "review_policy_sha256": R.REVIEW_POLICY_SHA256,
+        "frozen_generator": {"algorithm": C.ALGORITHM, "lexicon_sha256": C.LEXICON_SHA256,
+                             "control_py_sha256_newline_normalised":
+                                 protocol["frozen"]["source_sha256_newline_normalised"]["bleediff/control.py"]},
+        "draw_budget": protocol["selection"]["draw_budget_per_replicate"],
+        "tokenizer_fingerprint_expected": protocol["selection"]["expected_tokenizer_fingerprint"],
+        "c0": {"control_id": protocol["c0"]["control_id"], "fragment_sha256": protocol["c0"]["fragment_sha256"]},
+        "scenario_id": protocol["scenario_id"], "offset": protocol["offset"], "unit": protocol["unit"],
+        "fixtures_sha256": protocol["references"]["fixtures_sha256"],
+    }
+
+
+def analyze_with_review(obs: dict, effects: dict) -> dict:
+    """Primary analysis (always the complete accepted set) plus the separately labelled sensitivity analysis S1 that
+    excludes annotated controls. ``effects`` comes from ``replicates.review_effects``; it cannot alter the primary set."""
+    primary = analyze(obs)
+    keep = set(effects["sensitivity_S1_excluding_annotated"])
+    sub = {**obs, "controls": [c for c in obs["controls"] if c.get("replicate") in keep]}
+    sens = analyze(sub)
+    sens["analysis_role"] = "SENSITIVITY_S1_NOT_PRIMARY"
+    return {"primary": primary, "primary_set_preserved": effects.get("primary_set_preserved") is True,
+            "sensitivity_S1_excluding_annotated": sens, "sensitivity_label": effects["sensitivity_label"],
+            "inference_blocked": effects["inference_blocked"]}
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -448,7 +577,7 @@ def main(argv: list[str] | None = None) -> int:
     s.add_argument("--input", required=True)
     s.add_argument("--out", default=None)
     s = sub.add_parser("verify-protocol")
-    s.add_argument("--protocol", default=os.path.join("fixtures", "config-audit-robustness", "protocol.json"))
+    s.add_argument("--protocol", default=EFFECTIVE_PROTOCOL_REL)
     s.add_argument("--root", default=".")
     a = p.parse_args(argv)
     try:
@@ -463,7 +592,8 @@ def main(argv: list[str] | None = None) -> int:
                     fh.write(text + "\n")
             print(text)
             return 0
-        probs = verify_robustness_protocol(load_robustness_protocol(a.protocol), a.root)
+        path = a.protocol if os.path.isabs(a.protocol) else os.path.join(a.root, a.protocol)
+        probs = verify_robustness_protocol(load_robustness_protocol(path), a.root)
         for q in probs:
             print("PROBLEM:", q)
         print("OK" if not probs else f"{len(probs)} problem(s)")

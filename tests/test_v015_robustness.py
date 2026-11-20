@@ -40,8 +40,10 @@ from bleediff.arena import load_fixtures, plan_requests  # noqa: E402
 from bleediff.fold import FoldAccumulator, contrast  # noqa: E402
 
 ROB_DIR = os.path.join(ROOT, "fixtures", "config-audit-robustness")
-ROB_PROTOCOL = os.path.join(ROB_DIR, "protocol.json")
-PREREG = os.path.join(ROB_DIR, "PREREGISTRATION.md")
+ROB_PROTOCOL = os.path.join(ROB_DIR, "protocol-1.1.json")                 # the EFFECTIVE (amended) protocol
+ORIGINAL_PROTOCOL = os.path.join(ROB_DIR, "protocol.json")               # historical, superseded, byte-identical
+AMENDMENT = os.path.join(ROB_DIR, "AMENDMENT-001.md")
+PREREG = os.path.join(ROB_DIR, "PREREGISTRATION.md")                     # historical original, byte-identical
 SEM_FIXTURES = os.path.join(ROOT, "fixtures", "semantic-v2", "contexts.json")
 SEM_PROTOCOL = os.path.join(ROOT, "fixtures", "semantic-v2", "protocol.json")
 SEM_MANIFEST = os.path.join(ROOT, "fixtures", "semantic-v2", "controls", "neutral-prose-1.semantic-v2-1.json")
@@ -90,7 +92,8 @@ class TestProtocolIdentityAndFrozenSources(unittest.TestCase):
     def test_identity(self):
         p = self.p
         self.assertEqual(p["protocol_id"], "config-audit-robustness/1")
-        self.assertEqual(p["parent_commit"], "4805abb76fe111048a36df3eee80ef84abe6c04a")
+        self.assertEqual(p["parent_commit"], "58a00b1d149994eb3775570e85174fe4a3e2df21")         # the original preregistration commit
+        self.assertEqual(p["frozen_experiment_commit"], "4805abb76fe111048a36df3eee80ef84abe6c04a")
         self.assertEqual(p["references"]["fixtures_sha256"], FIXTURES_SHA256)
         self.assertEqual(p["references"]["semantic_v2_protocol_sha256"], SEM_PROTOCOL_SHA256)
         self.assertEqual(p["references"]["semantic_v2_controls_sha256"], SEM_MANIFEST_SHA256)
@@ -98,7 +101,8 @@ class TestProtocolIdentityAndFrozenSources(unittest.TestCase):
         self.assertEqual(p["c0"]["control_id"], C0_ID)
         self.assertEqual(p["original_experiment"]["classification"], "INCONCLUSIVE")
         self.assertIn("EXPLORATORY", p["status"])
-        self.assertEqual(p["inference"]["completion_requests_in_phase_1a"], 0)
+        self.assertEqual(p["inference"]["completion_requests_in_amendment"], 0)
+        self.assertEqual(p["revision"], "1.1")
         self.assertFalse(p["analysis"]["uses_five_scenario_gate"])
         self.assertTrue(p["analysis"]["no_pass_label"])
         self.assertEqual(p["software_version"], __version__)
@@ -118,7 +122,9 @@ class TestProtocolIdentityAndFrozenSources(unittest.TestCase):
         self.assertEqual(RB.file_sha256(SEM_MANIFEST), SEM_MANIFEST_SHA256)
         self.assertEqual(RB.file_sha256(os.path.join(ROOT, "fixtures", "contexts.json")),
                          "38ab93521643523dfd8fcb023b59055f1db21b1f22db16ed00f9a49fa538e250")
-        self.assertEqual(RB.file_sha256(PREREG), self.p["references"]["preregistration_sha256"])
+        self.assertEqual(RB.file_sha256(PREREG), self.p["supersedes"]["original_preregistration_sha256"])
+        self.assertEqual(RB.file_sha256(ORIGINAL_PROTOCOL), self.p["supersedes"]["original_protocol_sha256"])
+        self.assertEqual(RB.file_sha256(AMENDMENT), self.p["amendment"]["sha256"])
 
     def test_frozen_generator_source_is_unchanged(self):
         pinned = _json(FROZEN_GENERATOR)
@@ -167,17 +173,17 @@ class TestProtocolIdentityAndFrozenSources(unittest.TestCase):
             lambda p: p["frozen"]["source_sha256_newline_normalised"].__setitem__("bleediff/control.py", "0" * 64),
             lambda p: p["mechanism_separation_static_check"].__setitem__("displaced_equals_in_slot_exact_bytes", False),
             lambda p: p["analysis"]["labels"].append("PASS"),
-            lambda p: p["inference"].__setitem__("completion_requests_in_phase_1a", 1),
+            lambda p: p["inference"].__setitem__("completion_requests_in_amendment", 1),
         ):
             q = copy.deepcopy(self.p)
             mutate(q)
             self.assertTrue(RB.verify_robustness_protocol(q, ROOT))
 
-    def test_no_final_controls_were_generated_in_phase_1a(self):
-        self.assertEqual(sorted(os.listdir(ROB_DIR)), ["PREREGISTRATION.md", "protocol.json"])
+    def test_no_final_controls_were_generated(self):
+        self.assertEqual(sorted(os.listdir(ROB_DIR)), ["AMENDMENT-001.md", "PREREGISTRATION.md", "protocol-1.1.json", "protocol.json"])
         for dirpath, _d, files in os.walk(os.path.join(ROOT, "fixtures")):
             self.assertFalse([f for f in files if "replicates" in f], dirpath)
-        self.assertFalse(self.p["inference"]["tokenizer_based_generation_in_phase_1a"])
+        self.assertFalse(self.p["inference"]["real_tokenizer_generation_performed"])
 
     def test_preregistration_documents_the_required_content(self):
         t = _read(PREREG)
@@ -288,7 +294,7 @@ class TestReplicateAlgorithm(unittest.TestCase):
         self.assertEqual((len(e["fragment_text"].encode()), len(e["fragment_text"].split())), (len(treat.encode()), len(treat.split())))
         self.assertEqual(e["counts"]["fragment_tokens"][0], e["counts"]["fragment_tokens"][1])
         self.assertEqual(e["counts"]["prompt_tokens"][0], e["counts"]["prompt_tokens"][1])
-        self.assertIn("rubric/1", e["checks"])
+        self.assertIn(R.RUBRIC_ID, e["checks"])
         self.assertEqual(R.screen(e["fragment_text"], sc), [])
 
     def test_every_rubric_rejection_is_recorded_in_full_and_the_stream_advances(self):
@@ -307,68 +313,14 @@ class TestReplicateAlgorithm(unittest.TestCase):
 
     def test_infeasible_replicates_are_preserved_not_substituted(self):
         sc = scen()
-        r = R.generate_replicate(sc, OFFSET, 6, qwenish, max_draws=1)          # a 1-draw budget cannot satisfy the structure
+        r = R.generate_replicate(sc, OFFSET, 6, qwenish, max_draws=0)          # a zero-draw budget cannot satisfy anything
         self.assertEqual(r["status"], "FAILED")
         self.assertEqual(r["reason"], "REPLICATE_FAILED_NO_FEASIBLE_CANDIDATE")
         self.assertEqual(r["domain"], "trail")
         self.assertNotIn("control", r)
         self.assertIn("nothing was relaxed", r["note"])
-        self.assertEqual(r["draws_used"], 1)
-
-    def test_a_full_manifest_builds_verifies_and_is_deterministic(self):
-        m1 = R.build_replicate_manifest(fx(), SID, OFFSET, qwenish, c0_entry=c0_entry(), c0_manifest_sha256=SEM_MANIFEST_SHA256,
-                                        protocol_id="config-audit-robustness/1", max_draws=300)
-        m2 = R.build_replicate_manifest(fx(), SID, OFFSET, qwenish, c0_entry=c0_entry(), c0_manifest_sha256=SEM_MANIFEST_SHA256,
-                                        protocol_id="config-audit-robustness/1", max_draws=300)
-        self.assertEqual(m1, m2)
-        self.assertEqual(m1["schema"], "bleediff.controls/3")
-        self.assertEqual([r["domain"] for r in m1["replicates"]], EXPECTED_DOMAINS)
-        self.assertEqual(m1["summary"]["n_requested"], 12)
-        self.assertEqual(m1["generator"]["protocol_id"], "config-audit-robustness/1")
-        self.assertIn("do not make them statistically independent", m1["independence_statement"])
-        self.assertEqual(R.verify_replicate_manifest(m1, fx(), None, c0_entry=c0_entry()), [])         # static
-        self.assertEqual(R.verify_replicate_manifest(m1, fx(), qwenish, c0_entry=c0_entry()), [])      # live (stand-in)
-        texts = [r["control"]["fragment_text"] for r in m1["replicates"] if r["status"] == "ACCEPTED"]
-        self.assertEqual(len(texts), len(set(texts)))
-        self.assertNotIn(c0_entry()["fragment_text"], texts)
-
-    def test_manifest_tampering_is_detected(self):
-        m = R.build_replicate_manifest(fx(), SID, OFFSET, qwenish, c0_entry=c0_entry(), c0_manifest_sha256=SEM_MANIFEST_SHA256,
-                                       max_draws=300)
-        ok = [r for r in m["replicates"] if r["status"] == "ACCEPTED"][0]["replicate"]
-        for mutate in (
-            lambda d: d["replicates"][0].__setitem__("domain", "workshop"),
-            lambda d: d["replicates"][1].__setitem__("seed_hex16", "0" * 16),
-            lambda d: d["replicates"][ok]["control"].__setitem__("fragment_text", "Tenant 4 x."),
-            lambda d: d["summary"].__setitem__("n_accepted", 3),
-            lambda d: d.__setitem__("rubric_sha256", "0" * 64),
-            lambda d: d.__setitem__("fixtures_sha256", "0" * 64),
-            lambda d: d["replicates"].pop(),
-            lambda d: d["replicates"][ok].__setitem__("rubric_rejections", [{"draw": 0, "text": "Tenant 4 oven notes: warm bread.", "reasons": [["R1_TASK_WORD", "x"]]}]),
-        ):
-            d = copy.deepcopy(m)
-            mutate(d)
-            self.assertTrue(R.verify_replicate_manifest(d, fx(), None, c0_entry=c0_entry()))
-
-    def test_fewer_than_ten_qualifying_controls_is_flagged_insufficient(self):
-        m = R.build_replicate_manifest(fx(), SID, OFFSET, qwenish, c0_entry=c0_entry(), c0_manifest_sha256=SEM_MANIFEST_SHA256,
-                                       max_draws=1)
-        self.assertEqual(m["summary"]["n_accepted"], sum(r["status"] == "ACCEPTED" for r in m["replicates"]))
-        self.assertLess(m["summary"]["n_accepted"], 10)
-        self.assertFalse(m["summary"]["qualifies_for_analysis"])
-        self.assertIn("INSUFFICIENT", m["summary"]["if_not_qualifying"])
-        self.assertEqual(R.verify_replicate_manifest(m, fx(), None, c0_entry=c0_entry()), [])        # failures are valid records
-
-    def test_the_manifest_is_never_overwritten_and_bounce_refuses_it(self):
-        m = R.build_replicate_manifest(fx(), SID, OFFSET, qwenish, c0_entry=c0_entry(), c0_manifest_sha256=SEM_MANIFEST_SHA256,
-                                       max_draws=50)
-        with tempfile.TemporaryDirectory() as d:
-            path = os.path.join(d, "m.json")
-            R.write_manifest(path, m)
-            with self.assertRaises(C.ControlMatchError):
-                R.write_manifest(path, m)
-            with self.assertRaises(C.ControlMatchError):
-                C.load_manifest(path)                                  # the frozen loader refuses schema /3: bounce cannot use it
+        self.assertEqual(r["draws_used"], 0)
+        self.assertEqual(r["effective_draw_budget"], 0)
 
     def test_generator_cannot_reach_completion(self):
         for rel in ("bleediff/replicates.py", "bleediff/robustness.py"):
@@ -666,7 +618,7 @@ class TestPrivacyAndDependencies(unittest.TestCase):
 
     def test_new_files_contain_no_personal_or_local_data(self):
         pat = re.compile(r"(@[A-Za-z0-9-]+\.[a-z]{2,}|[A-Za-z]:\\|/Users/|/home/|\.gguf|api[_-]?key\s*[:=]|password\s*[:=])", re.I)
-        for path in (ROB_PROTOCOL, PREREG, os.path.join(ROOT, "bleediff", "replicates.py"), os.path.join(ROOT, "bleediff", "robustness.py")):
+        for path in (ROB_PROTOCOL, ORIGINAL_PROTOCOL, PREREG, AMENDMENT, os.path.join(ROOT, "bleediff", "replicates.py"), os.path.join(ROOT, "bleediff", "robustness.py")):
             self.assertIsNone(pat.search(_read(path)), path)
 
     def test_version_files_agree(self):
@@ -674,7 +626,8 @@ class TestPrivacyAndDependencies(unittest.TestCase):
 
         with open(os.path.join(ROOT, "pyproject.toml"), "rb") as fh:
             self.assertEqual(tomllib.load(fh)["project"]["version"], __version__)
-        self.assertEqual(__version__, "0.1.5")
+        self.assertEqual(__version__, "0.1.6")
+        self.assertEqual(_json(ORIGINAL_PROTOCOL)["software_version"], "0.1.5")   # the original writer's stamp is preserved
 
 
 if __name__ == "__main__":

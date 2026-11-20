@@ -2,7 +2,7 @@
 
 > What survives subtraction was already in the composite.
 
-`bleediff` (v0.1.5) is a zero-dependency Python 3.11+ CLI that evaluates one narrow question about an
+`bleediff` (v0.1.6) is a zero-dependency Python 3.11+ CLI that evaluates one narrow question about an
 inference stack: **when a contiguous multi-tenant prompt arena over-reads past a tenant boundary, does a
 fragment of the neighbour's context leave a trace in the model's output distribution, even when the
 final answer does not change?**
@@ -329,9 +329,9 @@ protocol file.
 3. *All controls:* technical-versus-ordinary-prose differences remain (acronyms, upper case, hyphens, decimals, digits).
 4. *One control per scenario* cannot establish content-specific attribution.
 
-## Config-audit robustness protocol (v0.1.5, `config-audit-robustness/1`, Phase 1A)
+## Config-audit robustness protocol (`config-audit-robustness/1`, revision 1.1)
 
-**Status: preregistered, exploratory, implementation and static verification only.** No `/completion` request, no
+**Status: preregistered (as amended), exploratory, implementation and static verification only.** No `/completion` request, no
 model probability and no final replicate control exists yet. The original five-scenario `semantic-v2/1` experiment
 remains **INCONCLUSIVE**; this study does not reuse its aggregate gate and cannot change that classification. Nothing
 here is a demonstration of a security vulnerability.
@@ -360,13 +360,26 @@ produces? "Not distinguishable" is an expected-possible outcome.
   the model's input cannot distinguish the delivery mechanism. This does not show a tenant-isolation failure. The
   linear fold also lets anyone holding the clean reference recover the request-3 probability change exactly
   (`p3_treated - p3_clean = 3 * (M - B_ref)` when requests 1-2 are unchanged).
+* **Amendment 001 (v0.1.6, disclosed).** A pre-generation audit found governance defects, corrected by
+  `fixtures/config-audit-robustness/AMENDMENT-001.md` and the effective `protocol-1.1.json`. The original
+  `PREREGISTRATION.md` and `protocol.json` are kept byte-identical as history. The amendment discloses that candidate
+  generation with the **offline stand-in tokenizer** occurred before the original commit (so the study is preregistered
+  before any *real-tokenizer* generation, not before all forms of candidate generation); makes human review
+  **annotation-only** (it can flag, never replace, regenerate, reorder or discard; a serious finding means NO-GO and a new
+  protocol version; a separately labelled sensitivity analysis may exclude annotated controls); fixes the draw budget at
+  exactly 5,000 with no CLI override; requires verification by **byte-identical deterministic regeneration** of the whole
+  selection (a different valid control is never "equivalent"); requires a recorded anchor (the replicate loop must
+  reproduce C0 under the real tokenizer) before generation; and binds every manifest to the controlling documents and the
+  exact code revision. Seeds changed (the hashed rubric lost the manual-review clause); no real-tokenizer generation had
+  happened, so no selected control changed. It also corrects the "nine headers per domain" claim: this skeleton leaves
+  only 2-4 usable headers per domain.
 * Later phases (tokenizer-only feasibility; inference) need separate authorisation. The frozen bounce/diff classifier is
   not used and not modified.
 
 ## Tests
 
 `tests/test_bleediff.py`, `tests/test_v011_validity.py`, `tests/test_v012_control.py` and
-`tests/test_v013_protocol.py`, `tests/test_v014_semantic_v2.py` and `tests/test_v015_robustness.py` (stdlib `unittest`, 272 tests) run a stdlib
+`tests/test_v013_protocol.py`, `tests/test_v014_semantic_v2.py`, `tests/test_v015_robustness.py` and `tests/test_v016_amendment.py` (stdlib `unittest`, 312 tests) run a stdlib
 `http.server` mock of `llama-server` (`/tokenize`, `/completion`, `/props`) and cover: exact contrastive math with
 `argmax == A` and `delta_contrast > 0.4`; B winning raw is never a stealth PASS; the matched control staying within
 0.1 and a drifting control making the run `INCONCLUSIVE` (never `FAIL`); invalid baselines never counting as
