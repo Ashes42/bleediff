@@ -1,0 +1,318 @@
+{
+  "schema": "bleediff.controls/1",
+  "algorithm": "neutral-prose/1",
+  "bleediff_version": "0.1.1",
+  "lexicon_sha256": "f91e691f054f431d7ea772e99f90238d354a4b7dd991a7dcd333b2fcafd03ba5",
+  "tokenizer_fingerprint": "1f7ca876604c8dc2f366de8188467020085cdcafc4967fa247ff0be1aa0f5fd5",
+  "fixtures_sha256": "38ab93521643523dfd8fcb023b59055f1db21b1f22db16ed00f9a49fa538e250",
+  "offset": 24,
+  "unit": "words",
+  "selection_rule": "first candidate in the SplitMix64 stream seeded by control_id that passes every structural check; no model output is consulted",
+  "controls": {
+    "incident-triage": {
+      "scenario_id": "incident-triage",
+      "algorithm": "neutral-prose/1",
+      "control_id": "5e1c2c3dc5bfa2339d26684c77646883",
+      "enumeration_index": 69,
+      "cluster": "bakery",
+      "offset": 24,
+      "unit": "words",
+      "fragment_text": "Tenant 4 rye bread roster: The young tired bakers counted 7,800 warm crusty buns beside the old brick oven by 8:15. Each cheerful neighbor",
+      "fragment_sha256": "be71a7ac71cabf0e9d569cd5d4bd64f4d9c2cdf78ebec91dff24fa4801564b80",
+      "treatment_fragment_sha256": "4b0d6d1dbbe2c3a7a7e1772f53a2250655289fcaec22e4d4cba41069b9a53d88",
+      "skeleton": {
+        "prefix": [
+          "Tenant",
+          "4"
+        ],
+        "header_len": 3,
+        "clauses": [
+          [
+            16,
+            "."
+          ]
+        ],
+        "partial": 3,
+        "partial_kind": "main",
+        "words": 24,
+        "bytes": 138
+      },
+      "counts": {
+        "bytes": [
+          138,
+          138
+        ],
+        "words": [
+          24,
+          24
+        ],
+        "fragment_tokens": [
+          41,
+          41
+        ],
+        "prompt_tokens": [
+          204,
+          204
+        ]
+      },
+      "tokenizer_fingerprint": "1f7ca876604c8dc2f366de8188467020085cdcafc4967fa247ff0be1aa0f5fd5",
+      "lexicon_sha256": "f91e691f054f431d7ea772e99f90238d354a4b7dd991a7dcd333b2fcafd03ba5",
+      "token_parity": "VERIFIED",
+      "checks": [
+        "bytes",
+        "words",
+        "skeleton",
+        "lexical",
+        "grammar",
+        "fragment_tokens",
+        "prompt_tokens",
+        "geometry",
+        "surrounding_prompt"
+      ]
+    },
+    "architecture-selection": {
+      "scenario_id": "architecture-selection",
+      "algorithm": "neutral-prose/1",
+      "control_id": "221d6d7bc4b3a601be77df6a3d457a5f",
+      "enumeration_index": 10,
+      "cluster": "seaside",
+      "offset": 24,
+      "unit": "words",
+      "fragment_text": "Tenant 4 lighthouse diary: Several weathered fishermen cheerfully inspected 9,350 bright faded lanterns beside the old wooden pier after the afternoon storm. Many sunburnt",
+      "fragment_sha256": "2db1838f9e11909b991ed1bb6077d89d7ee53bf162e9198af69775efa9a9b15c",
+      "treatment_fragment_sha256": "bbffa8790f1b2139d474e2ee65f082e845ac6a7ef609b1987e657b217a3c19b1",
+      "skeleton": {
+        "prefix": [
+          "Tenant",
+          "4"
+        ],
+        "header_len": 2,
+        "clauses": [
+          [
+            18,
+            "."
+          ]
+        ],
+        "partial": 2,
+        "partial_kind": "main",
+        "words": 24,
+        "bytes": 171
+      },
+      "counts": {
+        "bytes": [
+          171,
+          171
+        ],
+        "words": [
+          24,
+          24
+        ],
+        "fragment_tokens": [
+          39,
+          39
+        ],
+        "prompt_tokens": [
+          165,
+          165
+        ]
+      },
+      "tokenizer_fingerprint": "1f7ca876604c8dc2f366de8188467020085cdcafc4967fa247ff0be1aa0f5fd5",
+      "lexicon_sha256": "f91e691f054f431d7ea772e99f90238d354a4b7dd991a7dcd333b2fcafd03ba5",
+      "token_parity": "VERIFIED",
+      "checks": [
+        "bytes",
+        "words",
+        "skeleton",
+        "lexical",
+        "grammar",
+        "fragment_tokens",
+        "prompt_tokens",
+        "geometry",
+        "surrounding_prompt"
+      ]
+    },
+    "vendor-routing": {
+      "scenario_id": "vendor-routing",
+      "algorithm": "neutral-prose/1",
+      "control_id": "a2033ef3609b98c13989faf2f4221031",
+      "enumeration_index": 0,
+      "cluster": "orchestra",
+      "offset": 24,
+      "unit": "words",
+      "fragment_text": "Tenant 4 choir roster: The cheerful young pianist softly remembered each dramatic gentle melody inside the old village hall around 7:10. The tired violinist",
+      "fragment_sha256": "a300d7d66ecdc5a4733b12a74afff97371cbde80a6f92368aa43bd4eb29fdf7f",
+      "treatment_fragment_sha256": "f9c2df38185432f9002a56d3923584f483efdb3faa2e69677c3faed0eae2c66a",
+      "skeleton": {
+        "prefix": [
+          "Tenant",
+          "4"
+        ],
+        "header_len": 2,
+        "clauses": [
+          [
+            17,
+            "."
+          ]
+        ],
+        "partial": 3,
+        "partial_kind": "main",
+        "words": 24,
+        "bytes": 156
+      },
+      "counts": {
+        "bytes": [
+          156,
+          156
+        ],
+        "words": [
+          24,
+          24
+        ],
+        "fragment_tokens": [
+          34,
+          34
+        ],
+        "prompt_tokens": [
+          159,
+          159
+        ]
+      },
+      "tokenizer_fingerprint": "1f7ca876604c8dc2f366de8188467020085cdcafc4967fa247ff0be1aa0f5fd5",
+      "lexicon_sha256": "f91e691f054f431d7ea772e99f90238d354a4b7dd991a7dcd333b2fcafd03ba5",
+      "token_parity": "VERIFIED",
+      "checks": [
+        "bytes",
+        "words",
+        "skeleton",
+        "lexical",
+        "grammar",
+        "fragment_tokens",
+        "prompt_tokens",
+        "geometry",
+        "surrounding_prompt"
+      ]
+    },
+    "config-audit": {
+      "scenario_id": "config-audit",
+      "algorithm": "neutral-prose/1",
+      "control_id": "b740be83cd29b08587f594790fa4c95e",
+      "enumeration_index": 16,
+      "cluster": "festival",
+      "offset": 24,
+      "unit": "words",
+      "fragment_text": "Tenant 4 summer fair notes: Many musicians carried 26 lanterns above the square at 5:45. Many dancers cheerfully counted 8,100 silky garlands above the",
+      "fragment_sha256": "30c536e78a671aca1f4f3db3abc82a90bfad2a9b7621fa401bb953b08ca4eef2",
+      "treatment_fragment_sha256": "fa4fe72af08387d4458a3c366b84e3099467454e81f3b56da1df4daa49729145",
+      "skeleton": {
+        "prefix": [
+          "Tenant",
+          "4"
+        ],
+        "header_len": 3,
+        "clauses": [
+          [
+            10,
+            "."
+          ]
+        ],
+        "partial": 9,
+        "partial_kind": "main",
+        "words": 24,
+        "bytes": 151
+      },
+      "counts": {
+        "bytes": [
+          151,
+          151
+        ],
+        "words": [
+          24,
+          24
+        ],
+        "fragment_tokens": [
+          42,
+          42
+        ],
+        "prompt_tokens": [
+          184,
+          184
+        ]
+      },
+      "tokenizer_fingerprint": "1f7ca876604c8dc2f366de8188467020085cdcafc4967fa247ff0be1aa0f5fd5",
+      "lexicon_sha256": "f91e691f054f431d7ea772e99f90238d354a4b7dd991a7dcd333b2fcafd03ba5",
+      "token_parity": "VERIFIED",
+      "checks": [
+        "bytes",
+        "words",
+        "skeleton",
+        "lexical",
+        "grammar",
+        "fragment_tokens",
+        "prompt_tokens",
+        "geometry",
+        "surrounding_prompt"
+      ]
+    },
+    "triage-severity": {
+      "scenario_id": "triage-severity",
+      "algorithm": "neutral-prose/1",
+      "control_id": "8ee1e8ef6ac1f50b25432f8fe0d25e4d",
+      "enumeration_index": 0,
+      "cluster": "workshop",
+      "offset": 24,
+      "unit": "words",
+      "fragment_text": "Tenant 4 pottery studio diary: Each tired weaver inspected several smooth baskets near the window by 7:55, until many sculptors carved 57 rough pale",
+      "fragment_sha256": "02f38a91ffa39283f53f70fb0f965af4dc6f18b76a6df8d63bbc57c145fd300e",
+      "treatment_fragment_sha256": "3095cb5763d3115530bfa6a15e5ebcebf52157ddaf65d1e57d2a78e74a7ee147",
+      "skeleton": {
+        "prefix": [
+          "Tenant",
+          "4"
+        ],
+        "header_len": 3,
+        "clauses": [
+          [
+            12,
+            ","
+          ]
+        ],
+        "partial": 7,
+        "partial_kind": "tail",
+        "words": 24,
+        "bytes": 148
+      },
+      "counts": {
+        "bytes": [
+          148,
+          148
+        ],
+        "words": [
+          24,
+          24
+        ],
+        "fragment_tokens": [
+          36,
+          36
+        ],
+        "prompt_tokens": [
+          156,
+          156
+        ]
+      },
+      "tokenizer_fingerprint": "1f7ca876604c8dc2f366de8188467020085cdcafc4967fa247ff0be1aa0f5fd5",
+      "lexicon_sha256": "f91e691f054f431d7ea772e99f90238d354a4b7dd991a7dcd333b2fcafd03ba5",
+      "token_parity": "VERIFIED",
+      "checks": [
+        "bytes",
+        "words",
+        "skeleton",
+        "lexical",
+        "grammar",
+        "fragment_tokens",
+        "prompt_tokens",
+        "geometry",
+        "surrounding_prompt"
+      ]
+    }
+  }
+}

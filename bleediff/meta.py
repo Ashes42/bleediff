@@ -170,6 +170,8 @@ def build_sidecar(*, trace_path: str, records: list[dict], harness, baseline_doc
             "server_flags": info.public_flags(),
             "n_probs_requested": harness.client.n_probs,
             "code_revision": code_revision(),
+            "control_algorithm": getattr(harness, "control_algorithm", UNKNOWN),
+            "control_manifest_sha256": getattr(harness, "control_manifest_sha256", UNKNOWN),
         },
         "baselines": {ref: _baseline_entry(i) for ref, i in infos.items()},
         "coverage_interpretation": (
@@ -219,6 +221,8 @@ def legacy_sidecar(*, trace_path: str, records: list[dict], baseline_doc: dict,
             "server_flags": UNKNOWN,
             "n_probs_requested": UNKNOWN,
             "code_revision": UNKNOWN,
+            "control_algorithm": UNKNOWN,
+            "control_manifest_sha256": UNKNOWN,
         },
         "baseline_file_provenance": {
             "note": "facts about the baseline file only; the trace itself recorded none of these",

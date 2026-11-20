@@ -1,0 +1,46 @@
+{
+ "_note": "sha256 of whitespace-normalised source segments of the frozen measurement code at commit 6a0356520760b486e41c9ac2ae92cfb67f3bf26a (verified identical to the working tree when v0.1.2 was written). If a test comparing against this file fails, a frozen definition changed: that is a scientific change, not a refactor.",
+ "anchors": {
+  "bleediff/__init__.py": {
+   "CHOICES": "3403b48437b14acdfd0f3eb2b13e44cf6325bc2d604827c09aa27c773ec12509",
+   "CONTROL_BAND_NATS": "5fd24eace0ac78803f181806bfc88b17d67c732877f3cc3a0a60cfbaf1d95050",
+   "EPS": "cbb679250344fb59dbc3f517ff434e07b18fd9b3eebe4163bfd3151a77db254a",
+   "EXIT_FAIL": "3fd95e96cf2247c75b3bea5663e3daa08014388d299987e713d9170113219063",
+   "EXIT_INCONCLUSIVE": "3bdf888b661809a33e7747db317183d5b6cdba6174f29ad6d7ac358b4e65eac9",
+   "EXIT_PASS": "bf883f30590f1377e13dae6d4e142f00dc232855171d8bc42602a9ebc0e8fb66",
+   "EXPOSURE_DELTA_NATS": "c07a6064c8ebf2097bbc02767f81faf7a40e5427ddefbae08c452d4ec7c4ffd8",
+   "MIN_TREATMENT_FRACTION": "73899e4a10dafd37c4c9085baf8e34a47173259e089fe05a9cf649d60f88eff5"
+  },
+  "bleediff/arena.py": {
+   "Arena": "4c7befd25306011b6993d552e5bc61868f54dc233963d68408630c01afb896f9",
+   "FILLER_ALGORITHM": "4cc4197cf1bf56bf2be7332819a74975bd6be043ae162d255e09966ac5d4980d",
+   "PROMPT_TEMPLATE": "4a2559901a803d882669c12b620a8020cfa6e18a9e02a0f22b82a93cb6415dda",
+   "_NEUTRAL": "335d1dcf98ae6ae48f8ee85bad207fcb83d22cf2961344cd145651a79c5af184",
+   "_gibberish": "b8f6a1f7932fcb24da672dbca4202d88521b19c9d620121a73d34d43d85ced50",
+   "_hybrid": "33985282cb8e883e1e96a8c6771e6d614bf6e8df9de8066ff020a8b21f4fa37e",
+   "_mirror": "cab6c89bee4270fa7d43da298d2ab0d52320b6f1a85f15a3582c6e120c8d3775",
+   "_neutral_candidates": "abd68c1000eb462b14c907b0a51d5040b2e9565d2448c4b305ebac7d78e0632f",
+   "_shape_preserving": "1fe1e3696a39bb3e98161d8d58f9c691be2b80b94ceac27f213e831d0648f26e",
+   "make_neutral_filler": "ae46d72c5f45e3def3e4a032a28daf72638793d09508b7ad374e8feea20540dd",
+   "plan_requests": "5f8020e8683c1e7251cdcec0b5ff76bb39322c1294b3635bf4e9c6c406eb366f",
+   "render_prompt": "c995bde9e0c68965cc2808604cdb63c27cb0843919e1ff811cce0fc76ef491c5"
+  },
+  "bleediff/fold.py": {
+   "FoldAccumulator": "b1f4b1b4671d4712b8ee55ebf3b2a636a13729ba7ccfb4a3210ff0e4aced8461",
+   "TRACE_SCHEMA": "f0234b7b8e496e9504a6f3ed1a2145ce12d8cded5be52a7869353255bbb222b7",
+   "_canon": "07d3fad3a1c5b7ad1d85e041a0fce4c6c925d1df897e5b67865ed0c0d318bd04",
+   "argmax_choice": "24ab2b26951c0045f60e262bf0dcc7882fcca28160879a9f62e5a17f1cdea155",
+   "assess_trial": "33bcb9e7fed3aeb20ad44885509747d8ed8df7949d6aaadfdfe15300d024667e",
+   "check_record": "f47f6d918075b43517951139aa59a0c4cb39d0ead84d5a20d5788357b8e7e89b",
+   "contrast": "c63151281a859b05420df701e9d9572397693434b448d270ec59d12366bb53aa",
+   "fold_hash": "c89debcd2249d468e04717ab7e3840262ff56400339de93bf7ff995d40a362c4",
+   "gate": "255bb0a4b870254c63f11b259c7488f446e78ba4c16dfbccca4a519bc8de5e38",
+   "make_record": "acad63f346407871823ad6d937d17d44933222b4fb977bc616a8936045f51b12",
+   "read_traces": "d9e737bf65f1d9f6d32766742d4465344ee3de46659c6a02f0e2ba7d01c901b2",
+   "reference_hash": "171f99cd9ec04e9a5c427a5fc4332a35c5b9effda02189c25f9e5da409eada17",
+   "trial_verdict": "d5eca501c3c4b95b16cfb3715a0e5255ef389df263c413a43a869651723892fd",
+   "write_traces": "7cb89ae0e76d785c505b089a2eadbd46701d850af4c4dd60a39d911f473ad650"
+  },
+  "client-normalisation": "c69ca8b02a5453e863b3f682616fa073b448fc6a0b5b0245d7b3f345940070d6"
+ }
+}

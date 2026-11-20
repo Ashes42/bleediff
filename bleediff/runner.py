@@ -15,6 +15,8 @@ from .arena import (
     scrub,
 )
 from .client import LlamaClient, ServerInfo, TokenizationReport
+from .control import ALGORITHM as PROSE_ALGORITHM
+from .control import ControlMatchError, verify_control
 from .errors import BaselineError, Inconclusive
 from .fold import FoldAccumulator, argmax_choice, make_record, reference_hash
 from .meta import filler_hash, filler_repro_id
@@ -52,6 +54,8 @@ class Harness:
         self.witnesses: list[dict] = []
         self.meta_records: list[dict] = []
         self._last_diag: dict | None = None
+        self.control_algorithm: str = UNKNOWN          # recorded in the sidecar
+        self.control_manifest_sha256: str = UNKNOWN
 
     # -- setup ---------------------------------------------------------------------------
     def preflight(self) -> ServerInfo:
@@ -165,7 +169,16 @@ class Harness:
             reason="CONTROL_LENGTH_MISMATCH",
         )
 
-    def bounce(self, baseline: dict, trials: int, offset: int, unit: str = "words") -> list[dict]:
+    def bounce(self, baseline: dict, trials: int, offset: int, unit: str = "words", *,
+               control: str = PROSE_ALGORITHM, manifest: dict | None = None,
+               manifest_sha256: str | None = None) -> list[dict]:
+        """Run treatment + matched-control folds. ``control`` selects the control construction:
+
+        * ``neutral-prose/1`` (default, v0.1.2): the PRESERVED fluent controls from ``manifest``; each is re-verified
+          against the live tokenizer, the current fixtures and the current lexicon before any request is sent.
+        * ``neutral-filler/2``: the historical v0.1.0/v0.1.1 word-substitution filler, kept only so old evidence
+          stays reproducible. Its results are NOT comparable with ``neutral-prose/1`` results.
+        """
         info = self.info or self.preflight()
         if baseline["model_hash"] != info.model_hash:
             raise Inconclusive(
@@ -174,6 +187,22 @@ class Harness:
             )
         if baseline["fixtures_sha256"] != self.fixtures.sha256:
             raise BaselineError("fixtures changed since calibration (sha256 mismatch); re-run calibrate")
+        if control not in (PROSE_ALGORITHM, FILLER_ALGORITHM):
+            raise Inconclusive(f"unknown control algorithm {control!r}", reason="BAD_ARGS")
+        self.control_algorithm = control
+        self.control_manifest_sha256 = (manifest_sha256 or UNKNOWN) if control == PROSE_ALGORITHM else "NOT_APPLICABLE"
+        if control == PROSE_ALGORITHM:
+            if manifest is None:
+                raise ControlMatchError("neutral-prose/1 needs a preserved controls manifest", reason="CONTROL_MANIFEST_INVALID")
+            tok = lambda s: self.client.tokenize(s, cache=False)  # noqa: E731
+            for sc in self.fixtures.scenarios[:max(1, min(trials, len(self.fixtures.scenarios)))]:
+                entry = manifest["controls"].get(sc.id)
+                problems = (["no preserved control for this scenario"] if entry is None
+                            else verify_control(sc, entry, manifest, offset, unit, tok))
+                if problems:
+                    raise ControlMatchError(
+                        f"preserved control for {sc.id!r} does not validate: {'; '.join(problems)}",
+                        reason="CONTROL_NOT_VALIDATED")
         scs = self.fixtures.scenarios
         records: list[dict] = []
         for t in range(1, trials + 1):
@@ -182,9 +211,18 @@ class Harness:
             if ref is None:
                 raise BaselineError(f"baseline has no reference for scenario {sc.id!r}")
             b_ref = [float(x) for x in ref["B_ref"]]
-            for control in (False, True):
+            for control_arm in (False, True):
                 filler_meta: object = "NOT_APPLICABLE"
-                if control:
+                if control_arm and control == PROSE_ALGORITHM:
+                    entry = manifest["controls"][sc.id]
+                    plan = plan_requests(sc, "control", offset, unit, filler=entry["fragment_text"])
+                    filler_meta = {
+                        "sha256": entry["fragment_sha256"], "algorithm": PROSE_ALGORITHM,
+                        "control_id": entry["control_id"], "enumeration_index": entry["enumeration_index"],
+                        "salt": "NOT_APPLICABLE", "repro_id": entry["control_id"],
+                        "token_parity": entry["token_parity"],
+                    }
+                elif control_arm:
                     filler, salt = self._matched_filler(sc.adjacent, 0, unit, offset, sc)
                     plan = plan_requests(sc, "control", offset, unit, filler=filler)
                     filler_meta = {
@@ -202,12 +240,12 @@ class Harness:
                 m = self.fold(plan, measure_tokens=True)
                 rec = make_record(
                     trial=t, model_hash=info.model_hash, cursor_offset=offset, m=m, b_ref=b_ref,
-                    ref_hash=ref["reference_hash"], control=control,
+                    ref_hash=ref["reference_hash"], control=control_arm,
                 )
                 records.append(rec)
                 diag = self._last_diag or {}
                 self.meta_records.append({
-                    "trial": t, "control": control, "fold_hash": rec["fold_hash"],
+                    "trial": t, "control": control_arm, "fold_hash": rec["fold_hash"],
                     "scenario_id": sc.id,
                     "request_prompt_tokens": diag.get("request_prompt_tokens", UNKNOWN),
                     "coverage": diag.get("coverage", UNKNOWN),

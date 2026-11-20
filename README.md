@@ -2,7 +2,7 @@
 
 > What survives subtraction was already in the composite.
 
-`bleediff` (v0.1.1) is a zero-dependency Python 3.11+ CLI that evaluates one narrow question about an
+`bleediff` (v0.1.2) is a zero-dependency Python 3.11+ CLI that evaluates one narrow question about an
 inference stack: **when a contiguous multi-tenant prompt arena over-reads past a tenant boundary, does a
 fragment of the neighbour's context leave a trace in the model's output distribution, even when the
 final answer does not change?**
@@ -26,9 +26,9 @@ tracks. It was in the composite all along.
   `R_c = log(M_c + eps) - log(B_ref_c + eps)`, `eps = 1e-12`.
 * The effect, if any, shows up as `delta_contrast = R_B - R_A > 0.4` nats **while `argmax(M)` is still
   `A`**. A naive output-only check passes; the subtraction does not.
-* A **matched neutral control** (same byte length, word count and model-token count; neutral vocabulary in
-  place of the `B` text) must stay within `|delta_contrast| <= 0.1`, otherwise the effect is not attributable
-  to the *content* of the fragment.
+* A **matched neutral control** (since v0.1.2: fluent, off-topic prose matched on structure, bytes, words and
+  token counts, see "Neutral control" below) must stay within `|delta_contrast| <= 0.1`, otherwise the effect is
+  not attributable to the *content* of the fragment.
 
 ### Pre-registered verdict (thresholds frozen; validity gates added in v0.1.1)
 
@@ -141,11 +141,11 @@ window (default 32) the request is retried with 128, then 512, before giving up.
 A bare letter must be exactly one token and deterministic; two letters may not share a token id. A leading-space
 variant that is not a single token is dropped from the grammar and the mass, not treated as an error.
 
-**Matched control.** The filler has the same whitespace layout and the same per-word byte length as the `B`
-slot, so bytes and words match at *every* prefix, i.e. for any `cursor_offset`. At `bounce` time candidates are
-additionally chosen against the live tokenizer so the fragment's **model-token** count matches too; if no match
-is found the run is `INCONCLUSIVE` (`CONTROL_LENGTH_MISMATCH`). Digits are replaced by different digits because
-some tokenizers (Qwen) emit one token per digit.
+**Matched control (historical, `neutral-filler/2`).** v0.1.0/v0.1.1 replaced every word of the `B` slot with a
+same-length pool word, shifted digit or nonsense token. It matched bytes, words and tokens but was word salad (see
+"Neutral control"), and it displaced the output by up to 0.42 nats deterministically. It is kept only behind
+`bounce --control neutral-filler/2` so old evidence stays reproducible; its results are **not comparable** with
+`neutral-prose/1`.
 
 **Disposal scope.** The harness consumes each per-request vector (summed, then zeroed and cleared in place) and
 zeroes its prompt buffers and arena. This models **collector-level retention disposal**: the harness holds no
@@ -221,9 +221,56 @@ would not be interpretable. (An earlier note here said `A` "did not dominate" th
 by the criterion in the code, `argmax(B_ref) == A`, it did lead, by 0.0101.) Regression data for this
 reclassification is in `tests/data/legacy_qwen1p5b_v0.1.0/`.
 
+## Neutral control (v0.1.2: `neutral-prose/1`)
+
+**Why it changed.** Three repeated runs were bit-identical, so the historical control's drift (-0.419, +0.302,
++0.206 nats) was a deterministic effect of its text, not noise. Reconstructing the exact historical controls (hash
+verified against the recorded sidecar) showed: a lost `Tenant 4` header (`4` became a stray `1`), "Yes", "Use",
+"Get", "End", "key", "one", "two" as words, hybrid tokens such as `understandbu`/`researchso`, shifted numerals,
+and no syntax at all. Token/byte/word parity was fine; the problem was the *language*.
+
+**What it does.** For one scenario and one displacement it writes ordinary grammatical English that mirrors the
+treatment fragment's structure: the shared `Tenant 4` prefix, header length, the punctuation skeleton (where the
+colon, comma and periods fall), the mid-sentence truncation point, and the exact byte length, word count,
+fragment token count and whole request-#3 token count under the real tokenizer. It is off-topic neutral prose
+(bakery, trail, orchestra, greenhouse, seaside, library, festival, workshop) with no vocabulary from the
+scenario, no answer-label words, no ordinals or number words, no scale/rating words, no imperatives.
+
+**Selection rule (fixed before any inference).** A seeded stream (SplitMix64, seeded by `control_id`) proposes
+structures; an exact knapsack fills them to the byte/token budget; the **first** candidate passing every
+structural check is selected. Checks use only bytes, words, the punctuation skeleton, lexical bans, an
+independent grammar recognizer and tokenizer counts. No model output is ever consulted, so a control cannot be
+tuned toward a result. `control_id` hashes the algorithm, scenario, offset, treatment fragment, tokenizer
+fingerprint and lexicon, so any change yields different controls. If exact matching is impossible the generator
+raises `CONTROL_MATCH_FAILED` and never relaxes a constraint. The selected controls are preserved in
+`fixtures/controls/neutral-prose-1.json` and must not be regenerated after seeing a result.
+
+```
+python -m bleediff.control generate --server URL --out fixtures/controls/neutral-prose-1.json   # tokenize only
+python -m bleediff.control verify   --server URL                                                 # re-verify live
+python -m bleediff.control static                                                                # no server: PENDING
+```
+
+(`bleediff.control` uses only `/tokenize`; the main CLI lexicon is unchanged.) `bounce` now defaults to
+`--control neutral-prose/1`, re-verifies each preserved control (tokenizer fingerprint, fixtures, lexicon, token
+and whole-prompt parity) before sending anything, and otherwise stops `INCONCLUSIVE` (`CONTROL_NOT_VALIDATED`).
+The sidecar records `control_algorithm`, the manifest hash and, per control record, the control id and fragment
+hash (never the text).
+
+**Limits.** Structural checks cannot establish semantic neutrality; a human review of the text is required and
+is part of the v0.1.2 report. The control is off-topic by construction, so topical relevance still differs between
+arms. And one treatment fragment is itself defective (below).
+
+**Treatment-fragment integrity (reported, not fixed).** With the frozen 24-word window, the B evidence is present
+inside the displaced fragment for 4 of 5 scenarios. In `triage-severity` the only B cue ("major") is word 40 of
+the slot, 16 words past the window, so that scenario's treatment cannot carry the evidence it is meant to test.
+The fixtures and the offset are frozen and were not changed. `python -m bleediff.control` exposes the check as
+`fragment_integrity()`.
+
 ## Tests
 
-`tests/test_bleediff.py` and `tests/test_v011_validity.py` (stdlib `unittest`, 86 tests) run a stdlib
+`tests/test_bleediff.py`, `tests/test_v011_validity.py` and `tests/test_v012_control.py` (stdlib `unittest`, 130
+tests) run a stdlib
 `http.server` mock of `llama-server` (`/tokenize`, `/completion`, `/props`) and cover: exact contrastive math with
 `argmax == A` and `delta_contrast > 0.4`; B winning raw is never a stealth PASS; the matched control staying within
 0.1 and a drifting control making the run `INCONCLUSIVE` (never `FAIL`); invalid baselines never counting as

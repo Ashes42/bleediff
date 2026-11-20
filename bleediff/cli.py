@@ -19,7 +19,9 @@ from . import (
     EXPOSURE_DELTA_NATS,
     __version__,
 )
-from .arena import load_fixtures, plan_requests
+from .arena import FILLER_ALGORITHM, load_fixtures, plan_requests
+from .control import ALGORITHM as PROSE_ALGORITHM
+from .control import load_manifest
 from .client import DEFAULT_N_PROBS, LlamaClient
 from .errors import Inconclusive, TraceError
 from .fold import TRACE_SCHEMA, check_record, gate, read_traces, write_traces
@@ -86,16 +88,29 @@ def cmd_calibrate(a) -> int:
 def cmd_bleed(a) -> int:
     fixtures = load_fixtures(a.fixtures)
     ok = True
-    print(f"cursor_offset={a.offset} unit={a.unit}   (offline preview: no server contacted, no model state touched)\n")
+    mpath = a.controls_manifest or os.path.join(os.path.dirname(fixtures.path) or ".", "controls",
+                                                "neutral-prose-1.json")
+    manifest = None
+    if os.path.exists(mpath):
+        try:
+            manifest = load_manifest(mpath)
+        except Inconclusive:
+            manifest = None
+    use_prose = bool(manifest) and (manifest.get("offset"), manifest.get("unit")) == (a.offset, a.unit)
+    which = (f"{PROSE_ALGORITHM} (preserved manifest)" if use_prose else
+             f"{FILLER_ALGORITHM} (historical tokenizer-free preview: no preserved controls for this offset)")
+    print(f"cursor_offset={a.offset} unit={a.unit}   (offline preview: no server contacted, no model state touched)")
+    print(f"control: {which}\n")
     for sc in fixtures.scenarios:
         if a.scenario and sc.id != a.scenario:
             continue
         t = plan_requests(sc, "treatment", a.offset, a.unit)
-        c = plan_requests(sc, "control", a.offset, a.unit)
+        entry = (manifest or {}).get("controls", {}).get(sc.id) if use_prose else None
+        c = plan_requests(sc, "control", a.offset, a.unit, filler=entry["fragment_text"] if entry else None)
         tg, cg = t.geometry, c.geometry
         slots = ", ".join(f"{s.name}[{s.start}:{s.end}]" for s in t.arena.slots)
         match = (tg.bleed_bytes == cg.bleed_bytes and tg.bleed_words == cg.bleed_words
-                 and tg.boundary == cg.boundary and len(t.arena.buf) == len(c.arena.buf))
+                 and tg.boundary == cg.boundary and (bool(entry) or len(t.arena.buf) == len(c.arena.buf)))
         ok &= match
         print(f"== {sc.id} - {sc.title}")
         print(f"   arena        {len(t.arena.buf)} bytes contiguous | {slots}")
@@ -139,7 +154,13 @@ def cmd_bounce(a) -> int:
     client = LlamaClient(a.server, timeout=a.timeout, n_probs=a.n_probs)
     h = Harness(client, fixtures)
     h.preflight()
-    records = h.bounce(baseline, a.trials, offset, a.unit)
+    manifest, manifest_path = None, None
+    if a.control == PROSE_ALGORITHM:
+        manifest_path = a.controls_manifest or os.path.join(os.path.dirname(fixtures.path) or ".", "controls",
+                                                            "neutral-prose-1.json")
+        manifest = load_manifest(manifest_path)
+    records = h.bounce(baseline, a.trials, offset, a.unit, control=a.control, manifest=manifest,
+                       manifest_sha256=file_sha256(manifest_path) if manifest_path else None)
     write_traces(a.out, records)
     meta = build_sidecar(trace_path=a.out, records=records, harness=h, baseline_doc=baseline,
                          baseline_file_sha256=file_sha256(a.baseline), cursor_offset=offset, unit=a.unit)
@@ -300,6 +321,7 @@ def build_parser() -> argparse.ArgumentParser:
     b.add_argument("--offset", type=int, default=1)
     b.add_argument("--unit", choices=("words", "bytes"), default="words")
     b.add_argument("--scenario", default=None)
+    b.add_argument("--controls-manifest", default=None)
     b.set_defaults(fn=cmd_bleed)
 
     o = sub.add_parser("bounce", help="run treatment + matched-control 3-request folds")
@@ -310,6 +332,11 @@ def build_parser() -> argparse.ArgumentParser:
     o.add_argument("--fixtures", default=None, help="default: the path recorded in the baseline")
     o.add_argument("--offset", type=int, default=None, help="default: fixtures' default_cursor_offset")
     o.add_argument("--unit", choices=("words", "bytes"), default="words")
+    o.add_argument("--control", choices=(PROSE_ALGORITHM, FILLER_ALGORITHM), default=PROSE_ALGORITHM,
+                   help=f"control construction (default {PROSE_ALGORITHM}: preserved fluent prose; "
+                        f"{FILLER_ALGORITHM} is the historical filler, kept only to reproduce old evidence)")
+    o.add_argument("--controls-manifest", default=None,
+                   help="preserved controls (default: controls/neutral-prose-1.json next to the fixtures)")
     o.add_argument("--n-probs", type=int, default=DEFAULT_N_PROBS)
     o.add_argument("--timeout", type=float, default=120.0)
     o.set_defaults(fn=cmd_bounce)

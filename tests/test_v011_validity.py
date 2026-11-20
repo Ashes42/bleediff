@@ -354,13 +354,13 @@ def _all_keys(obj):
 
 
 class TestProvenanceSidecar(unittest.TestCase):
-    def _run(self, **mock):
+    def _run(self, control=None, **mock):
         cm = serve(**mock)
         url, state = cm.__enter__()
         self.addCleanup(cm.__exit__, None, None, None)
         tmp = tempfile.TemporaryDirectory()
         self.addCleanup(tmp.cleanup)
-        res = pipeline(tmp.name, url)
+        res = pipeline(tmp.name, url, control=control)
         side = meta_mod.load_sidecar(meta_mod.sidecar_path(res["trace"]))
         return res, side, state
 
@@ -421,15 +421,18 @@ class TestProvenanceSidecar(unittest.TestCase):
         _, side, _ = self._run(props={"model_path": "/models/m.gguf", "default_generation_settings": {}})
         self.assertEqual(side["experiment"]["server_build"], UNKNOWN)
 
-    def test_control_filler_is_recorded_by_hash_and_salt_never_as_text(self):
-        res, side, _ = self._run()
+    def test_legacy_control_filler_is_recorded_by_hash_and_salt_never_as_text(self):
+        """neutral-filler/2 (historical) still records sha256 + salt + repro id; selectable only explicitly."""
+        res, side, _ = self._run(control="neutral-filler/2")
         fx = _json(FIXTURES)
+        self.assertEqual(side["experiment"]["control_algorithm"], "neutral-filler/2")
         for m in side["records"]:
             if m["control"]:
                 f = m["control_filler"]
                 self.assertRegex(f["sha256"], r"^[0-9a-f]{64}$")
                 self.assertIsInstance(f["salt"], int)
                 self.assertRegex(f["repro_id"], r"^[0-9a-f]{64}$")
+                self.assertEqual(f["algorithm"], "neutral-filler/2")
             else:
                 self.assertEqual(m["control_filler"], "NOT_APPLICABLE")
         text = json.dumps(side)
@@ -629,7 +632,7 @@ class TestChoiceSurfaceCoverage(unittest.TestCase):
 # --------------------------------------------------------------------------------------
 class TestNoThirdPartyDependencies(unittest.TestCase):
     def test_every_import_is_stdlib_or_local(self):
-        allowed = set(sys.stdlib_module_names) | {"bleediff", "tests", "test_bleediff"}
+        allowed = set(sys.stdlib_module_names) | {"bleediff", "tests", "test_bleediff", "_tok"}
         offenders = []
         for folder in ("bleediff", "tests"):
             for name in os.listdir(os.path.join(ROOT, folder)):

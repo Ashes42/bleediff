@@ -84,6 +84,18 @@ BLEED_B_WINS = [0.02, 0.93, 0.03, 0.02]
 # --------------------------------------------------------------------------------------
 # Mock llama-server
 # --------------------------------------------------------------------------------------
+_SIGS: list = []
+
+
+def _treatment_signatures() -> list:
+    """First six words of each adjacent tenant's text: present in the TREATMENT fragment, absent from any control."""
+    if not _SIGS:
+        from bleediff.arena import load_fixtures as _lf
+
+        _SIGS.extend(" ".join(sc.adjacent.split()[:6]) for sc in _lf(FIXTURES).scenarios)
+    return _SIGS
+
+
 class MockState:
     def __init__(self, **kw):
         self.bases = kw.get("bases", BASES_A_WINS)
@@ -129,7 +141,7 @@ class MockState:
         m = re.search(r"Evidence:\n.*?Tenant (\d)", prompt, re.S)
         k = int(m.group(1)) if m else 1
         has_overread = re.search(r"Evidence:\n[^\n]+\n[^\n]", prompt) is not None
-        if "Tenant 4" in prompt:
+        if any(sig in prompt for sig in _treatment_signatures()):
             return list(self.bleed_vec)
         if has_overread and self.control_vec is not None:
             return list(self.control_vec)
@@ -226,12 +238,38 @@ def run_cli(*argv: str) -> tuple[int, str]:
     return code, buf.getvalue()
 
 
-def pipeline(tmp: str, url: str, trials: int = 5, offset: int | None = None) -> dict:
-    """calibrate -> bounce -> diff through the real CLI; returns exit codes and text."""
+_MOCK_CONTROLS: list = []
+
+
+def mock_controls_manifest() -> str:
+    """Preserved neutral-prose/1 controls generated ONCE against the mock tokenizer (the real Qwen controls in
+    fixtures/controls/ are validated against Qwen's tokenizer and would rightly be refused by the mock)."""
+    if not _MOCK_CONTROLS:
+        import atexit
+        import shutil as _sh
+
+        from bleediff import control as _c
+        from bleediff.arena import load_fixtures as _lf
+
+        d = tempfile.mkdtemp(prefix="bleediff-mock-controls-")
+        atexit.register(_sh.rmtree, d, True)
+        path = os.path.join(d, "neutral-prose-1.json")
+        _c.write_manifest(path, _c.build_controls(_lf(FIXTURES), 24, "words", MockState().tokenize))
+        _MOCK_CONTROLS.append(path)
+    return _MOCK_CONTROLS[0]
+
+
+def pipeline(tmp: str, url: str, trials: int = 5, offset: int | None = None, control: str | None = None) -> dict:
+    """calibrate -> bounce -> diff through the real CLI; returns exit codes and text.
+    ``control`` None = the v0.1.2 default (neutral-prose/1 via the mock-tokenizer manifest)."""
     base, trace = os.path.join(tmp, "baseline.json"), os.path.join(tmp, "traces.jsonl")
     out = {}
     out["calibrate"] = run_cli("calibrate", "--server", url, "--fixtures", FIXTURES, "--out", base)
     bounce = ["bounce", "--server", url, "--baseline", base, "--trials", str(trials), "--out", trace]
+    if control is None:
+        bounce += ["--controls-manifest", mock_controls_manifest()]
+    else:
+        bounce += ["--control", control]
     if offset is not None:
         bounce += ["--offset", str(offset)]
     out["bounce"] = run_cli(*bounce)
@@ -671,7 +709,9 @@ class TestSourceVectorDisposal(unittest.TestCase):
             with mock.patch.object(client, "choice_probs", spy), \
                     mock.patch.object(runner_mod, "plan_requests", spy_plan):
                 baseline = h.calibrate()
-                records = h.bounce(baseline, trials=2, offset=24)
+                from bleediff.control import load_manifest
+
+                records = h.bounce(baseline, trials=2, offset=24, manifest=load_manifest(mock_controls_manifest()))
             self.assertEqual(len(handed_out), 3 * (5 + 4))  # 5 calibrate folds + 4 bounce folds, 3 requests each
             self.assertEqual(len(records), 4)
 
