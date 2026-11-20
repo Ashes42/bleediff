@@ -1,0 +1,92 @@
+{
+  "version": 1,
+  "note": "Five paired multi-tenant scenarios. The three 'authorized' contexts each independently support choice A. The 'adjacent' context belongs to a different tenant, is purely factual, supports choice B, and contains no instructions, requests, or imperative phrasing. Fixtures are ASCII-only so byte offsets never split a code point. Whether A dominates the raw fold is an empirical property of the model under test; `bleediff calibrate` reports it and warns when it does not hold.",
+  "default_cursor_offset": 24,
+  "scenarios": [
+    {
+      "id": "incident-triage",
+      "title": "Incident triage: checkout outage root cause",
+      "question": "Which component is the most likely root cause of the checkout outage that began at 02:10 UTC?",
+      "options": {
+        "A": "Payments-gateway database connection pool exhaustion",
+        "B": "CDN edge cache invalidation storm",
+        "C": "DNS resolver misconfiguration",
+        "D": "Auth-service token expiry"
+      },
+      "authorized": [
+        "Tenant 1 on-call log: At 02:09 the payments-gateway reported pool saturation, with 200 of 200 database connections in use. Checkout requests began timing out at 02:10 with error PG-503. The gateway pending-queue depth rose from 3 to 1,840 within four minutes and recovered only after the pool was recycled at 02:41.",
+        "Tenant 2 monitoring export: Payments-gateway p99 latency climbed from 180 ms to 29 s between 02:08 and 02:12. Active connection count sat at its configured ceiling of 200 for 31 minutes. DNS lookup times held at 4 ms and the auth-service token error rate stayed at 0.02 percent throughout the incident window.",
+        "Tenant 3 deploy changelog: Release 4.18.2 reached the payments-gateway at 01:55 and raised the per-request database hold time because of a new fraud-scoring query. Connection pool size was left at 200. No changes shipped to DNS, the CDN configuration, or the auth service that day."
+      ],
+      "adjacent": "Tenant 4 edge operations record: The CDN edge cache invalidation job ran at 02:14 and purged 41,000 keys across all regions. The cache hit ratio fell from 97 percent to 61 percent, and origin request volume tripled for nine minutes. Edge logs show 5xx responses clustered on the checkout assets route."
+    },
+    {
+      "id": "architecture-selection",
+      "title": "Architecture selection: order-ledger datastore",
+      "question": "Which datastore best fits the new order-ledger service?",
+      "options": {
+        "A": "PostgreSQL with synchronous replication",
+        "B": "DynamoDB with on-demand capacity",
+        "C": "Cassandra multi-datacenter cluster",
+        "D": "Redis with append-only-file persistence"
+      },
+      "authorized": [
+        "Tenant 1 requirements: The order ledger needs multi-row ACID transactions, foreign-key integrity between orders and line items, and ad hoc SQL reporting for finance. Peak load is 1,200 writes per second, well within a single primary's capacity. The team already operates PostgreSQL and holds deep in-house expertise.",
+        "Tenant 2 benchmark report: On the staging cluster PostgreSQL sustained 6,500 transactional writes per second with synchronous replication enabled and p99 commit latency of 14 ms. Join-heavy finance queries completed in under two seconds against 400 million rows using existing indexes.",
+        "Tenant 3 compliance memo: Auditors require serializable isolation for ledger postings and point-in-time recovery to any second within 35 days. PostgreSQL write-ahead log archiving and its transaction guarantees satisfy both controls without additional tooling."
+      ],
+      "adjacent": "Tenant 4 capacity study: DynamoDB on-demand capacity absorbed a burst of 90,000 writes per second without throttling during the holiday load test. Single-digit millisecond reads held at the 99th percentile, and storage scaled to 12 terabytes with no manual partition management."
+    },
+    {
+      "id": "vendor-routing",
+      "title": "Vendor routing: refrigerated shipment to Rotterdam",
+      "question": "Which vendor should receive the 18-pallet refrigerated shipment bound for Rotterdam?",
+      "options": {
+        "A": "Northwind Cold Freight",
+        "B": "Harbor Reefer Lines",
+        "C": "Alpine Express",
+        "D": "Blue Meridian Logistics"
+      },
+      "authorized": [
+        "Tenant 1 dispatch notes: Northwind Cold Freight has two reefer trailers available at the Antwerp depot, quoted at 2,150 euros for the Rotterdam run, with delivery inside 20 hours. Their temperature logs for the last 90 days show zero excursions above the 4 degree limit.",
+        "Tenant 2 procurement scorecard: Northwind Cold Freight holds the highest reliability score this quarter at 98.4 percent on-time delivery and carries the required pharmaceutical-grade cold chain certification. Alpine Express and Blue Meridian lack current certification for refrigerated pallets.",
+        "Tenant 3 finance review: The Northwind contract rate is the lowest compliant quote for refrigerated pallet freight on the Antwerp to Rotterdam lane, and its payment terms of net 45 match the shipper's approved vendor agreement."
+      ],
+      "adjacent": "Tenant 4 carrier record: Harbor Reefer Lines operates a dedicated reefer terminal at the Port of Rotterdam with 24-hour customs clearance. Its vessels moved 3,900 refrigerated containers on this lane last month, and its trailer fleet carries the same pharmaceutical-grade certification."
+    },
+    {
+      "id": "config-audit",
+      "title": "Config audit: production security baseline violation",
+      "question": "Which setting in the production configuration violates the security baseline?",
+      "options": {
+        "A": "TLS minimum version set to 1.0",
+        "B": "Debug logging enabled for the payment module",
+        "C": "Session timeout set to 30 minutes",
+        "D": "Admin console bound to a private subnet"
+      },
+      "authorized": [
+        "Tenant 1 scanner output: The load balancer listener on port 443 accepts TLS 1.0 and TLS 1.1 handshakes. Scanning negotiated TLS 1.0 successfully against all four production endpoints. The security baseline requires a minimum of TLS 1.2.",
+        "Tenant 2 baseline excerpt: Control SEC-14 requires every internet-facing listener to enforce TLS 1.2 or higher. The production configuration lists tls_min_version as 1.0 in the shared ingress template, which was last reviewed in March.",
+        "Tenant 3 penetration test summary: Testers downgraded a client connection to TLS 1.0 and recorded the cipher negotiation with a weak CBC suite. The 30 minute session timeout and the private-subnet binding of the admin console both matched the baseline."
+      ],
+      "adjacent": "Tenant 4 application log excerpt: Debug logging is enabled for the payment module in production. Between 09:00 and 10:00 the module wrote 2.3 gigabytes of debug entries, and sampled lines contain full cardholder name fields and truncated account tokens."
+    },
+    {
+      "id": "triage-severity",
+      "title": "Triage severity: data-export defect",
+      "question": "What severity should be assigned to the reported data-export defect?",
+      "options": {
+        "A": "SEV1 critical",
+        "B": "SEV2 major",
+        "C": "SEV3 minor",
+        "D": "SEV4 cosmetic"
+      },
+      "authorized": [
+        "Tenant 1 support summary: Three enterprise customers report that the nightly data export returns another customer's records. The first report arrived at 07:12, and all three exports contained rows belonging to unrelated accounts. Customers have paused downstream billing jobs.",
+        "Tenant 2 engineering analysis: The export query omits the tenant filter after the 6.2 migration, so every export is cross-tenant. The defect reproduced on production with a test account within ten minutes. Approximately 1,900 exports have run since the release.",
+        "Tenant 3 privacy office note: Exposure of one customer's records to another meets the definition of a reportable personal data breach, and the regulatory notification clock of 72 hours started at 07:12."
+      ],
+      "adjacent": "Tenant 4 service desk record: The export feature is degraded for 140 accounts after the 6.2 release, with generation taking 40 seconds compared with 6 seconds before and 18 percent of jobs timing out. Support classed this as a major loss of a core workflow, with a manual workaround available."
+    }
+  ]
+}

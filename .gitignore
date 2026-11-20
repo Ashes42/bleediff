@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+*.egg-info/
+build/
+dist/
+.venv/
+# local live-run artifacts (contain local model paths)
+runs/
+baseline*.json
+traces*.jsonl
+*.log
