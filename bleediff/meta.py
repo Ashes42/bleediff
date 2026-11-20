@@ -138,6 +138,7 @@ def build_sidecar(*, trace_path: str, records: list[dict], harness, baseline_doc
     """Sidecar for a freshly produced trace. ``harness`` supplies per-fold diagnostics (aggregates only)."""
     info = harness.info
     infos = baseline_infos_from_baseline(baseline_doc)
+    offs = {mr["cursor_offset"] for mr in harness.meta_records} or {cursor_offset}
     by_key = {(m["trial"], m["control"]): m for m in harness.meta_records}
     recs = []
     for r in records:
@@ -149,6 +150,7 @@ def build_sidecar(*, trace_path: str, records: list[dict], harness, baseline_doc
             "control": r["control"],
             "fold_hash": r["fold_hash"],
             "scenario_id": m["scenario_id"],
+            "cursor_offset": m.get("cursor_offset", cursor_offset),
             "request_prompt_tokens": m["request_prompt_tokens"],
             "coverage": m["coverage"],
             "control_filler": m["control_filler"] if r["control"] else NOT_APPLICABLE,
@@ -164,8 +166,11 @@ def build_sidecar(*, trace_path: str, records: list[dict], harness, baseline_doc
             "model_hash_basis": info.model_hash_basis,
             "fixtures_sha256": harness.fixtures.sha256,
             "baseline_file_sha256": baseline_file_sha256 or UNKNOWN,
-            "cursor_offset": cursor_offset,
+            "cursor_offset": (next(iter(offs)) if len(offs) == 1 else "PER_SCENARIO"),
+            "cursor_offsets": {mr["scenario_id"]: mr["cursor_offset"] for mr in harness.meta_records},
             "offset_unit": unit,
+            "protocol": getattr(harness, "protocol_info", None) or {
+                "protocol_id": "NONE", "note": "no protocol file: uniform --offset for every scenario"},
             "server_build": info.build_info or UNKNOWN,
             "server_flags": info.public_flags(),
             "n_probs_requested": harness.client.n_probs,
@@ -223,6 +228,7 @@ def legacy_sidecar(*, trace_path: str, records: list[dict], baseline_doc: dict,
             "code_revision": UNKNOWN,
             "control_algorithm": UNKNOWN,
             "control_manifest_sha256": UNKNOWN,
+            "protocol": UNKNOWN,
         },
         "baseline_file_provenance": {
             "note": "facts about the baseline file only; the trace itself recorded none of these",

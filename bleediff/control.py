@@ -49,7 +49,9 @@ from .arena import Fixtures, Scenario, load_fixtures, plan_requests
 from .errors import FixtureError, Inconclusive
 
 ALGORITHM = "neutral-prose/1"
-MANIFEST_SCHEMA = "bleediff.controls/1"
+MANIFEST_SCHEMA = "bleediff.controls/1"           # one offset for every scenario (v0.1.2)
+MANIFEST_SCHEMA_V2 = "bleediff.controls/2"        # per-scenario offsets (protocol amendments, v0.1.3)
+ACCEPTED_MANIFEST_SCHEMAS = (MANIFEST_SCHEMA, MANIFEST_SCHEMA_V2)
 DEFAULT_MAX_DRAWS = 5_000
 DEFAULT_MANIFEST = os.path.join("fixtures", "controls", "neutral-prose-1.json")
 
@@ -930,6 +932,48 @@ def build_controls(fixtures: Fixtures, offset: int, unit: str = "words", tokeniz
     }
 
 
+def build_protocol_controls(fixtures: Fixtures, offsets: dict, unit: str = "words", tokenize=None, *,
+                            previous: dict | None = None, previous_sha256: str | None = None,
+                            protocol_id: str | None = None, max_draws: int = DEFAULT_MAX_DRAWS) -> dict:
+    """Controls for a protocol with PER-SCENARIO offsets (schema bleediff.controls/2).
+
+    An entry from ``previous`` is carried over VERBATIM when its offset, treatment fragment, tokenizer
+    fingerprint and lexicon are unchanged (the frozen algorithm would regenerate it identically; that is
+    checked separately). Only scenarios whose window changed are generated, with the unchanged algorithm.
+
+    Three different identities are recorded and must not be confused (see ``generator``):
+    the SOFTWARE that wrote the file, the control ALGORITHM that produced each control, and the experimental
+    PROTOCOL the controls belong to. ``bleediff_version`` is kept for compatibility and means the first of these."""
+    fp = tokenizer_fingerprint(tokenize) if tokenize is not None else UNKNOWN
+    controls, reused, generated = {}, [], []
+    for sc in fixtures.scenarios:
+        off = offsets[sc.id]
+        old = (previous or {}).get("controls", {}).get(sc.id)
+        t_sha = fragment_sha256(treatment_fragment(sc, off, unit))
+        if (old and old.get("offset") == off and old.get("treatment_fragment_sha256") == t_sha
+                and old.get("tokenizer_fingerprint") == fp and old.get("lexicon_sha256") == LEXICON_SHA256):
+            controls[sc.id] = json.loads(json.dumps(old))
+            reused.append(sc.id)
+        else:
+            controls[sc.id] = generate_control(sc, off, unit, tokenize, max_draws=max_draws, fingerprint=fp).to_json()
+            generated.append(sc.id)
+    return {
+        "schema": MANIFEST_SCHEMA_V2, "algorithm": ALGORITHM, "bleediff_version": __version__,
+        "generator": {
+            "software_version": __version__,          # bleediff release that WROTE this file (not the protocol)
+            "control_algorithm": ALGORITHM,           # algorithm that produced each control (frozen since v0.1.2)
+            "protocol_id": protocol_id or UNKNOWN,    # experimental protocol these controls belong to
+        },
+        "lexicon_sha256": LEXICON_SHA256, "tokenizer_fingerprint": fp, "fixtures_sha256": fixtures.sha256,
+        "unit": unit, "offsets": dict(offsets),
+        "selection_rule": "first candidate in the SplitMix64 stream seeded by control_id that passes every "
+                          "structural check; no model output is consulted",
+        "carried_over": {"from_manifest_sha256": previous_sha256 or UNKNOWN, "scenarios": reused},
+        "generated": generated,
+        "controls": controls,
+    }
+
+
 def write_manifest(path: str, manifest: dict) -> None:
     if os.path.exists(path):
         raise FixtureError(f"refusing to overwrite existing {path!r}")
@@ -946,7 +990,7 @@ def load_manifest(path: str) -> dict:
     except (OSError, ValueError) as e:
         raise ControlMatchError(f"cannot read control manifest {path!r}: {e}",
                                 reason="CONTROL_MANIFEST_INVALID") from e
-    if doc.get("schema") != MANIFEST_SCHEMA or doc.get("algorithm") != ALGORITHM:
+    if doc.get("schema") not in ACCEPTED_MANIFEST_SCHEMAS or doc.get("algorithm") != ALGORITHM:
         raise ControlMatchError("control manifest schema/algorithm mismatch", reason="CONTROL_MANIFEST_INVALID")
     return doc
 
@@ -956,9 +1000,10 @@ def verify_control(sc: Scenario, entry: dict, manifest: dict, offset: int, unit:
     problems = []
     if manifest.get("lexicon_sha256") != LEXICON_SHA256:
         problems.append("lexicon changed since the controls were selected")
-    if (manifest.get("offset"), manifest.get("unit")) != (offset, unit):
-        problems.append(f"controls were selected for offset={manifest.get('offset')} {manifest.get('unit')}, "
-                        f"not {offset} {unit}")
+    sel_offset = entry.get("offset", manifest.get("offset"))     # per-entry since v0.1.2 records; v2 manifests need it
+    sel_unit = entry.get("unit", manifest.get("unit"))
+    if (sel_offset, sel_unit) != (offset, unit):
+        problems.append(f"controls were selected for offset={sel_offset} {sel_unit}, not {offset} {unit}")
         return problems
     treat = treatment_fragment(sc, offset, unit)
     if fragment_sha256(treat) != entry["treatment_fragment_sha256"]:
@@ -1034,6 +1079,11 @@ def main(argv: list[str] | None = None) -> int:
         if name == "generate":
             s.add_argument("--out", default=DEFAULT_MANIFEST)
             s.add_argument("--max-draws", type=int, default=DEFAULT_MAX_DRAWS)
+            s.add_argument("--override", action="append", default=[], metavar="SCENARIO=N",
+                           help="per-scenario offset (protocol amendment); makes a bleediff.controls/2 manifest")
+            s.add_argument("--reuse", default=None,
+                           help="previous manifest whose unchanged controls are carried over verbatim")
+            s.add_argument("--protocol-id", default=None, help="recorded in the manifest's generator block")
         if name == "verify":
             s.add_argument("--manifest", default=DEFAULT_MANIFEST)
     a = p.parse_args(argv)
@@ -1047,7 +1097,22 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         tok = _client_tokenizer(a.server, a.timeout)
         if a.cmd == "generate":
-            manifest = build_controls(fx, a.offset, a.unit, tok, max_draws=a.max_draws)
+            if a.override or a.reuse:
+                offs = {sc.id: a.offset for sc in fx.scenarios}
+                for item in a.override:
+                    sid, _, n = item.partition("=")
+                    if sid not in offs or not n.isdigit():
+                        raise ControlMatchError(f"bad --override {item!r}", reason="BAD_ARGS")
+                    offs[sid] = int(n)
+                prev = load_manifest(a.reuse) if a.reuse else None
+                psha = None
+                if a.reuse:
+                    with open(a.reuse, "rb") as fh:
+                        psha = hashlib.sha256(fh.read()).hexdigest()
+                manifest = build_protocol_controls(fx, offs, a.unit, tok, previous=prev, previous_sha256=psha,
+                                                   protocol_id=a.protocol_id, max_draws=a.max_draws)
+            else:
+                manifest = build_controls(fx, a.offset, a.unit, tok, max_draws=a.max_draws)
             write_manifest(a.out, manifest)
             for sid, c in manifest["controls"].items():
                 print(f"{sid}: draw {c['enumeration_index']}, cluster {c['cluster']}, tokens {c['counts']['fragment_tokens']}, "
@@ -1058,7 +1123,8 @@ def main(argv: list[str] | None = None) -> int:
         bad = 0
         for sc in fx.scenarios:
             entry = manifest["controls"].get(sc.id)
-            probs = ["no control recorded"] if entry is None else verify_control(sc, entry, manifest, a.offset, a.unit, tok)
+            off = (manifest.get("offsets") or {}).get(sc.id, a.offset)
+            probs = ["no control recorded"] if entry is None else verify_control(sc, entry, manifest, off, a.unit, tok)
             print(f"{sc.id}: {'OK' if not probs else 'INVALID: ' + '; '.join(probs)}")
             bad += bool(probs)
         return 0 if not bad else 2

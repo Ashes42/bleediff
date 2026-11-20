@@ -22,6 +22,8 @@ from . import (
 from .arena import FILLER_ALGORITHM, load_fixtures, plan_requests
 from .control import ALGORITHM as PROSE_ALGORITHM
 from .control import load_manifest
+from .protocol import file_sha256 as _file_sha256
+from .protocol import load_protocol, protocol_summary, scenario_offsets
 from .client import DEFAULT_N_PROBS, LlamaClient
 from .errors import Inconclusive, TraceError
 from .fold import TRACE_SCHEMA, check_record, gate, read_traces, write_traces
@@ -88,25 +90,29 @@ def cmd_calibrate(a) -> int:
 def cmd_bleed(a) -> int:
     fixtures = load_fixtures(a.fixtures)
     ok = True
-    mpath = a.controls_manifest or os.path.join(os.path.dirname(fixtures.path) or ".", "controls",
-                                                "neutral-prose-1.json")
+    protocol = load_protocol(a.protocol) if a.protocol else None
+    offs = scenario_offsets(protocol, fixtures) if protocol else None
+    mpath = a.controls_manifest or (os.path.join(os.path.dirname(fixtures.path) or ".", protocol["controls_manifest"])
+                                    if protocol else os.path.join(os.path.dirname(fixtures.path) or ".", "controls",
+                                                                  "neutral-prose-1.json"))
     manifest = None
     if os.path.exists(mpath):
         try:
             manifest = load_manifest(mpath)
         except Inconclusive:
             manifest = None
-    use_prose = bool(manifest) and (manifest.get("offset"), manifest.get("unit")) == (a.offset, a.unit)
+    use_prose = bool(manifest) and (bool(protocol) or (manifest.get("offset"), manifest.get("unit")) == (a.offset, a.unit))
     which = (f"{PROSE_ALGORITHM} (preserved manifest)" if use_prose else
              f"{FILLER_ALGORITHM} (historical tokenizer-free preview: no preserved controls for this offset)")
-    print(f"cursor_offset={a.offset} unit={a.unit}   (offline preview: no server contacted, no model state touched)")
+    print(f"cursor_offset={offs if offs else a.offset} unit={a.unit}   (offline preview: no server contacted, no model state touched)")
     print(f"control: {which}\n")
     for sc in fixtures.scenarios:
         if a.scenario and sc.id != a.scenario:
             continue
-        t = plan_requests(sc, "treatment", a.offset, a.unit)
+        so = offs[sc.id] if offs else a.offset
+        t = plan_requests(sc, "treatment", so, a.unit)
         entry = (manifest or {}).get("controls", {}).get(sc.id) if use_prose else None
-        c = plan_requests(sc, "control", a.offset, a.unit, filler=entry["fragment_text"] if entry else None)
+        c = plan_requests(sc, "control", so, a.unit, filler=entry["fragment_text"] if entry else None)
         tg, cg = t.geometry, c.geometry
         slots = ", ".join(f"{s.name}[{s.start}:{s.end}]" for s in t.arena.slots)
         match = (tg.bleed_bytes == cg.bleed_bytes and tg.bleed_words == cg.bleed_words
@@ -148,24 +154,41 @@ def _resolve_fixtures(a, baseline: dict, baseline_path: str) -> str:
 def cmd_bounce(a) -> int:
     baseline = load_baseline(a.baseline)
     fixtures = load_fixtures(_resolve_fixtures(a, baseline, a.baseline))
-    offset = a.offset if a.offset is not None else fixtures.default_cursor_offset
-    if offset <= 0:
+    protocol, offsets = None, None
+    if a.protocol:
+        if a.offset is not None:
+            raise Inconclusive("--protocol sets every scenario's offset; do not combine it with --offset", reason="BAD_ARGS")
+        if a.control != PROSE_ALGORITHM or a.unit != "words":
+            raise Inconclusive(f"--protocol requires --control {PROSE_ALGORITHM} and --unit words", reason="BAD_ARGS")
+        protocol = load_protocol(a.protocol)
+        offsets = scenario_offsets(protocol, fixtures)       # fails closed on fixtures/offset mismatch
+    offset = (protocol or {}).get("default_offset") if protocol else (
+        a.offset if a.offset is not None else fixtures.default_cursor_offset)
+    if offset <= 0 or any(n <= 0 for n in (offsets or {}).values()):
         raise Inconclusive("bounce needs cursor_offset > 0 (offset 0 is the clean baseline)", reason="BAD_ARGS")
     client = LlamaClient(a.server, timeout=a.timeout, n_probs=a.n_probs)
     h = Harness(client, fixtures)
     h.preflight()
     manifest, manifest_path = None, None
     if a.control == PROSE_ALGORITHM:
-        manifest_path = a.controls_manifest or os.path.join(os.path.dirname(fixtures.path) or ".", "controls",
-                                                            "neutral-prose-1.json")
+        default_manifest = (os.path.join(os.path.dirname(fixtures.path) or ".", protocol["controls_manifest"])
+                            if protocol else os.path.join(os.path.dirname(fixtures.path) or ".", "controls",
+                                                          "neutral-prose-1.json"))
+        manifest_path = a.controls_manifest or default_manifest
         manifest = load_manifest(manifest_path)
+        if protocol and file_sha256(manifest_path) != protocol.get("controls_manifest_sha256"):
+            raise Inconclusive("controls manifest does not match the hash recorded in the protocol",
+                               reason="PROTOCOL_INVALID")
+    if protocol:
+        h.protocol_info = protocol_summary(protocol, a.protocol)
     records = h.bounce(baseline, a.trials, offset, a.unit, control=a.control, manifest=manifest,
-                       manifest_sha256=file_sha256(manifest_path) if manifest_path else None)
+                       manifest_sha256=file_sha256(manifest_path) if manifest_path else None, offsets=offsets)
     write_traces(a.out, records)
     meta = build_sidecar(trace_path=a.out, records=records, harness=h, baseline_doc=baseline,
                          baseline_file_sha256=file_sha256(a.baseline), cursor_offset=offset, unit=a.unit)
     write_sidecar(sidecar_path(a.out), meta, overwrite=True)  # rewritten together with the trace it binds
-    print(f"bounced {a.trials} trial(s) x (treatment + matched control), cursor_offset={offset} {a.unit}")
+    shown = f"per-scenario windows {offsets}" if offsets else f"cursor_offset={offset}"
+    print(f"bounced {a.trials} trial(s) x (treatment + matched control), {shown} {a.unit}")
     print(f"wrote {sidecar_path(a.out)} (provenance sidecar; bound to the trace by sha256)")
     print(f"disposal witness: {sum(w['vectors_absorbed_and_zeroed'] for w in h.witnesses)} per-request vectors "
           f"absorbed+zeroed, {sum(w['prompt_buffers_zeroed'] for w in h.witnesses)} prompt buffers zeroed "
@@ -322,6 +345,7 @@ def build_parser() -> argparse.ArgumentParser:
     b.add_argument("--unit", choices=("words", "bytes"), default="words")
     b.add_argument("--scenario", default=None)
     b.add_argument("--controls-manifest", default=None)
+    b.add_argument("--protocol", default=None, help="show each scenario's window and control from a protocol file")
     b.set_defaults(fn=cmd_bleed)
 
     o = sub.add_parser("bounce", help="run treatment + matched-control 3-request folds")
@@ -337,6 +361,9 @@ def build_parser() -> argparse.ArgumentParser:
                         f"{FILLER_ALGORITHM} is the historical filler, kept only to reproduce old evidence)")
     o.add_argument("--controls-manifest", default=None,
                    help="preserved controls (default: controls/neutral-prose-1.json next to the fixtures)")
+    o.add_argument("--protocol", default=None,
+                   help="versioned protocol file with per-scenario windows (e.g. fixtures/protocols/window-repair-1.json); "
+                        "its controls manifest is hash-checked. Cannot be combined with --offset")
     o.add_argument("--n-probs", type=int, default=DEFAULT_N_PROBS)
     o.add_argument("--timeout", type=float, default=120.0)
     o.set_defaults(fn=cmd_bounce)

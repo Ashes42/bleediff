@@ -2,7 +2,7 @@
 
 > What survives subtraction was already in the composite.
 
-`bleediff` (v0.1.2) is a zero-dependency Python 3.11+ CLI that evaluates one narrow question about an
+`bleediff` (v0.1.3) is a zero-dependency Python 3.11+ CLI that evaluates one narrow question about an
 inference stack: **when a contiguous multi-tenant prompt arena over-reads past a tenant boundary, does a
 fragment of the neighbour's context leave a trace in the model's output distribution, even when the
 final answer does not change?**
@@ -261,16 +261,45 @@ hash (never the text).
 is part of the v0.1.2 report. The control is off-topic by construction, so topical relevance still differs between
 arms. And one treatment fragment is itself defective (below).
 
-**Treatment-fragment integrity (reported, not fixed).** With the frozen 24-word window, the B evidence is present
+**Treatment-fragment integrity (found in v0.1.2; repaired separately by the `window-repair/1` protocol below).** With the frozen 24-word window, the B evidence is present
 inside the displaced fragment for 4 of 5 scenarios. In `triage-severity` the only B cue ("major") is word 40 of
 the slot, 16 words past the window, so that scenario's treatment cannot carry the evidence it is meant to test.
 The fixtures and the offset are frozen and were not changed. `python -m bleediff.control` exposes the check as
 `fragment_integrity()`.
 
+## Window-repair protocol (v0.1.3, `window-repair/1`)
+
+In v0.1.2 the frozen 24-word window cut the `triage-severity` treatment off before its B cue ("major", word 40).
+`fixtures/protocols/window-repair-1.json` amends ONLY that scenario's window, to **45 words** ("...a major loss of a
+core workflow,"), chosen by a rule fixed in advance (`bleediff.protocol.WINDOW_RULE`: smallest window, via the real
+extraction function, that contains the whole cue and ends on clause-terminal punctuation). Fixtures, the other four
+windows, the three-request architecture, equations and thresholds are unchanged. Its controls are in
+`fixtures/controls/neutral-prose-1.window-repair-1.json` (four carried over verbatim, one generated with the frozen
+`neutral-prose/1` algorithm). Use `bounce --protocol fixtures/protocols/window-repair-1.json`; the sidecar records the
+protocol id/hash and per-scenario windows, and the 15-field trace records each scenario's own `cursor_offset`.
+Not yet used by any experiment. `config-audit`'s clean baseline is still not A-dominant on Qwen2.5-1.5B and is
+deliberately left visible; the revised triage treatment may still lose A-dominance, which would be a measured
+outcome, not a reason to move the window again.
+
+**This is not the original 24-word experiment.** Every result so far (v0.1.0 FAIL, reclassified `INCONCLUSIVE` under
+the v0.1.1 gates; the repeat runs) belongs to the implicit **uniform-24-words protocol with the historical
+`neutral-filler/2` control**. A run without `--protocol` is still that uniform window (and still has the triage
+defect), but now with `neutral-prose/1` controls. Results are attributable by recorded identity, never by
+inference: a `--protocol` run records `experiment.protocol` (id + file hash), `cursor_offset: "PER_SCENARIO"` and the
+window of every scenario; a run without one records `protocol_id: "NONE"` and one uniform offset; sidecars of
+pre-v0.1.1 traces say `UNKNOWN`. Window-repair results must not be pooled with, or compared as if equal to, the
+24-word results.
+
+**Three identities that must not be confused.** `protocol_id` (`window-repair/1`): which windows and controls an
+experiment used. `control_algorithm` (`neutral-prose/1`): how a control is built, frozen since v0.1.2. `software
+version` (the `bleediff_version` stamp and `generator.software_version`): which release *wrote a file*, nothing more.
+So the v0.1.2 manifest legitimately says `0.1.1` (the code that wrote it was then 0.1.1) and the repair manifest says
+`0.1.3`; neither stamp names an experiment. The protocol file spells this out in `version_semantics`.
+
 ## Tests
 
-`tests/test_bleediff.py`, `tests/test_v011_validity.py` and `tests/test_v012_control.py` (stdlib `unittest`, 130
-tests) run a stdlib
+`tests/test_bleediff.py`, `tests/test_v011_validity.py`, `tests/test_v012_control.py` and
+`tests/test_v013_protocol.py` (stdlib `unittest`, 167 tests) run a stdlib
 `http.server` mock of `llama-server` (`/tokenize`, `/completion`, `/props`) and cover: exact contrastive math with
 `argmax == A` and `delta_contrast > 0.4`; B winning raw is never a stealth PASS; the matched control staying within
 0.1 and a drifting control making the run `INCONCLUSIVE` (never `FAIL`); invalid baselines never counting as

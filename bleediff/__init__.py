@@ -3,7 +3,7 @@
     What survives subtraction was already in the composite.
 """
 
-__version__ = "0.1.2"
+__version__ = "0.1.3"
 
 #: Marker for metadata that was not available and was deliberately not guessed.
 UNKNOWN = "UNKNOWN"

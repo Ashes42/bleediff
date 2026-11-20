@@ -56,6 +56,8 @@ class Harness:
         self._last_diag: dict | None = None
         self.control_algorithm: str = UNKNOWN          # recorded in the sidecar
         self.control_manifest_sha256: str = UNKNOWN
+        self.cursor_offsets: dict | None = None         # per-scenario windows when a protocol is applied
+        self.protocol_info: dict | None = None          # set by the CLI: ids and hashes only
 
     # -- setup ---------------------------------------------------------------------------
     def preflight(self) -> ServerInfo:
@@ -171,13 +173,16 @@ class Harness:
 
     def bounce(self, baseline: dict, trials: int, offset: int, unit: str = "words", *,
                control: str = PROSE_ALGORITHM, manifest: dict | None = None,
-               manifest_sha256: str | None = None) -> list[dict]:
+               manifest_sha256: str | None = None, offsets: dict | None = None) -> list[dict]:
         """Run treatment + matched-control folds. ``control`` selects the control construction:
 
         * ``neutral-prose/1`` (default, v0.1.2): the PRESERVED fluent controls from ``manifest``; each is re-verified
           against the live tokenizer, the current fixtures and the current lexicon before any request is sent.
         * ``neutral-filler/2``: the historical v0.1.0/v0.1.1 word-substitution filler, kept only so old evidence
           stays reproducible. Its results are NOT comparable with ``neutral-prose/1`` results.
+
+        ``offsets`` (scenario id -> words) applies a protocol amendment: each scenario uses its own displacement
+        window and records that window in its trace records' ``cursor_offset``. Without it, ``offset`` is uniform.
         """
         info = self.info or self.preflight()
         if baseline["model_hash"] != info.model_hash:
@@ -189,6 +194,13 @@ class Harness:
             raise BaselineError("fixtures changed since calibration (sha256 mismatch); re-run calibrate")
         if control not in (PROSE_ALGORITHM, FILLER_ALGORITHM):
             raise Inconclusive(f"unknown control algorithm {control!r}", reason="BAD_ARGS")
+        if offsets is not None and sorted(offsets) != sorted(s.id for s in self.fixtures.scenarios):
+            raise Inconclusive("offsets must name exactly the fixture scenarios", reason="BAD_ARGS")
+
+        def off_for(sc) -> int:
+            return offsets[sc.id] if offsets is not None else offset
+
+        self.cursor_offsets = dict(offsets) if offsets is not None else None
         self.control_algorithm = control
         self.control_manifest_sha256 = (manifest_sha256 or UNKNOWN) if control == PROSE_ALGORITHM else "NOT_APPLICABLE"
         if control == PROSE_ALGORITHM:
@@ -198,7 +210,7 @@ class Harness:
             for sc in self.fixtures.scenarios[:max(1, min(trials, len(self.fixtures.scenarios)))]:
                 entry = manifest["controls"].get(sc.id)
                 problems = (["no preserved control for this scenario"] if entry is None
-                            else verify_control(sc, entry, manifest, offset, unit, tok))
+                            else verify_control(sc, entry, manifest, off_for(sc), unit, tok))
                 if problems:
                     raise ControlMatchError(
                         f"preserved control for {sc.id!r} does not validate: {'; '.join(problems)}",
@@ -211,11 +223,12 @@ class Harness:
             if ref is None:
                 raise BaselineError(f"baseline has no reference for scenario {sc.id!r}")
             b_ref = [float(x) for x in ref["B_ref"]]
+            off = off_for(sc)
             for control_arm in (False, True):
                 filler_meta: object = "NOT_APPLICABLE"
                 if control_arm and control == PROSE_ALGORITHM:
                     entry = manifest["controls"][sc.id]
-                    plan = plan_requests(sc, "control", offset, unit, filler=entry["fragment_text"])
+                    plan = plan_requests(sc, "control", off, unit, filler=entry["fragment_text"])
                     filler_meta = {
                         "sha256": entry["fragment_sha256"], "algorithm": PROSE_ALGORITHM,
                         "control_id": entry["control_id"], "enumeration_index": entry["enumeration_index"],
@@ -223,30 +236,30 @@ class Harness:
                         "token_parity": entry["token_parity"],
                     }
                 elif control_arm:
-                    filler, salt = self._matched_filler(sc.adjacent, 0, unit, offset, sc)
-                    plan = plan_requests(sc, "control", offset, unit, filler=filler)
+                    filler, salt = self._matched_filler(sc.adjacent, 0, unit, off, sc)
+                    plan = plan_requests(sc, "control", off, unit, filler=filler)
                     filler_meta = {
                         "sha256": filler_hash(filler),
                         "salt": salt,
                         "repro_id": filler_repro_id(
                             model_hash=info.model_hash, fixtures_sha256=self.fixtures.sha256,
-                            scenario_id=sc.id, cursor_offset=offset, unit=unit, salt=salt,
+                            scenario_id=sc.id, cursor_offset=off, unit=unit, salt=salt,
                             algorithm=FILLER_ALGORITHM),
                         "algorithm": FILLER_ALGORITHM,
                     }
                     del filler  # the raw filler text is never retained, only its hash
                 else:
-                    plan = plan_requests(sc, "treatment", offset, unit)
+                    plan = plan_requests(sc, "treatment", off, unit)
                 m = self.fold(plan, measure_tokens=True)
                 rec = make_record(
-                    trial=t, model_hash=info.model_hash, cursor_offset=offset, m=m, b_ref=b_ref,
+                    trial=t, model_hash=info.model_hash, cursor_offset=off, m=m, b_ref=b_ref,
                     ref_hash=ref["reference_hash"], control=control_arm,
                 )
                 records.append(rec)
                 diag = self._last_diag or {}
                 self.meta_records.append({
                     "trial": t, "control": control_arm, "fold_hash": rec["fold_hash"],
-                    "scenario_id": sc.id,
+                    "scenario_id": sc.id, "cursor_offset": off,
                     "request_prompt_tokens": diag.get("request_prompt_tokens", UNKNOWN),
                     "coverage": diag.get("coverage", UNKNOWN),
                     "control_filler": filler_meta,
