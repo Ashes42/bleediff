@@ -2,7 +2,7 @@
 
 > What survives subtraction was already in the composite.
 
-`bleediff` (v0.1.4) is a zero-dependency Python 3.11+ CLI that evaluates one narrow question about an
+`bleediff` (v0.1.5) is a zero-dependency Python 3.11+ CLI that evaluates one narrow question about an
 inference stack: **when a contiguous multi-tenant prompt arena over-reads past a tenant boundary, does a
 fragment of the neighbour's context leave a trace in the model's output distribution, even when the
 final answer does not change?**
@@ -329,10 +329,44 @@ protocol file.
 3. *All controls:* technical-versus-ordinary-prose differences remain (acronyms, upper case, hyphens, decimals, digits).
 4. *One control per scenario* cannot establish content-specific attribution.
 
+## Config-audit robustness protocol (v0.1.5, `config-audit-robustness/1`, Phase 1A)
+
+**Status: preregistered, exploratory, implementation and static verification only.** No `/completion` request, no
+model probability and no final replicate control exists yet. The original five-scenario `semantic-v2/1` experiment
+remains **INCONCLUSIVE**; this study does not reuse its aggregate gate and cannot change that classification. Nothing
+here is a demonstration of a security vulnerability.
+
+*Question:* is the one valid exposed result of the semantic-v2 run (`config-audit-v2`, +0.857 nats on one small model)
+unusual relative to a set of diverse, structurally matched neutral controls, or within the range generic matched text
+produces? "Not distinguishable" is an expected-possible outcome.
+
+* `fixtures/config-audit-robustness/PREREGISTRATION.md` and `protocol.json` fix the method before any candidate exists:
+  the frozen fixture and treatment are referenced by SHA-256, thresholds and the contrast/fold are unchanged, and
+  frozen sources are hash-pinned.
+* `bleediff/replicates.py` (`neutral-prose-replicates/1`) imports the frozen `neutral-prose/1` internals unchanged and
+  adds only a replicate seed, a forced domain (`sorted(domains)[k mod 8]`, k = 0..11) and a fixed rubric (task-specific
+  content words, stems, a semantic-field list and numerals are prohibited; ordinary stopwords may overlap). Every frozen
+  structural requirement is kept. Every rejection is recorded; an infeasible domain is preserved as a failure, never
+  substituted; fewer than 10 accepted controls means the later study reports `INSUFFICIENT`. The controls are
+  *deterministically diversified samples from a constrained generator*, not independent draws. The historical control C0
+  stays outside the 12-control analysis.
+* `bleediff/robustness.py` (`config-audit-robustness-analysis/1`) reports descriptive statistics and, separately,
+  rank-exceedance and prediction-bound **diagnostics** (not calibrated guarantees), with the labels `INSUFFICIENT`,
+  `TREATMENT_PRECONDITION_FAILED`, `SEPARATED_FROM_PLACEBO_EXPLORATORY`, `THRESHOLD_NOT_DISCRIMINATING`, `NOT_SEPARATED`.
+  There is no PASS label. Separation from neutral prose is not evidence of semantic reasoning, displacement exploitation
+  or a vulnerability.
+* **Mechanism separation (static).** The request-3 prompt reached by simulated displacement is byte-identical to the same
+  evidence supplied as authorized in-slot text (the harness's own in-slot path differs by one terminating newline), so
+  the model's input cannot distinguish the delivery mechanism. This does not show a tenant-isolation failure. The
+  linear fold also lets anyone holding the clean reference recover the request-3 probability change exactly
+  (`p3_treated - p3_clean = 3 * (M - B_ref)` when requests 1-2 are unchanged).
+* Later phases (tokenizer-only feasibility; inference) need separate authorisation. The frozen bounce/diff classifier is
+  not used and not modified.
+
 ## Tests
 
 `tests/test_bleediff.py`, `tests/test_v011_validity.py`, `tests/test_v012_control.py` and
-`tests/test_v013_protocol.py` and `tests/test_v014_semantic_v2.py` (stdlib `unittest`, 223 tests) run a stdlib
+`tests/test_v013_protocol.py`, `tests/test_v014_semantic_v2.py` and `tests/test_v015_robustness.py` (stdlib `unittest`, 272 tests) run a stdlib
 `http.server` mock of `llama-server` (`/tokenize`, `/completion`, `/props`) and cover: exact contrastive math with
 `argmax == A` and `delta_contrast > 0.4`; B winning raw is never a stealth PASS; the matched control staying within
 0.1 and a drifting control making the run `INCONCLUSIVE` (never `FAIL`); invalid baselines never counting as

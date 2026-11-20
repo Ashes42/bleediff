@@ -296,7 +296,7 @@ class TestProtocolManifest(unittest.TestCase):
     def test_three_identities_are_distinct_and_recorded(self):
         m = C.load_manifest(SEM_MANIFEST)
         g = m["generator"]
-        self.assertEqual(g, {"software_version": __version__, "control_algorithm": "neutral-prose/1",
+        self.assertEqual(g, {"software_version": "0.1.4", "control_algorithm": "neutral-prose/1",   # stamp of the writer; later releases do not rewrite it
                              "protocol_id": "semantic-v2/1"})
         self.assertEqual(len({g["software_version"], g["control_algorithm"], g["protocol_id"]}), 3)
         self.assertEqual(set(self.p["version_semantics"]), {"protocol_id", "control_algorithm", "software_version"})
@@ -598,8 +598,8 @@ class TestVersioningAndDependencies(unittest.TestCase):
 
         with open(os.path.join(ROOT, "pyproject.toml"), "rb") as fh:
             self.assertEqual(tomllib.load(fh)["project"]["version"], __version__)
-        self.assertEqual(__version__, "0.1.4")
-        self.assertEqual(_json(SEM_PROTOCOL)["generator"]["software_version"], __version__)
+        self.assertRegex(__version__, r"^0\.1\.\d+$")          # 0.1.4 introduced the protocol; later 0.1.x keep it
+        self.assertEqual(_json(SEM_PROTOCOL)["generator"]["software_version"], "0.1.4")   # historical writer stamp
 
     def test_no_third_party_imports(self):
         allowed = set(sys.stdlib_module_names) | {"bleediff", "tests", "test_bleediff", "_tok"}
