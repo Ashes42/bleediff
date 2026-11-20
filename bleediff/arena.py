@@ -67,6 +67,8 @@ class Fixtures:
     default_cursor_offset: int
     sha256: str
     path: str
+    #: protocol id these fixtures may only be used under (None = usable with a uniform --offset)
+    requires_protocol: str | None = None
 
 
 def load_fixtures(path: str) -> Fixtures:
@@ -113,7 +115,10 @@ def load_fixtures(path: str) -> Fixtures:
     offset = doc.get("default_cursor_offset", 24)
     if not isinstance(offset, int) or offset < 0:
         raise FixtureError("fixtures: default_cursor_offset must be a non-negative integer")
-    return Fixtures(scenarios=tuple(out), default_cursor_offset=offset, sha256=sha, path=path)
+    req = doc.get("requires_protocol")
+    if req is not None and not isinstance(req, str):
+        raise FixtureError("fixtures: requires_protocol must be a string")
+    return Fixtures(scenarios=tuple(out), default_cursor_offset=offset, sha256=sha, path=path, requires_protocol=req)
 
 
 # --------------------------------------------------------------------------------------

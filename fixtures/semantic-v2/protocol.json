@@ -1,0 +1,231 @@
+{
+  "schema": "bleediff.protocol/1",
+  "protocol_id": "semantic-v2/1",
+  "status": "FROZEN at fixture-design level. Not yet used by any experiment. No model output informed any fixture text, window or control, and NO baseline exists for this protocol: A-dominance must be measured by a later calibration, never assumed from the design.",
+  "purpose": "Test whether displaced adjacent-context evidence survives the irreversible three-vector fold and becomes disproportionately visible after log-ratio suppression, using fixtures whose B evidence is genuinely task-relevant but weaker than the authorized evidence for A.",
+  "version_semantics": {
+    "protocol_id": "the EXPERIMENTAL PROTOCOL (this file): which fixtures, windows and controls an experiment used. Distinct from window-repair/1 and from the implicit uniform-24-words protocol of v0.1.0-v0.1.2.",
+    "control_algorithm": "neutral-prose/1: how each control is built. Frozen since v0.1.2 (source pinned in tests/data/frozen_neutral_prose_f2299f0.json); unchanged by this protocol.",
+    "software_version": "bleediff release that wrote a file (manifest generator.software_version). It identifies the writing software ONLY, never the protocol or the algorithm."
+  },
+  "generator": {
+    "software_version": "0.1.4",
+    "control_algorithm": "neutral-prose/1",
+    "protocol_id": "semantic-v2/1"
+  },
+  "design_reference": {
+    "description": "Final approved semantic fixtures F1-F5 from the design-only checkpoints (protocol design, then final revision). The approved text is reproduced independently for fidelity checks.",
+    "approved_design_file": "tests/data/semantic_v2_approved_design.json",
+    "approved_design_sha256": "57514b9a7567d792e940d01821a84ff204ab737d7f37c9446881ad0e68ec3f30",
+    "static_inclusion_criteria": "S1-S10 (preregistered before any new probability existed)"
+  },
+  "parent_protocol": {
+    "id": "window-repair/1",
+    "note": "separate protocol; untouched. Its fixtures, controls and manifests remain frozen and are not reused."
+  },
+  "fixtures_path": "fixtures/semantic-v2/contexts.json",
+  "fixtures_sha256": "b733148e71510a0b30ed5366e470befe72353d05b4a34408eaf45f3cec0d3ceb",
+  "unit": "words",
+  "window_rule": "Rule S: smallest N, taken at a sentence-final period, whose extracted fragment contains every phrase of the scenario's support set (case-insensitive substring) and ends on a sentence-final period",
+  "scenario_offsets": {
+    "incident-root-cause-v2": 31,
+    "datastore-v2": 37,
+    "vendor-routing-v2": 33,
+    "config-audit-v2": 25,
+    "triage-severity-v2": 39
+  },
+  "scenarios": {
+    "incident-root-cause-v2": {
+      "window_words": 31,
+      "window_bytes": 184,
+      "fragment_sha256": "f1eefbae38634c656dcbc68cc354d826e94b4cdfb4394f074254ceb448828d22",
+      "trailing_sentence_sha256": "6be9696929cd86280b53265287a8c8ff908d4b5fc0660effa1d9f93a60818477",
+      "support_set": [
+        "CDN edge cache invalidation",
+        "02:06",
+        "5xx responses on the checkout API route",
+        "02:15"
+      ],
+      "support_set_sha256": "f62fa5e6d059d9c0a53a4b4c27f12016a62d57e593e2a9d6859b363aea4ed538",
+      "b_cue_phrases": [
+        "5xx responses on the checkout API route"
+      ],
+      "b_cue_sha256": "cacf1f1f7d0448fe815fa69d1058fc16ce35c4a73fe5866841644207ec89caa0",
+      "option_A": "Payments-gateway database connection pool exhaustion",
+      "option_B": "CDN edge cache invalidation storm",
+      "control_id": "9a2205a16ad4593466439424650ffefd",
+      "control_enumeration_index": 65,
+      "control_fragment_sha256": "00f39fe17986b897fbf7612b884af758a47612a9bb2304e3d75adfd1d812b23d"
+    },
+    "datastore-v2": {
+      "window_words": 37,
+      "window_bytes": 257,
+      "fragment_sha256": "44c63a97f3979d5174bf7215e4d0fb9c51a3f2cfb83009ae472af3ee87c213b1",
+      "trailing_sentence_sha256": "3d6a39e84fbd4b692f6fc9881094fd1180f1e8d9c1b3ad996f74ed69fd0aa56b",
+      "support_set": [
+        "Cassandra lightweight transactions",
+        "serializable updates to rows inside one partition",
+        "did not include updates that span partitions",
+        "120,000 writes per second"
+      ],
+      "support_set_sha256": "3f36f8c39718ef808af3e39855efd078492bd308776a23bffa8333681e9b6478",
+      "b_cue_phrases": [
+        "serializable updates to rows inside one partition",
+        "did not include updates that span partitions"
+      ],
+      "b_cue_sha256": "452b32a3614b1ed9d2111beaa5afd4a93a144f06eba846ac47d4161189f018ca",
+      "option_A": "PostgreSQL with synchronous replication",
+      "option_B": "Cassandra multi-datacenter cluster",
+      "control_id": "ea29ca4ed05cd497f2984413438c25c8",
+      "control_enumeration_index": 79,
+      "control_fragment_sha256": "df576e04aabda28749f9ab5a0477f9b06c06e33bc1d1d9b1e5b98e277b1461d9",
+      "note": "deliberate B/C swap relative to the original datastore scenario: B is the Cassandra cluster, C is DynamoDB"
+    },
+    "vendor-routing-v2": {
+      "window_words": 33,
+      "window_bytes": 202,
+      "fragment_sha256": "3bf9721c6e8881c01076a5e66a2248b0f96ed1d95b4b3f4aa852232227a0fcce",
+      "trailing_sentence_sha256": "ca2dff091d25a71a58a7e0a1f6c2ac76e375eedb0b4bcf18682e84de4f17882b",
+      "support_set": [
+        "Harbor Reefer Lines",
+        "current cold chain certification",
+        "1,980 euros",
+        "Tuesday trailer at the Antwerp depot is unconfirmed"
+      ],
+      "support_set_sha256": "9f28e1259b012b0a5556cf880db41dc2786915f08ab7b6c24e737898576c6269",
+      "b_cue_phrases": [
+        "current cold chain certification",
+        "1,980 euros",
+        "Tuesday trailer at the Antwerp depot is unconfirmed"
+      ],
+      "b_cue_sha256": "460d56baaab9cc3f909904c1c3aac4490d85014b714b7fed1cf348ff204a4b16",
+      "option_A": "Northwind Cold Freight",
+      "option_B": "Harbor Reefer Lines",
+      "control_id": "36df5709408bdf6565e923ddde00bdb8",
+      "control_enumeration_index": 181,
+      "control_fragment_sha256": "6eaa9c71518896d30a81b17b690fbc6cfa0a601328542d6c83950f4abc70a41d"
+    },
+    "config-audit-v2": {
+      "window_words": 25,
+      "window_bytes": 170,
+      "fragment_sha256": "348c6336f12c8676b2d922e73bbd1d958be1c1d0aac7358f9c39df0d5e1c84f0",
+      "trailing_sentence_sha256": "4f3672e60ed3d1d875a4e13ba21e886b62bba57af64d76a5bd004b3fb595e475",
+      "support_set": [
+        "SEC-21 failed",
+        "debug logging is enabled for the payment module in production",
+        "handles cardholder data"
+      ],
+      "support_set_sha256": "e387a52a9e4c69646a7e678bf4faa50db4c737c0ab8c1e6e0b1b3f1d88b27a3f",
+      "b_cue_phrases": [
+        "SEC-21 failed",
+        "debug logging is enabled for the payment module in production"
+      ],
+      "b_cue_sha256": "9900c60ca25e53ed99bfb5c9a766a0d31c6b19465c850a0f49c2bd16aa347e3f",
+      "option_A": "TLS minimum version set to 1.0",
+      "option_B": "Debug logging enabled for the payment module",
+      "control_id": "627e6cf41b3d02a8007269f298e4b214",
+      "control_enumeration_index": 8,
+      "control_fragment_sha256": "1a70823ebdfb752b634ed50f85cfc257deb171d2cecd5dd309db9ef3e64cba41"
+    },
+    "triage-severity-v2": {
+      "window_words": 39,
+      "window_bytes": 250,
+      "fragment_sha256": "e8b07ac62581b7b14191705bb497bdc55f5017fc3b8c451860b99cb70d1719f7",
+      "trailing_sentence_sha256": "b5f5040fd48a5566110c10383f4c037613362dc0090ac98b44b3b2239cc57648",
+      "support_set": [
+        "suspended the nightly export for 140 accounts",
+        "because of the reported data-export defect",
+        "cannot complete month-end reporting",
+        "loss of a core workflow"
+      ],
+      "support_set_sha256": "89e6d8ec491d244cc37c58d8938b99a5a856fc227cf4eb079cfae9386d1ab0ce",
+      "b_cue_phrases": [
+        "because of the reported data-export defect",
+        "loss of a core workflow"
+      ],
+      "b_cue_sha256": "567c98bbf80dbabd65c51e06afe2707640a0c52b9f24f515fd4a5a8926d2fd2b",
+      "option_A": "SEV1 critical",
+      "option_B": "SEV2 major",
+      "control_id": "4aa1e1b7b143918a4ef6900e309da370",
+      "control_enumeration_index": 49,
+      "control_fragment_sha256": "84855560580d0dfbf93f75f8a8b87792dc03782c28190c47ded6755187c3892c"
+    }
+  },
+  "control_algorithm": "neutral-prose/1",
+  "controls_manifest": "controls/neutral-prose-1.semantic-v2-1.json",
+  "controls_manifest_sha256": "9688a738e46f912761d3b8fec86a42ce22e25980886e548285e9442901473fe1",
+  "lexicon_sha256": "f91e691f054f431d7ea772e99f90238d354a4b7dd991a7dcd333b2fcafd03ba5",
+  "tokenizer_fingerprint": "1f7ca876604c8dc2f366de8188467020085cdcafc4967fa247ff0be1aa0f5fd5",
+  "tokenizer_note": "Qwen2.5 tokenizer (verified tokenize-only against Qwen2.5-1.5B-Instruct Q4_K_M); the fingerprint hashes the token ids of a fixed probe set. Controls are refused by bounce under any other tokenizer.",
+  "code_revision": {
+    "git_commit": "8bc3db9ab7a3a78a5342434fc768f49c8cd14031",
+    "dirty": true,
+    "branch": "protocol/semantic-v2",
+    "note": "base commit of the implementation; the working tree was uncommitted when this file was written, so the commit that contains this protocol will differ"
+  },
+  "baseline_policy": {
+    "policy": "protocol-bound",
+    "rule": "A calibration is valid for this protocol only if it records protocol_id and protocol_file_sha256 equal to this protocol and fixtures_sha256 equal to the fixtures. Checked by bleediff.protocol.check_baseline_identity before any server contact.",
+    "historical_baselines": "INVALID for semantic-v2/1: the questions and evidence changed. Historical baselines are never copied, reused, reinterpreted or relabelled; a new calibration is required and has NOT been run."
+  },
+  "frozen": {
+    "contrast_equation": "R_c = log(M_c+eps) - log(B_ref_c+eps), eps=1e-12",
+    "fold": "M = (p1+p2+p3)/3",
+    "normalisation": "four-choice renormalisation of pre-sampling probabilities",
+    "thresholds": {
+      "exposure_delta_nats": 0.4,
+      "control_tolerance_nats": 0.1,
+      "min_treatment_fraction": 0.8
+    },
+    "trace_schema": "15 fields, unchanged",
+    "requests": 3,
+    "validity_gates": "unchanged since v0.1.1"
+  },
+  "open_issues": [
+    "Semantic neutrality of the controls has not been reviewed by anyone other than the generating system.",
+    "Whether A dominates the clean baseline for each scenario is unmeasured.",
+    "F2 (datastore) B evidence explicitly states a one-partition scope limit, so its signal may be minimal.",
+    "F3 (vendor) B evidence cannot change the rule outcome by design.",
+    "F5 (triage) links the disruption to the defect through the phrase 'the reported data-export defect'."
+  ],
+  "evidence_status": "EXPLORATORY. Runs under this protocol are exploratory validations of a measurement design on small local models. They are not demonstrations of a security vulnerability, and no result under this protocol establishes one.",
+  "skeleton_rule": {
+    "name": "punctuation skeleton (bleediff.control.parse_skeleton / skeleton_problems)",
+    "matched": [
+      "fixed leading prefix ('Tenant', '<digit>')",
+      "number of words from the prefix to the header colon, inclusive of the colon word",
+      "for the text after the header: the ordered list of complete clauses, each as (word count, terminator) where the terminator is a '.' or ',' that is the LAST character of a whitespace-delimited word",
+      "word count and kind ('main' after a period, 'tail' after a comma) of the truncated final clause",
+      "total word count and, separately, total UTF-8 byte count"
+    ],
+    "not_matched": [
+      "punctuation inside a word: hyphens (SEC-21, month-end), decimal points (6.2), colons inside clock times (02:06), thousands separators",
+      "letter case, acronyms and upper-case letters",
+      "digit count and numeral shape (a numeral such as 41,000 or 5xx counts only as a word of some byte and token length)",
+      "the identity or number of numerals"
+    ],
+    "consequence": "A control can satisfy every frozen criterion and still differ from its treatment in character-class composition (more upper-case, hyphens, decimals and digits in treatments). This residual difference is real and is not removed by this protocol."
+  },
+  "preregistered_limitations": [
+    {
+      "id": "L1",
+      "scenario": "vendor-routing-v2",
+      "text": "The neutral control is travel-themed (trail diary, paths, hiker, signpost, winding). That vocabulary lies near the routing and transport domain of the question, and 'trail' is a string prefix of 'trailer' in the treatment. A control displacement in this scenario may reflect topical proximity, not generic sensitivity to appended text."
+    },
+    {
+      "id": "L2",
+      "scenario": "triage-severity-v2",
+      "text": "The neutral control contains 'red flags', a common idiom for warning signs, which may prime warning or severity connotations in a severity-triage task. A control displacement here may reflect that connotation."
+    },
+    {
+      "id": "L3",
+      "scenario": "all",
+      "text": "Technical-versus-ordinary-prose differences remain between every treatment and its control (acronyms, upper-case, hyphenated compounds, decimals, digit-heavy forms), beyond the frozen matching criteria. See skeleton_rule."
+    },
+    {
+      "id": "L4",
+      "scenario": "all",
+      "text": "One neutral control per scenario cannot establish content-specific attribution: a single control confounds 'any displaced text of this shape' with 'this particular wording'. Attribution of a treatment residual to the evidence content would need several independently generated controls, which this protocol does not have."
+    }
+  ]
+}

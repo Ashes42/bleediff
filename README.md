@@ -2,7 +2,7 @@
 
 > What survives subtraction was already in the composite.
 
-`bleediff` (v0.1.3) is a zero-dependency Python 3.11+ CLI that evaluates one narrow question about an
+`bleediff` (v0.1.4) is a zero-dependency Python 3.11+ CLI that evaluates one narrow question about an
 inference stack: **when a contiguous multi-tenant prompt arena over-reads past a tenant boundary, does a
 fragment of the neighbour's context leave a trace in the model's output distribution, even when the
 final answer does not change?**
@@ -296,10 +296,43 @@ version` (the `bleediff_version` stamp and `generator.software_version`): which 
 So the v0.1.2 manifest legitimately says `0.1.1` (the code that wrote it was then 0.1.1) and the repair manifest says
 `0.1.3`; neither stamp names an experiment. The protocol file spells this out in `version_semantics`.
 
+## Semantic-v2 protocol (v0.1.4, `semantic-v2/1`)
+
+**Status: exploratory.** `semantic-v2/1` replaces the five original scenarios with fixtures whose B evidence is
+genuinely task-relevant but weaker than the authorized evidence for A (`fixtures/semantic-v2/`). Runs under it are
+**exploratory validations of a measurement design on small local models. They are not demonstrations of a security
+vulnerability**, and nothing here shows that any real system leaks anything. A negative or inconclusive result is as
+informative as a positive one and is preserved as such.
+
+* **Fixed in advance:** the approved fixture text (`tests/data/semantic_v2_approved_design.json` is an independent
+  copy), per-scenario windows chosen by Rule S (smallest sentence-final window whose real extraction contains the
+  whole support set), one preserved `neutral-prose/1` control per scenario, and the unchanged equations and thresholds.
+* **Fixtures are protocol-bound.** They declare `requires_protocol`; `calibrate`, `bounce` and `bleed` refuse them
+  without `--protocol fixtures/semantic-v2/protocol.json`.
+* **No historical calibration applies.** A baseline is accepted only if it records this protocol's id and file hash and
+  the fixtures' hash (`BASELINE_PROTOCOL_MISMATCH` otherwise). Calibrations are never copied or relabelled.
+* **Identities** are separate: `protocol_id` `semantic-v2/1`, `control_algorithm` `neutral-prose/1`, software version.
+
+**Exact punctuation-skeleton rule (what "matched" means).** A control must reproduce: the `Tenant <n>` prefix; the word
+count up to and including the header colon; the ordered clauses after it, each as (word count, terminator) where the
+terminator is a `.` or `,` that is the *last character of a whitespace-delimited word*; the kind and length of the
+truncated final clause; the total word count; and, separately, the byte count (plus token and whole-prompt token
+parity under the real tokenizer). Punctuation *inside* a word (hyphens, decimal points, clock-time colons, thousands
+separators), letter case, acronyms, digit count and numeral shape are **not** matched. See `skeleton_rule` in the
+protocol file.
+
+**Preregistered limitations** (also in the protocol file, written before any model output under this protocol):
+
+1. *Vendor routing:* the neutral control is travel-themed (trail, paths, hiker, signpost), near the routing domain, and
+   "trail" prefixes "trailer".
+2. *Triage severity:* the control contains "red flags", an idiom that may prime warnings or severity.
+3. *All controls:* technical-versus-ordinary-prose differences remain (acronyms, upper case, hyphens, decimals, digits).
+4. *One control per scenario* cannot establish content-specific attribution.
+
 ## Tests
 
 `tests/test_bleediff.py`, `tests/test_v011_validity.py`, `tests/test_v012_control.py` and
-`tests/test_v013_protocol.py` (stdlib `unittest`, 167 tests) run a stdlib
+`tests/test_v013_protocol.py` and `tests/test_v014_semantic_v2.py` (stdlib `unittest`, 223 tests) run a stdlib
 `http.server` mock of `llama-server` (`/tokenize`, `/completion`, `/props`) and cover: exact contrastive math with
 `argmax == A` and `delta_contrast > 0.4`; B winning raw is never a stealth PASS; the matched control staying within
 0.1 and a drifting control making the run `INCONCLUSIVE` (never `FAIL`); invalid baselines never counting as

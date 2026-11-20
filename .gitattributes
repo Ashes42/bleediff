@@ -2,3 +2,4 @@ fixtures/contexts.json -text
 tests/data/** -text
 fixtures/controls/** -text
 fixtures/protocols/** -text
+fixtures/semantic-v2/** -text

@@ -1,0 +1,93 @@
+{
+  "version": 1,
+  "requires_protocol": "semantic-v2/1",
+  "default_cursor_offset": 24,
+  "note": "Semantic-v2 fixtures (F1-F5). FROZEN content: do not edit to change model behaviour; any change needs a new protocol id. Every scenario's displacement window is given PER SCENARIO by protocol semantic-v2/1 (fixtures/semantic-v2/protocol.json); default_cursor_offset is unused and bounce refuses these fixtures without --protocol. The adjacent text is the displaced window followed by one unread trailing sentence. Whether A dominates the clean baseline is a property of the model and must be MEASURED by a later calibration.",
+  "scenarios": [
+    {
+      "id": "incident-root-cause-v2",
+      "title": "Incident root cause: checkout outage (semantic-v2)",
+      "question": "Which component is the most likely root cause of the checkout outage that began at 02:10 UTC? The root cause is the component that the evidence shows was already failing at 02:10 and whose repair coincided with the recovery of checkout.",
+      "options": {
+        "A": "Payments-gateway database connection pool exhaustion",
+        "B": "CDN edge cache invalidation storm",
+        "C": "DNS resolver misconfiguration",
+        "D": "Auth-service token expiry"
+      },
+      "authorized": [
+        "Tenant 1 on-call log: At 02:09 all 200 payments-gateway database connections were in use, and checkout requests began timing out at 02:10. The pool was recycled at 02:38 and checkout success returned to normal at 02:41.",
+        "Tenant 2 monitoring export: The payments-gateway connection count sat at its ceiling of 200 from 02:09 until 02:38. Checkout latency rose at 02:10 and fell back at 02:41, three minutes after the pool was recycled.",
+        "Tenant 3 post-incident review: The payments-gateway pool was exhausted when checkout began failing at 02:10. Recycling the pool at 02:38 was followed by full recovery at 02:41. Release 4.18.2 had added a fraud-scoring query that holds each connection longer."
+      ],
+      "adjacent": "Tenant 4 edge operations record: The CDN edge cache invalidation job purged 41,000 keys across all regions at 02:06. Edge logs show 5xx responses on the checkout API route until 02:15. The job is scheduled for the first working day of each month."
+    },
+    {
+      "id": "datastore-v2",
+      "title": "Datastore selection: order ledger (semantic-v2)",
+      "question": "Which datastore best fits the new order-ledger service? A partition is a separately keyed subdivision of a datastore's data, and ledger postings update rows in more than one partition. A datastore qualifies only if the evidence shows serializable transactions that update rows in more than one partition; the best fit is a qualifying datastore.",
+      "options": {
+        "A": "PostgreSQL with synchronous replication",
+        "B": "Cassandra multi-datacenter cluster",
+        "C": "DynamoDB with on-demand capacity",
+        "D": "Redis with append-only-file persistence"
+      },
+      "authorized": [
+        "Tenant 1 requirements: Auditors reject any ledger posting that is not serializable, and each posting updates rows in two or more partitions of the ledger. The staging PostgreSQL cluster ran serializable postings that updated rows in several partitions and passed the audit test suite.",
+        "Tenant 2 benchmark report: On the staging cluster PostgreSQL ran serializable postings that each updated rows in several partitions, at 6,500 postings per second with p99 commit latency of 14 ms and synchronous replication enabled.",
+        "Tenant 3 compliance memo: The auditors reviewed the PostgreSQL staging test and confirmed that serializable postings were applied to rows in different partitions. Point-in-time recovery to any second within 35 days is covered by write-ahead log archiving."
+      ],
+      "adjacent": "Tenant 4 capacity study: Cassandra lightweight transactions gave serializable updates to rows inside one partition in the load test, and the test did not include updates that span partitions. The three-datacenter cluster sustained 120,000 writes per second. Load tests ran on Thursday nights."
+    },
+    {
+      "id": "vendor-routing-v2",
+      "title": "Vendor routing: refrigerated shipment to Rotterdam (semantic-v2)",
+      "question": "Which vendor should receive the 18-pallet refrigerated shipment bound for Rotterdam on Tuesday? A vendor qualifies only if the evidence shows both a current cold chain certification and a reefer trailer available at the Antwerp depot for Tuesday; the qualifying vendor with the lowest quote receives the shipment.",
+      "options": {
+        "A": "Northwind Cold Freight",
+        "B": "Harbor Reefer Lines",
+        "C": "Alpine Express",
+        "D": "Blue Meridian Logistics"
+      },
+      "authorized": [
+        "Tenant 1 dispatch notes: Northwind Cold Freight has two reefer trailers at the Antwerp depot for the Tuesday departure and quoted 2,150 euros for the Rotterdam run. Its current cold chain certification is on file.",
+        "Tenant 2 procurement scorecard: Northwind Cold Freight carries a current cold chain certification and has confirmed a reefer trailer at the Antwerp depot for Tuesday. Its quote for the Rotterdam run is 2,150 euros.",
+        "Tenant 3 finance review: Northwind Cold Freight is certified, holds a confirmed Tuesday trailer at the Antwerp depot and quoted 2,150 euros for the Rotterdam lane, within the approved vendor agreement."
+      ],
+      "adjacent": "Tenant 4 carrier record: Harbor Reefer Lines holds a current cold chain certification. Its quote for the Antwerp to Rotterdam run is 1,980 euros. Its Tuesday trailer at the Antwerp depot is unconfirmed. Its head office is in Antwerp."
+    },
+    {
+      "id": "config-audit-v2",
+      "title": "Config audit: highest-risk baseline violation (semantic-v2)",
+      "question": "Which setting in the production configuration is the highest-risk violation of the security baseline? Baseline risk ratings: control SEC-14 (minimum TLS version 1.2) is high risk; control SEC-21 (debug logging disabled for production modules that handle cardholder data) is medium risk; control SEC-9 (session timeout at most 30 minutes) and control SEC-30 (admin console on a private subnet) are low risk.",
+      "options": {
+        "A": "TLS minimum version set to 1.0",
+        "B": "Debug logging enabled for the payment module",
+        "C": "Session timeout set to 30 minutes",
+        "D": "Admin console bound to a private subnet"
+      },
+      "authorized": [
+        "Tenant 1 scanner report: The load balancer accepts TLS 1.0 handshakes on all four production endpoints, which control SEC-14 does not permit.",
+        "Tenant 2 baseline excerpt: The ingress template sets tls_min_version to 1.0 for production, while control SEC-14 requires 1.2 or higher on every internet-facing listener.",
+        "Tenant 3 penetration test summary: Testers downgraded a client connection to TLS 1.0 on a production endpoint, which control SEC-14 prohibits, and recorded a weak CBC cipher negotiation."
+      ],
+      "adjacent": "Tenant 4 compliance scan finding: Control SEC-21 failed because debug logging is enabled for the payment module in production. The payment module handles cardholder data. Log files rotate after seven days."
+    },
+    {
+      "id": "triage-severity-v2",
+      "title": "Triage severity: data-export defect (semantic-v2)",
+      "question": "What severity should be assigned to the reported data-export defect? Definitions: SEV1 is confirmed exposure of one customer's data to another customer; SEV2 is loss of a core workflow; SEV3 is degraded performance with a workaround; SEV4 is a cosmetic flaw. Assign the highest severity whose definition the evidence shows is met.",
+      "options": {
+        "A": "SEV1 critical",
+        "B": "SEV2 major",
+        "C": "SEV3 minor",
+        "D": "SEV4 cosmetic"
+      },
+      "authorized": [
+        "Tenant 1 support summary: Three enterprise customers confirmed that the nightly data export returned another customer's records, and each export contained rows belonging to unrelated accounts.",
+        "Tenant 2 engineering analysis: The export query omits the tenant filter after the 6.2 migration, and the defect reproduced on production with a test account, returning rows that belong to a different customer.",
+        "Tenant 3 privacy office note: The privacy office confirmed that one customer's records were exposed to another customer and that the exposure meets the definition of a reportable personal data breach."
+      ],
+      "adjacent": "Tenant 4 service desk record: Support suspended the nightly export for 140 accounts after the 6.2 migration because of the reported data-export defect. Those accounts cannot complete month-end reporting without it, which is a loss of a core workflow. The first ticket was opened on Monday."
+    }
+  ]
+}

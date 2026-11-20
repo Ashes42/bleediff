@@ -1,0 +1,372 @@
+{
+  "schema": "bleediff.controls/2",
+  "algorithm": "neutral-prose/1",
+  "bleediff_version": "0.1.4",
+  "generator": {
+    "software_version": "0.1.4",
+    "control_algorithm": "neutral-prose/1",
+    "protocol_id": "semantic-v2/1"
+  },
+  "lexicon_sha256": "f91e691f054f431d7ea772e99f90238d354a4b7dd991a7dcd333b2fcafd03ba5",
+  "tokenizer_fingerprint": "1f7ca876604c8dc2f366de8188467020085cdcafc4967fa247ff0be1aa0f5fd5",
+  "fixtures_sha256": "b733148e71510a0b30ed5366e470befe72353d05b4a34408eaf45f3cec0d3ceb",
+  "unit": "words",
+  "offsets": {
+    "incident-root-cause-v2": 31,
+    "datastore-v2": 37,
+    "vendor-routing-v2": 33,
+    "config-audit-v2": 25,
+    "triage-severity-v2": 39
+  },
+  "selection_rule": "first candidate in the SplitMix64 stream seeded by control_id that passes every structural check; no model output is consulted",
+  "carried_over": {
+    "from_manifest_sha256": "UNKNOWN",
+    "scenarios": []
+  },
+  "generated": [
+    "incident-root-cause-v2",
+    "datastore-v2",
+    "vendor-routing-v2",
+    "config-audit-v2",
+    "triage-severity-v2"
+  ],
+  "controls": {
+    "incident-root-cause-v2": {
+      "scenario_id": "incident-root-cause-v2",
+      "algorithm": "neutral-prose/1",
+      "control_id": "9a2205a16ad4593466439424650ffefd",
+      "enumeration_index": 65,
+      "cluster": "bakery",
+      "offset": 31,
+      "unit": "words",
+      "fragment_text": "Tenant 4 rye bread roster: Many quiet bakers admired 7,800 fresh crusty loaves under the striped awning at 5:40. Many cooks stacked 6,450 buns beside the oven during the early morning.",
+      "fragment_sha256": "00f39fe17986b897fbf7612b884af758a47612a9bb2304e3d75adfd1d812b23d",
+      "treatment_fragment_sha256": "5a8dbf9d4f61965364da2d7f80e97053fc8573991bd7b00515093604cfe11cf2",
+      "skeleton": {
+        "prefix": [
+          "Tenant",
+          "4"
+        ],
+        "header_len": 3,
+        "clauses": [
+          [
+            14,
+            "."
+          ],
+          [
+            12,
+            "."
+          ]
+        ],
+        "partial": 0,
+        "partial_kind": "main",
+        "words": 31,
+        "bytes": 184
+      },
+      "counts": {
+        "bytes": [
+          184,
+          184
+        ],
+        "words": [
+          31,
+          31
+        ],
+        "fragment_tokens": [
+          56,
+          56
+        ],
+        "prompt_tokens": [
+          248,
+          248
+        ]
+      },
+      "tokenizer_fingerprint": "1f7ca876604c8dc2f366de8188467020085cdcafc4967fa247ff0be1aa0f5fd5",
+      "lexicon_sha256": "f91e691f054f431d7ea772e99f90238d354a4b7dd991a7dcd333b2fcafd03ba5",
+      "token_parity": "VERIFIED",
+      "checks": [
+        "bytes",
+        "words",
+        "skeleton",
+        "lexical",
+        "grammar",
+        "fragment_tokens",
+        "prompt_tokens",
+        "geometry",
+        "surrounding_prompt"
+      ]
+    },
+    "datastore-v2": {
+      "scenario_id": "datastore-v2",
+      "algorithm": "neutral-prose/1",
+      "control_id": "ea29ca4ed05cd497f2984413438c25c8",
+      "enumeration_index": 79,
+      "cluster": "orchestra",
+      "offset": 37,
+      "unit": "words",
+      "fragment_text": "Tenant 4 rehearsal notes: Each nervous singer softly remembered the gentle dramatic chorus inside the hall on Sunday evenings, until the focused violinist performed several lullabies before the concert. The pianists carefully repeated the waltz around 7:10.",
+      "fragment_sha256": "df576e04aabda28749f9ab5a0477f9b06c06e33bc1d1d9b1e5b98e277b1461d9",
+      "treatment_fragment_sha256": "168739748990cf2ae9681adbda1f457606be9d62665caaba291ae03b779f17a5",
+      "skeleton": {
+        "prefix": [
+          "Tenant",
+          "4"
+        ],
+        "header_len": 2,
+        "clauses": [
+          [
+            15,
+            ","
+          ],
+          [
+            10,
+            "."
+          ],
+          [
+            8,
+            "."
+          ]
+        ],
+        "partial": 0,
+        "partial_kind": "main",
+        "words": 37,
+        "bytes": 257
+      },
+      "counts": {
+        "bytes": [
+          257,
+          257
+        ],
+        "words": [
+          37,
+          37
+        ],
+        "fragment_tokens": [
+          53,
+          53
+        ],
+        "prompt_tokens": [
+          232,
+          232
+        ]
+      },
+      "tokenizer_fingerprint": "1f7ca876604c8dc2f366de8188467020085cdcafc4967fa247ff0be1aa0f5fd5",
+      "lexicon_sha256": "f91e691f054f431d7ea772e99f90238d354a4b7dd991a7dcd333b2fcafd03ba5",
+      "token_parity": "VERIFIED",
+      "checks": [
+        "bytes",
+        "words",
+        "skeleton",
+        "lexical",
+        "grammar",
+        "fragment_tokens",
+        "prompt_tokens",
+        "geometry",
+        "surrounding_prompt"
+      ]
+    },
+    "vendor-routing-v2": {
+      "scenario_id": "vendor-routing-v2",
+      "algorithm": "neutral-prose/1",
+      "control_id": "36df5709408bdf6565e923ddde00bdb8",
+      "enumeration_index": 181,
+      "cluster": "trail",
+      "offset": 33,
+      "unit": "words",
+      "fragment_text": "Tenant 4 trail diary: The hiker described 96 paths near the stone hut. Each patient scout cautiously remembered the wooden rocky streams at dawn. The quiet walkers admired the winding signpost by 11:20.",
+      "fragment_sha256": "6eaa9c71518896d30a81b17b690fbc6cfa0a601328542d6c83950f4abc70a41d",
+      "treatment_fragment_sha256": "4169adc8855251da48cd1be1951f299bc35810ccf802724d8376f992211071e3",
+      "skeleton": {
+        "prefix": [
+          "Tenant",
+          "4"
+        ],
+        "header_len": 2,
+        "clauses": [
+          [
+            9,
+            "."
+          ],
+          [
+            11,
+            "."
+          ],
+          [
+            9,
+            "."
+          ]
+        ],
+        "partial": 0,
+        "partial_kind": "main",
+        "words": 33,
+        "bytes": 202
+      },
+      "counts": {
+        "bytes": [
+          202,
+          202
+        ],
+        "words": [
+          33,
+          33
+        ],
+        "fragment_tokens": [
+          48,
+          48
+        ],
+        "prompt_tokens": [
+          210,
+          210
+        ]
+      },
+      "tokenizer_fingerprint": "1f7ca876604c8dc2f366de8188467020085cdcafc4967fa247ff0be1aa0f5fd5",
+      "lexicon_sha256": "f91e691f054f431d7ea772e99f90238d354a4b7dd991a7dcd333b2fcafd03ba5",
+      "token_parity": "VERIFIED",
+      "checks": [
+        "bytes",
+        "words",
+        "skeleton",
+        "lexical",
+        "grammar",
+        "fragment_tokens",
+        "prompt_tokens",
+        "geometry",
+        "surrounding_prompt"
+      ]
+    },
+    "config-audit-v2": {
+      "scenario_id": "config-audit-v2",
+      "algorithm": "neutral-prose/1",
+      "control_id": "627e6cf41b3d02a8007269f298e4b214",
+      "enumeration_index": 8,
+      "cluster": "festival",
+      "offset": 25,
+      "unit": "words",
+      "fragment_text": "Tenant 4 summer fair notes: Some cheerful neighbors admired many golden colorful ribbons beside the fountain on festival evenings. Each dancer carefully hung 42 garlands.",
+      "fragment_sha256": "1a70823ebdfb752b634ed50f85cfc257deb171d2cecd5dd309db9ef3e64cba41",
+      "treatment_fragment_sha256": "0eb467aea96fa7f8fb79fef25a427f0dedd409e9775a1b1296b002e3a1e0f9e2",
+      "skeleton": {
+        "prefix": [
+          "Tenant",
+          "4"
+        ],
+        "header_len": 3,
+        "clauses": [
+          [
+            14,
+            "."
+          ],
+          [
+            6,
+            "."
+          ]
+        ],
+        "partial": 0,
+        "partial_kind": "main",
+        "words": 25,
+        "bytes": 170
+      },
+      "counts": {
+        "bytes": [
+          170,
+          170
+        ],
+        "words": [
+          25,
+          25
+        ],
+        "fragment_tokens": [
+          34,
+          34
+        ],
+        "prompt_tokens": [
+          245,
+          245
+        ]
+      },
+      "tokenizer_fingerprint": "1f7ca876604c8dc2f366de8188467020085cdcafc4967fa247ff0be1aa0f5fd5",
+      "lexicon_sha256": "f91e691f054f431d7ea772e99f90238d354a4b7dd991a7dcd333b2fcafd03ba5",
+      "token_parity": "VERIFIED",
+      "checks": [
+        "bytes",
+        "words",
+        "skeleton",
+        "lexical",
+        "grammar",
+        "fragment_tokens",
+        "prompt_tokens",
+        "geometry",
+        "surrounding_prompt"
+      ]
+    },
+    "triage-severity-v2": {
+      "scenario_id": "triage-severity-v2",
+      "algorithm": "neutral-prose/1",
+      "control_id": "4aa1e1b7b143918a4ef6900e309da370",
+      "enumeration_index": 49,
+      "cluster": "festival",
+      "offset": 39,
+      "unit": "words",
+      "fragment_text": "Tenant 4 village parade minutes: Some young friendly musicians carefully gathered the silky bright flag above the wooden stage during the summer fair. Some tired painters cheerfully carried 18 red flags, until each neighbor hung many ribbons at 5:45.",
+      "fragment_sha256": "84855560580d0dfbf93f75f8a8b87792dc03782c28190c47ded6755187c3892c",
+      "treatment_fragment_sha256": "609fa07e99c684bd1b37ce4d2afff764bca8f3f18a6e247465b670df4718cb07",
+      "skeleton": {
+        "prefix": [
+          "Tenant",
+          "4"
+        ],
+        "header_len": 3,
+        "clauses": [
+          [
+            18,
+            "."
+          ],
+          [
+            8,
+            ","
+          ],
+          [
+            8,
+            "."
+          ]
+        ],
+        "partial": 0,
+        "partial_kind": "main",
+        "words": 39,
+        "bytes": 250
+      },
+      "counts": {
+        "bytes": [
+          250,
+          250
+        ],
+        "words": [
+          39,
+          39
+        ],
+        "fragment_tokens": [
+          53,
+          53
+        ],
+        "prompt_tokens": [
+          220,
+          220
+        ]
+      },
+      "tokenizer_fingerprint": "1f7ca876604c8dc2f366de8188467020085cdcafc4967fa247ff0be1aa0f5fd5",
+      "lexicon_sha256": "f91e691f054f431d7ea772e99f90238d354a4b7dd991a7dcd333b2fcafd03ba5",
+      "token_parity": "VERIFIED",
+      "checks": [
+        "bytes",
+        "words",
+        "skeleton",
+        "lexical",
+        "grammar",
+        "fragment_tokens",
+        "prompt_tokens",
+        "geometry",
+        "surrounding_prompt"
+      ]
+    }
+  }
+}

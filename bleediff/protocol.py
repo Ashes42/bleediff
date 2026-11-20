@@ -105,3 +105,88 @@ def protocol_summary(protocol: dict, path: str) -> dict:
             "parent_protocol": (protocol.get("parent_protocol") or {}).get("id"),
             "scenario_offsets": protocol.get("scenario_offsets"),
             "controls_manifest_sha256": protocol.get("controls_manifest_sha256")}
+
+
+# --------------------------------------------------------------------------------------
+# Rule S (semantic-v2/1) and static protocol verification
+# --------------------------------------------------------------------------------------
+RULE_S = ("Rule S: smallest N, taken at a sentence-final period, whose extracted fragment contains every phrase of the "
+          "scenario's support set (case-insensitive substring) and ends on a sentence-final period")
+BASELINE_POLICY_BOUND = "protocol-bound"
+
+
+def select_window_rule_s(sc: Scenario, support_set: list[str], unit: str = "words") -> dict:
+    """Apply Rule S through the REAL extraction function (``control.treatment_fragment`` -> ``arena.plan_requests``).
+
+    Inputs are the fixture text and the support set only; no model output exists in this code path."""
+    if unit != "words":
+        raise ProtocolError("Rule S is defined for unit='words' only")
+    words = sc.adjacent.split()
+    ends = [i + 1 for i, w in enumerate(words) if w.endswith(".")]
+    frags = {n: treatment_fragment(sc, n, unit) for n in ends}
+    ok = [n for n in ends if all(p.lower() in frags[n].lower() for p in support_set)]
+    if not ok:
+        raise ProtocolError(f"no sentence-complete window of {sc.id!r} contains the whole support set")
+    n = min(ok)
+    frag = frags[n]
+    trailing = " ".join(words[n:])
+    return {"scenario_id": sc.id, "rule": RULE_S, "offset": n, "words": len(frag.split()), "bytes": len(frag.encode()),
+            "fragment_sha256": hashlib.sha256(frag.encode("ascii")).hexdigest(),
+            "sentence_ends_considered": ends, "rejected_smaller_ends": [e for e in ends if e < n],
+            "trailing_sentence": trailing,
+            "support_terms_in_trailing": [p for p in support_set if p.lower() in trailing.lower()]}
+
+
+def verify_protocol_static(protocol: dict, fixtures: Fixtures) -> list[str]:
+    """Static consistency of a semantic protocol against the CURRENT fixtures. Empty list = consistent.
+
+    This verifies mechanics (offsets, byte counts, support-set inclusion, trailing sentence); it does NOT and
+    cannot establish that the fixtures are semantically valid."""
+    problems: list[str] = []
+    try:
+        offsets = scenario_offsets(protocol, fixtures)
+    except ProtocolError as e:
+        return [str(e)]
+    if protocol.get("window_rule") != RULE_S:
+        problems.append("protocol does not declare the preregistered Rule S")
+    scen = {s.id: s for s in fixtures.scenarios}
+    meta = protocol.get("scenarios") or {}
+    if sorted(meta) != sorted(scen):
+        return problems + ["protocol 'scenarios' metadata must cover exactly the fixture scenarios"]
+    for sid, sc in scen.items():
+        m = meta[sid]
+        sel = select_window_rule_s(sc, m["support_set"])
+        for key, got in (("offset", offsets[sid]), ("words", m["window_words"]), ("bytes", m["window_bytes"]),
+                         ("fragment_sha256", m["fragment_sha256"])):
+            want = sel["offset"] if key == "offset" else sel[key]
+            if want != got:
+                problems.append(f"{sid}: recorded {key} {got!r} != Rule S result {want!r}")
+        if sel["support_terms_in_trailing"]:
+            problems.append(f"{sid}: support terms occur in the unread trailing sentence")
+        if hashlib.sha256(sel["trailing_sentence"].encode("ascii")).hexdigest() != m["trailing_sentence_sha256"]:
+            problems.append(f"{sid}: trailing sentence differs from the recorded one")
+        for phrase in m["b_cue_phrases"]:
+            if phrase not in m["support_set"]:
+                problems.append(f"{sid}: B cue phrase {phrase!r} is not part of the support set")
+    return problems
+
+
+def check_baseline_identity(baseline: dict, protocol: dict | None, protocol_path: str | None, fixtures: Fixtures) -> None:
+    """Preflight: refuse a calibration made for different fixtures or a different protocol.
+
+    Applies to protocols that declare ``baseline_policy.policy == 'protocol-bound'`` (semantic-v2/1). A historical
+    baseline (no ``protocol`` field, or another protocol id/hash) is NEVER reinterpreted or relabelled."""
+    if baseline.get("fixtures_sha256") != fixtures.sha256:
+        raise ProtocolError("calibration was made for different fixtures (sha256 mismatch)", reason="BASELINE_PROTOCOL_MISMATCH")
+    if not protocol or (protocol.get("baseline_policy") or {}).get("policy") != BASELINE_POLICY_BOUND:
+        return
+    rec = baseline.get("protocol")
+    if not isinstance(rec, dict):
+        raise ProtocolError("calibration predates or was made outside this protocol (no protocol identity recorded); "
+                            "a protocol-bound experiment needs its own calibration", reason="BASELINE_PROTOCOL_MISMATCH")
+    if rec.get("protocol_id") != protocol.get("protocol_id"):
+        raise ProtocolError(f"calibration belongs to protocol {rec.get('protocol_id')!r}, not {protocol.get('protocol_id')!r}",
+                            reason="BASELINE_PROTOCOL_MISMATCH")
+    if protocol_path is None or rec.get("protocol_file_sha256") != file_sha256(protocol_path):
+        raise ProtocolError("calibration was made under a different version of the protocol file",
+                            reason="BASELINE_PROTOCOL_MISMATCH")

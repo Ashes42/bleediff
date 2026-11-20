@@ -110,7 +110,7 @@ class Harness:
         return m
 
     # -- calibrate -----------------------------------------------------------------------
-    def calibrate(self, fixtures_path_for_record: str | None = None) -> dict:
+    def calibrate(self, fixtures_path_for_record: str | None = None, protocol_info: dict | None = None) -> dict:
         info = self.info or self.preflight()
         scenarios = {}
         warnings = []
@@ -139,6 +139,9 @@ class Harness:
             "n_probs_used": self.client.last_n_probs_used,
             "fixtures_path": fixtures_path_for_record or self.fixtures.path,
             "fixtures_sha256": self.fixtures.sha256,
+            # identity of the experiment this calibration belongs to; checked by protocol.check_baseline_identity
+            "protocol": ({"protocol_id": protocol_info["protocol_id"],
+                          "protocol_file_sha256": protocol_info["protocol_file_sha256"]} if protocol_info else "NONE"),
             "choices": list(CHOICES),
             "scenarios": scenarios,
             "warnings": warnings,

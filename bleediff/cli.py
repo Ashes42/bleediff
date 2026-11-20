@@ -23,7 +23,14 @@ from .arena import FILLER_ALGORITHM, load_fixtures, plan_requests
 from .control import ALGORITHM as PROSE_ALGORITHM
 from .control import load_manifest
 from .protocol import file_sha256 as _file_sha256
-from .protocol import load_protocol, protocol_summary, scenario_offsets
+from .protocol import (
+    ProtocolError,
+    check_baseline_identity,
+    load_protocol,
+    protocol_summary,
+    scenario_offsets,
+    verify_protocol_static,
+)
 from .client import DEFAULT_N_PROBS, LlamaClient
 from .errors import Inconclusive, TraceError
 from .fold import TRACE_SCHEMA, check_record, gate, read_traces, write_traces
@@ -56,8 +63,27 @@ def _inconclusive(e: Inconclusive) -> int:
 
 
 # -- calibrate -----------------------------------------------------------------------------
+def _bind_protocol(a, fixtures, path: str | None):
+    """Load + validate a protocol against the fixtures BEFORE any server contact. Returns (protocol, offsets)."""
+    if fixtures.requires_protocol and not path:
+        raise Inconclusive(f"these fixtures may only be used under protocol {fixtures.requires_protocol!r}: pass --protocol",
+                           reason="BAD_ARGS")
+    if not path:
+        return None, None
+    protocol = load_protocol(path)
+    offsets = scenario_offsets(protocol, fixtures)                 # fixtures hash + exact scenario coverage
+    if fixtures.requires_protocol and fixtures.requires_protocol != protocol.get("protocol_id"):
+        raise ProtocolError(f"fixtures require protocol {fixtures.requires_protocol!r}, not {protocol.get('protocol_id')!r}")
+    if "scenarios" in protocol:                                    # semantic protocols carry per-scenario static metadata
+        problems = verify_protocol_static(protocol, fixtures)
+        if problems:
+            raise ProtocolError("protocol fails static verification: " + "; ".join(problems))
+    return protocol, offsets
+
+
 def cmd_calibrate(a) -> int:
     fixtures = load_fixtures(a.fixtures)
+    protocol, _ = _bind_protocol(a, fixtures, a.protocol)
     client = LlamaClient(a.server, timeout=a.timeout, n_probs=a.n_probs)
     h = Harness(client, fixtures)
     info = h.preflight()
@@ -65,7 +91,7 @@ def cmd_calibrate(a) -> int:
     print(f"model       {info.model_alias or info.model_path}  (hash basis: {info.model_hash_basis})")
     print(f"model_hash  {info.model_hash}")
     print(f"tokens      {h.report.to_json()['id_to_letter']}  dropped={list(h.report.dropped)}")
-    base = h.calibrate()
+    base = h.calibrate(protocol_info=protocol_summary(protocol, a.protocol) if protocol else None)
     with open(a.out, "w", encoding="utf-8", newline="\n") as fh:
         json.dump(base, fh, indent=2)
         fh.write("\n")
@@ -90,8 +116,7 @@ def cmd_calibrate(a) -> int:
 def cmd_bleed(a) -> int:
     fixtures = load_fixtures(a.fixtures)
     ok = True
-    protocol = load_protocol(a.protocol) if a.protocol else None
-    offs = scenario_offsets(protocol, fixtures) if protocol else None
+    protocol, offs = _bind_protocol(a, fixtures, a.protocol)
     mpath = a.controls_manifest or (os.path.join(os.path.dirname(fixtures.path) or ".", protocol["controls_manifest"])
                                     if protocol else os.path.join(os.path.dirname(fixtures.path) or ".", "controls",
                                                                   "neutral-prose-1.json"))
@@ -160,10 +185,10 @@ def cmd_bounce(a) -> int:
             raise Inconclusive("--protocol sets every scenario's offset; do not combine it with --offset", reason="BAD_ARGS")
         if a.control != PROSE_ALGORITHM or a.unit != "words":
             raise Inconclusive(f"--protocol requires --control {PROSE_ALGORITHM} and --unit words", reason="BAD_ARGS")
-        protocol = load_protocol(a.protocol)
-        offsets = scenario_offsets(protocol, fixtures)       # fails closed on fixtures/offset mismatch
-    offset = (protocol or {}).get("default_offset") if protocol else (
-        a.offset if a.offset is not None else fixtures.default_cursor_offset)
+    protocol, offsets = _bind_protocol(a, fixtures, a.protocol)     # fails closed before any server contact
+    check_baseline_identity(baseline, protocol, a.protocol, fixtures)   # a historical/other-protocol calibration is refused
+    offset = ((protocol.get("default_offset") or min(offsets.values())) if protocol else (
+        a.offset if a.offset is not None else fixtures.default_cursor_offset))
     if offset <= 0 or any(n <= 0 for n in (offsets or {}).values()):
         raise Inconclusive("bounce needs cursor_offset > 0 (offset 0 is the clean baseline)", reason="BAD_ARGS")
     client = LlamaClient(a.server, timeout=a.timeout, n_probs=a.n_probs)
@@ -337,6 +362,9 @@ def build_parser() -> argparse.ArgumentParser:
     c.add_argument("--out", default="baseline.json")
     c.add_argument("--n-probs", type=int, default=DEFAULT_N_PROBS)
     c.add_argument("--timeout", type=float, default=120.0)
+    c.add_argument("--protocol", default=None,
+                   help="protocol the calibration belongs to (required for fixtures that declare requires_protocol); "
+                        "its id and file hash are recorded in the baseline and checked by bounce")
     c.set_defaults(fn=cmd_calibrate)
 
     b = sub.add_parser("bleed", help="offline: preview the exact arena boundary displacement vs the matched control")
