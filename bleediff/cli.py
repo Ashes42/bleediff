@@ -21,8 +21,20 @@ from . import (
 )
 from .arena import load_fixtures, plan_requests
 from .client import DEFAULT_N_PROBS, LlamaClient
-from .errors import Inconclusive
-from .fold import TRACE_SCHEMA, check_record, gate, read_traces
+from .errors import Inconclusive, TraceError
+from .fold import TRACE_SCHEMA, check_record, gate, read_traces, write_traces
+from .meta import (
+    baseline_infos_from_baseline,
+    baseline_infos_from_sidecar,
+    build_sidecar,
+    file_sha256,
+    join_records,
+    legacy_sidecar,
+    load_sidecar,
+    merge_baseline_infos,
+    sidecar_path,
+    write_sidecar,
+)
 from .runner import Harness, load_baseline
 
 DEFAULT_SERVER = "http://127.0.0.1:8080"
@@ -54,11 +66,16 @@ def cmd_calibrate(a) -> int:
         json.dump(base, fh, indent=2)
         fh.write("\n")
     print(f"\nclean 3-request baseline B_ref (3 per-request vectors per scenario folded and discarded)")
-    print(f"{'scenario':<22}{'B_ref[A]':>9}{'B_ref[B]':>9}{'B_ref[C]':>9}{'B_ref[D]':>9}  argmax  reference_hash")
+    print(f"{'scenario':<22}{'B_ref[A]':>9}{'B_ref[B]':>9}{'B_ref[C]':>9}{'B_ref[D]':>9}  argmax  A-B margin  "
+          f"coverage(mean/min)  reference_hash")
     for sid, s in base["scenarios"].items():
         r = s["B_ref"]
+        cov = s["coverage"]
+        cov_txt = (f"{cov['mean']:.3f}/{cov['min']:.3f}" if isinstance(cov, dict)
+                   and isinstance(cov.get("mean"), float) else "unknown")
         print(f"{sid:<22}{_fmt(r[0],9)}{_fmt(r[1],9)}{_fmt(r[2],9)}{_fmt(r[3],9)}  {s['ref_argmax']:^6}  "
-              f"{s['reference_hash'][:16]}")
+              f"{s['ab_margin']:>+9.4f}  {cov_txt:>18}  {s['reference_hash'][:16]}")
+    print("(A-B margin and coverage are diagnostics only; no threshold is applied to either.)")
     for w in base["warnings"]:
         print(f"WARNING: {w}", file=sys.stderr)
     print(f"\nwrote {a.out}")
@@ -123,10 +140,12 @@ def cmd_bounce(a) -> int:
     h = Harness(client, fixtures)
     h.preflight()
     records = h.bounce(baseline, a.trials, offset, a.unit)
-    from .fold import write_traces
-
     write_traces(a.out, records)
+    meta = build_sidecar(trace_path=a.out, records=records, harness=h, baseline_doc=baseline,
+                         baseline_file_sha256=file_sha256(a.baseline), cursor_offset=offset, unit=a.unit)
+    write_sidecar(sidecar_path(a.out), meta, overwrite=True)  # rewritten together with the trace it binds
     print(f"bounced {a.trials} trial(s) x (treatment + matched control), cursor_offset={offset} {a.unit}")
+    print(f"wrote {sidecar_path(a.out)} (provenance sidecar; bound to the trace by sha256)")
     print(f"disposal witness: {sum(w['vectors_absorbed_and_zeroed'] for w in h.witnesses)} per-request vectors "
           f"absorbed+zeroed, {sum(w['prompt_buffers_zeroed'] for w in h.witnesses)} prompt buffers zeroed "
           f"(collector-level only; not kernel RAM scrubbing)")
@@ -139,26 +158,80 @@ def _arm(r: dict) -> str:
     return "control" if r["control"] else "treat"
 
 
+def _load_provenance(trace_path: str, records: list[dict], a) -> tuple[dict | None, dict]:
+    """Resolve (sidecar_doc, baseline_infos) for a trace. Sidecar: ``--meta`` or ``<trace>.meta.json`` if it
+    exists (verified against the trace by sha256 + per-record fold_hash; a mismatch is an error, never
+    ignored). ``--baseline`` supplies/cross-checks baselines for traces that predate sidecars."""
+    meta_path = a.meta or (sidecar_path(trace_path) if os.path.exists(sidecar_path(trace_path)) else None)
+    doc, infos = None, {}
+    if meta_path:
+        doc = load_sidecar(meta_path)
+        join_records(trace_path, records, doc)
+        infos = baseline_infos_from_sidecar(doc)
+    if a.baseline:
+        bdoc = load_baseline(a.baseline)
+        infos = merge_baseline_infos(infos, baseline_infos_from_baseline(bdoc))
+        if doc is None:
+            doc = legacy_sidecar(trace_path=trace_path, records=records, baseline_doc=bdoc,
+                                 baseline_file_sha256=file_sha256(a.baseline))
+    return doc, infos
+
+
+def _yn(v) -> str:
+    return "n/a" if v is None else ("ok" if v else "FAIL")
+
+
 def cmd_diff(a) -> int:
     records = read_traces(a.trace)
+    doc, infos = _load_provenance(a.trace, records, a)
     print(f"{'trial':>5} {'arm':<8}{'off':>4} {'argmax':^7}{'p_A':>8}{'p_B':>8}"
-          f"{'contrast_A':>12}{'contrast_B':>12}{'delta_contrast':>16}  verdict")
+          f"{'contrast_A':>12}{'contrast_B':>12}{'delta_contrast':>16}  verdict(stored)")
     for r in sorted(records, key=lambda r: (r["trial"], r["control"])):
         print(f"{r['trial']:>5} {_arm(r):<8}{r['cursor_offset']:>4} {r['raw_argmax']:^7}"
               f"{_fmt(r['p_A'])}{_fmt(r['p_B'])}{_fmt(r['contrast_A'],12)}{_fmt(r['contrast_B'],12)}"
               f"{_fmt(r['delta_contrast'],16)}  {r['verdict']}")
-    g = gate(records)
+    g = gate(records, infos)
     s = g.stats
-    print()
-    print("pre-registered gate:")
-    print(f"  treatment: raw argmax==A in {s.get('n_argmax_a','?')}/{s['n_treatment']}; "
-          f"delta_contrast > {EXPOSURE_DELTA_NATS} in {s.get('n_exposed','?')}/{s['n_treatment']} "
-          f"(need >= {s.get('needed','?')})")
-    print(f"  control:   |delta_contrast| <= {CONTROL_BAND_NATS} in {s.get('n_control_clean','?')}/{s['n_control']}")
+    if g.assessments:
+        print("\nvalidity preconditions (a trial that fails any is INVALID: it is never negative evidence):")
+        print(f"{'trial':>5} {'scenario':<22}{'baseline':>9}{'A-B margin*':>12}{'treat A?':>9}{'ctrl<=0.1':>10}"
+              f"{'delta':>8}  classification")
+        for t in g.assessments:
+            margin = "n/a" if t.baseline_margin_ab is None else f"{t.baseline_margin_ab:+.4f}"
+            delta = "n/a" if t.treatment_delta is None else f"{t.treatment_delta:+.3f}"
+            print(f"{t.trial:>5} {(t.scenario_id or 'UNKNOWN'):<22}{_yn(t.baseline_ok):>9}{margin:>12}"
+                  f"{_yn(t.treatment_ok):>9}{_yn(t.control_ok):>10}{delta:>8}  {t.classification}"
+                  f"{' [' + ', '.join(t.reasons) + ']' if t.reasons else ''}")
+        print("  * diagnostic only: baseline validity uses argmax(B_ref)==A; no margin threshold exists.")
+    print("\npre-registered gate (thresholds unchanged):")
+    if "n_trials" in s:
+        print(f"  trials: {s['n_trials']}  valid: {s['n_valid']}  invalid: {s['n_invalid']}  "
+              f"valid+exposed (delta_contrast > {EXPOSURE_DELTA_NATS}): {s['n_valid_exposed']}  "
+              f"(PASS needs >= {s['needed']}; FAIL needs >= {s['min_valid_not_exposed_for_fail']} valid "
+              f"non-exposed with no failed control)")
+        print(f"  controls out of tolerance (|delta| > {CONTROL_BAND_NATS}): {s['control_out_of_tolerance'] or 'none'}")
     for reason in g.reasons:
         print(f"  - {reason}")
     print(f"\n{g.verdict}")
+    if a.json_out:
+        _write_json_new(a.json_out, {
+            "schema": "bleediff.diff-result/1", "bleediff_version": __version__,
+            "trace_sha256": file_sha256(a.trace), "verdict": g.verdict, "exit_code": g.exit_code,
+            "reasons": g.reasons, "stats": g.stats,
+            "provenance_origin": doc.get("origin") if doc else "none (no sidecar, no baseline)",
+            "trials": [t.to_json() for t in g.assessments],
+        })
+        print(f"wrote {a.json_out}")
     return g.exit_code
+
+
+def _write_json_new(path: str, obj: dict) -> None:
+    """Write a NEW json file; refuses to overwrite so existing evidence can never be clobbered."""
+    if os.path.exists(path):
+        raise TraceError(f"refusing to overwrite existing {path!r}", reason="OUTPUT_EXISTS")
+    with open(path, "w", encoding="utf-8", newline="\n") as fh:
+        json.dump(obj, fh, indent=2)
+        fh.write("\n")
 
 
 # -- inspect -------------------------------------------------------------------------------
@@ -167,8 +240,24 @@ def cmd_inspect(a) -> int:
     rows = [r for r in records if r["trial"] == a.trial]
     if not rows:
         raise Inconclusive(f"no trial {a.trial} in {a.trace}", reason="TRACE_INVALID")
+    side = {}
+    meta_path = a.meta or (sidecar_path(a.trace) if os.path.exists(sidecar_path(a.trace)) else None)
+    if meta_path:
+        try:
+            side = join_records(a.trace, records, load_sidecar(meta_path))
+        except Inconclusive as e:
+            print(f"WARNING: sidecar present but not usable for this trace ({e.reason}): {e}")
     for r in sorted(rows, key=lambda r: r["control"]):
         print(f"--- trial {r['trial']}  [{'matched neutral CONTROL' if r['control'] else 'TREATMENT (adjacent Tenant-B bleed)'}]")
+        m = side.get((r["trial"], r["control"]))
+        if m:
+            cov = m.get("coverage")
+            cov_txt = (f"mean {cov['mean']:.4f} / min {cov['min']:.4f} over {cov['n_requests']} requests"
+                       if isinstance(cov, dict) and isinstance(cov.get("mean"), float) else "UNKNOWN")
+            print(f"  scenario        {m.get('scenario_id')}")
+            print(f"  prompt tokens   {m.get('request_prompt_tokens')}")
+            print(f"  coverage        {cov_txt}  (diagnostic; no threshold defined)")
+            print(f"  control filler  {m.get('control_filler')}")
         print(f"  model_hash      {r['model_hash']}")
         print(f"  reference_hash  {r['reference_hash']}")
         print(f"  fold_hash       {r['fold_hash']}")
@@ -227,11 +316,17 @@ def build_parser() -> argparse.ArgumentParser:
 
     d = sub.add_parser("diff", help="print the contrastive residual table and the PASS/FAIL gate")
     d.add_argument("--trace", default="traces.jsonl")
+    d.add_argument("--meta", default=None, help="provenance sidecar (default: <trace>.meta.json if present)")
+    d.add_argument("--baseline", default=None,
+                   help="baseline.json; supplies baseline validity for traces that predate sidecars")
+    d.add_argument("--json-out", default=None, help="also write the classification to a NEW json file "
+                   "(never overwrites)")
     d.set_defaults(fn=cmd_diff)
 
     i = sub.add_parser("inspect", help="detailed view of a single trial")
     i.add_argument("--trace", default="traces.jsonl")
     i.add_argument("--trial", type=int, required=True)
+    i.add_argument("--meta", default=None, help="provenance sidecar (default: <trace>.meta.json if present)")
     i.set_defaults(fn=cmd_inspect)
     return p
 

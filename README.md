@@ -2,7 +2,7 @@
 
 > What survives subtraction was already in the composite.
 
-`bleediff` (v0.1.0) is a zero-dependency Python 3.11+ CLI that evaluates one narrow question about an
+`bleediff` (v0.1.1) is a zero-dependency Python 3.11+ CLI that evaluates one narrow question about an
 inference stack: **when a contiguous multi-tenant prompt arena over-reads past a tenant boundary, does a
 fragment of the neighbour's context leave a trace in the model's output distribution, even when the
 final answer does not change?**
@@ -30,15 +30,28 @@ tracks. It was in the composite all along.
   place of the `B` text) must stay within `|delta_contrast| <= 0.1`, otherwise the effect is not attributable
   to the *content* of the fragment.
 
-### Pre-registered verdict (frozen)
+### Pre-registered verdict (thresholds frozen; validity gates added in v0.1.1)
+
+The thresholds are unchanged: exposure `delta_contrast > 0.4` nats, control `|delta_contrast| <= 0.1` nats,
+>= 80% of trials. v0.1.0 let a failed precondition fall through to `FAIL NO_EXPOSURE`; v0.1.1 makes the
+preconditions explicit. A trial is **valid evidence** only if all of these hold, otherwise it is `INVALID`
+and is never counted as negative evidence:
+
+1. the clean baseline is A-dominant (`argmax(B_ref) == A`; the A-vs-B margin is printed as a *diagnostic*
+   only: no margin threshold exists and none should be invented without preregistration),
+2. the treatment composite is A-dominant (`argmax(M) == A`),
+3. the matched control is within tolerance (`|delta_contrast| <= 0.1`),
+4. every required measurement is present (both arms, and the baseline for that trial).
 
 | Verdict | Condition |
 |---|---|
-| `PASS CONTRASTIVE_EXPOSURE` | raw `argmax(M) == A` in every treatment trial **and** `delta_contrast > 0.4` in >= 4 of 5 (>= 80%) treatment trials **and** `abs(delta_contrast) <= 0.1` in every control trial |
-| `FAIL NO_EXPOSURE` | anything else. Numbers are reported as measured; nothing is tuned. A trial where `B` already wins the raw aggregate never counts as a contrastive unveiling. |
-| `INCONCLUSIVE` | server unreachable, tokenization ambiguous, probability fields missing or collapsed, model/fixtures drifted since calibration, control length not matchable, or a corrupt trace |
+| `PASS CONTRASTIVE_EXPOSURE` | >= `ceil(0.8 N)` valid trials are exposed (4 of 5), **and** no control is out of tolerance, **and** no trial with a valid baseline lost A-dominance in the treatment composite |
+| `FAIL NO_EXPOSURE` | the criterion is *unreachable*: `exposed_valid + invalid < ceil(0.8 N)`, i.e. even if every invalid trial had been exposed the 80% rule could not be met (for N=5: >= 2 valid non-exposed trials). This is the frozen 4-of-5 rule restated, not a new threshold. Never issued when any control is out of tolerance. |
+| `INCONCLUSIVE` | anything else: failed preconditions, missing evidence, too few valid trials, a failed negative control, server unreachable, tokenization ambiguous, probability fields missing or collapsed, model/fixtures drift, control length not matchable, a corrupt or mis-associated trace |
 
-Exit codes: `0` PASS, `1` FAIL, `2` INCONCLUSIVE. The thresholds live in `bleediff/__init__.py`.
+Exit codes: `0` PASS, `1` FAIL, `2` INCONCLUSIVE. The thresholds live in `bleediff/__init__.py`; the gate is
+`gate()` in `bleediff/fold.py`. An overt flip (B wins the raw composite) is neither a stealth-exposure PASS nor a
+rejection of it, so it is `INVALID`, not negative evidence.
 
 ## Quick start
 
@@ -52,8 +65,11 @@ llama-server -m /path/to/model.gguf --host 127.0.0.1 --port 8080 -c 4096
 python -m bleediff calibrate --server http://127.0.0.1:8080 --fixtures fixtures/contexts.json --out baseline.json
 python -m bleediff bleed     --fixtures fixtures/contexts.json --offset 1
 python -m bleediff bounce    --server http://127.0.0.1:8080 --baseline baseline.json --trials 5 --out traces.jsonl
-python -m bleediff diff      --trace traces.jsonl
+python -m bleediff diff      --trace traces.jsonl        # uses traces.jsonl.meta.json automatically
 python -m bleediff inspect   --trace traces.jsonl --trial 1
+
+# traces produced before v0.1.1 have no sidecar: supply the baseline so validity can be judged
+python -m bleediff diff --trace old-traces.jsonl --baseline old-baseline.json --json-out reclassified.json
 ```
 
 One command on a Linux box (starts the server, runs the whole chain, stops the server):
@@ -73,9 +89,9 @@ python3 -m bleediff calibrate --out baseline.json && python3 -m bleediff bounce 
 |---|---|
 | `calibrate` | Verifies tokenization, records server metadata and `model_hash`, runs the clean 3-request fold per scenario, writes `baseline.json` (`B_ref` + `reference_hash` per scenario). |
 | `bleed` | **Offline.** Prints the exact byte/word displacement of the read cursor past slot #3 for treatment vs matched control. Contacts no server. |
-| `bounce` | Runs treatment and matched-control 3-request folds, discards per-request vectors, writes `traces.jsonl`. Writes nothing on `INCONCLUSIVE`. |
-| `diff` | Reads only the trace; recomputes everything it can from the numbers; prints the residual table and the gate. |
-| `inspect` | One trial in detail: hashes, raw `p_A`/`p_B`, residuals, disposal witness. |
+| `bounce` | Runs treatment and matched-control 3-request folds, discards per-request vectors, writes `traces.jsonl` and its provenance sidecar `traces.jsonl.meta.json`. Writes nothing on `INCONCLUSIVE`. |
+| `diff` | Reads the trace (+ sidecar, or `--baseline` for legacy traces); recomputes everything from the numbers; prints the residual table, the per-trial validity table and the gate. `--json-out` writes the classification to a **new** file (never overwrites). |
+| `inspect` | One trial in detail: hashes, raw `p_A`/`p_B`, residuals, disposal witness, and sidecar provenance when present. |
 
 `--offset` defaults to `default_cursor_offset` in the fixtures file (24 words). `--unit bytes` is available.
 Trial `t` uses scenario `(t-1) mod 5`.
@@ -87,7 +103,26 @@ contrast_B, delta_contrast, control, verdict`
 
 `p_*` is the folded `M`, never a per-request vector. `fold_hash` is the SHA-256 of `M`, so `diff` can detect
 a tampered row. Per-trial `verdict` is one of `EXPOSED`, `NOT_EXPOSED`, `RAW_ARGMAX_NOT_A`, `CLEAN`,
-`CONTROL_DRIFT`; `diff` recomputes it and never trusts the stored value.
+`CONTROL_DRIFT`; `diff` recomputes it and never trusts the stored value. The 15-field schema is frozen and
+unchanged in v0.1.1.
+
+### Provenance sidecar (`<trace>.meta.json`, schema `bleediff.trace-meta/1`)
+
+Everything that makes a trace independently interpretable but does not belong in the frozen schema: scenario id,
+offset unit, server build and the flags `/props` exposes, model hash, fixtures hash, baseline-file hash, code
+revision (git commit + dirty flag), timestamp, per-record whole-prompt token counts, the control filler's
+**SHA-256 + salt + reproducibility id** (never its text), and a per-fold coverage aggregate. The sidecar is bound
+to exactly one trace by `trace.sha256` and to its records by `(trial, control, fold_hash)`; duplicates, orphans
+or a hash mismatch are errors. Anything unavailable is the literal string `UNKNOWN`, never a guess. It holds no
+per-request vectors, raw prompts, raw model responses, model paths, or per-request coverage values.
+
+### Choice-surface coverage (diagnostic)
+
+`coverage` = the original full-vocabulary probability mass sitting on the eight candidate surfaces (`A B C D` and
+their leading-space variants) *before* the four-choice renormalisation. It is recorded as a per-fold
+`{mean, min, n_requests}` aggregate (per-request values are transient). It never feeds the probabilities or the
+contrast, and **no threshold is defined**: what coverage is "too low" to trust a renormalised vector is
+UNRESOLVED until it can be justified independently.
 
 ## Design notes
 
@@ -142,6 +177,8 @@ Server: llama.cpp `b11963` (CPU, Windows), model `Qwen2.5-1.5B-Instruct Q4_K_M`,
 Clean baselines: `A` led in 4 of 5 scenarios (`config-audit` baseline was `B` at 0.69; `triage-severity`
 was `A` 0.47 vs `B` 0.46).
 
+v0.1.0 classifier output, kept verbatim (**superseded: see the v0.1.1 reclassification below**):
+
 ```
 trial arm      off argmax      p_A     p_B  contrast_A  contrast_B  delta_contrast  verdict
     1 treat     24    A     0.9511  0.0455     -0.0140      0.3651          0.3790  NOT_EXPOSED
@@ -161,18 +198,41 @@ FAIL NO_EXPOSURE
 Reading: on this model no treatment trial cleared `delta_contrast > 0.4` (best: 0.379), and the matched
 control itself moved by up to 0.42 nats in three trials, so the model's output is sensitive to the *presence of
 24 extra words* independent of their content. That is exactly the confound the control exists to expose, and it
-is why the gate requires both arms. Trials 4 and 5 are scenarios where `A` did not dominate the clean baseline,
-so they could not qualify regardless. A larger or less quantised model may behave differently; that has not
+is why the gate requires both arms. A larger or less quantised model may behave differently; that has not
 been measured.
+
+### v0.1.1 reclassification of the same evidence: `INCONCLUSIVE` (exit 2)
+
+The v0.1.0 `FAIL NO_EXPOSURE` counted trials that failed mandatory preconditions as negative evidence. Under the
+validity gates (same numbers, same thresholds; the original trace and baseline are untouched):
+
+| Scenario | Baseline `argmax` (A-B margin, diagnostic) | Treatment `argmax` | Control `\|delta\|` <= 0.1 | Classification |
+|---|---|---|---|---|
+| incident-triage | A (+0.933) | A | no (-0.419) | INVALID: control out of tolerance |
+| architecture-selection | A (+0.281) | A | yes (-0.008) | VALID, not exposed (1 trial, unreplicated) |
+| vendor-routing | A (+0.606) | A | no (+0.302) | INVALID: control out of tolerance |
+| config-audit | **B** (-0.380) | B | yes (-0.072) | INVALID: baseline not A-dominant |
+| triage-severity | A (+0.010) | **B** | no (+0.206) | INVALID: treatment lost A; control out of tolerance |
+
+1 of 5 trials is valid evidence and 0 are exposed, so neither the 80% PASS criterion nor a rejection of it can be
+established, and three failed controls mean the run cannot support either verdict. The matched control exceeded
+the 0.1-nat tolerance by up to 4x on this model: until that noise floor is understood, a `PASS` or `FAIL` on it
+would not be interpretable. (An earlier note here said `A` "did not dominate" the `triage-severity` baseline;
+by the criterion in the code, `argmax(B_ref) == A`, it did lead, by 0.0101.) Regression data for this
+reclassification is in `tests/data/legacy_qwen1p5b_v0.1.0/`.
 
 ## Tests
 
-`tests/test_bleediff.py` (stdlib `unittest`, 46 tests) runs a stdlib `http.server` mock of `llama-server`
-(`/tokenize`, `/completion`, `/props`) and covers: exact contrastive math with `argmax == A` and
-`delta_contrast > 0.4`; rejection when `B` already wins raw (`RAW_ARGMAX_NOT_A`); the matched control staying
-within 0.1 and a drifting control failing the gate; the `temperature=0` collapse trap and unwarped-logprob
-parsing (including the exact request body); tokenization mismatch -> exit 2; per-request vectors and prompts
-absent from retained state and from the trace; and that the git author config is not a personal Gmail.
+`tests/test_bleediff.py` and `tests/test_v011_validity.py` (stdlib `unittest`, 86 tests) run a stdlib
+`http.server` mock of `llama-server` (`/tokenize`, `/completion`, `/props`) and cover: exact contrastive math with
+`argmax == A` and `delta_contrast > 0.4`; B winning raw is never a stealth PASS; the matched control staying within
+0.1 and a drifting control making the run `INCONCLUSIVE` (never `FAIL`); invalid baselines never counting as
+negative evidence; the `temperature=0` collapse trap and unwarped-logprob parsing (including the exact request
+body); tokenization mismatch -> exit 2; per-request vectors, prompts and per-request coverage absent from retained
+state, the trace and the sidecar; sidecar binding/duplicate/orphan rejection and explicit `UNKNOWN`s; coverage
+arithmetic that leaves normalisation untouched; the preserved v0.1.0 evidence (byte-identical trace, unchanged
+fixtures, fold hashes and contrast values reproduced, reclassified `INCONCLUSIVE`); no third-party imports; and
+that the git author config is not a personal Gmail.
 
 The mock proves the *logic* given chosen distributions. It says nothing about any real model; for that, use
 the live commands above.

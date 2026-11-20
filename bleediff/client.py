@@ -28,7 +28,7 @@ import urllib.error
 import urllib.request
 from dataclasses import dataclass, field
 
-from . import CHOICES
+from . import CHOICES, UNKNOWN
 from .errors import (
     Inconclusive,
     MissingProbabilities,
@@ -150,8 +150,29 @@ def _entry_logprob(item: dict) -> float | None:
     return None
 
 
+@dataclass(frozen=True)
+class ChoiceReading:
+    """One request's normalised choice vector plus a *diagnostic* coverage scalar.
+
+    ``coverage`` is the original full-vocabulary probability mass that sat on the eight candidate
+    surfaces (A/B/C/D and their leading-space variants) BEFORE renormalisation, i.e. ``exp(logsumexp)``
+    of the surface logprobs. It is only defined for pre-sampling ``logprob`` responses (a softmax over
+    the whole vocabulary); for post-sampling / legacy ``prob`` responses it is ``None`` because those
+    numbers are not full-vocabulary masses. It never feeds back into ``probs``.
+    """
+
+    probs: list[float]
+    coverage: float | None
+    coverage_basis: str  # "pre_sampling_logprob" | "unavailable_post_sampling_or_legacy"
+
+
 def parse_choice_probs(response: dict, report: TokenizationReport) -> list[float]:
-    """Extract the normalised [pA, pB, pC, pD] vector from a ``/completion`` response.
+    """Extract the normalised [pA, pB, pC, pD] vector from a ``/completion`` response."""
+    return parse_choice_reading(response, report).probs
+
+
+def parse_choice_reading(response: dict, report: TokenizationReport) -> ChoiceReading:
+    """Extract the normalised [pA, pB, pC, pD] vector (and coverage) from a ``/completion`` response.
 
     Raises MissingProbabilities if fields are absent or a choice token is outside the returned
     top-N, and ProbabilityCollapse if the response carries the signature of a collapsed / warped
@@ -191,6 +212,7 @@ def parse_choice_probs(response: dict, report: TokenizationReport) -> list[float
 
     per_letter: dict[str, list[float]] = {c: [] for c in CHOICES}
     seen: set = set()
+    pre_sampling = True  # flips to False if any choice entry is a post-sampling / legacy ``prob``
     for item in pool:
         if not isinstance(item, dict):
             continue
@@ -214,6 +236,8 @@ def parse_choice_probs(response: dict, report: TokenizationReport) -> list[float
                 f"choice {letter!r} has zero probability (logprob={item.get('logprob', item.get('prob'))!r}); "
                 "this is the greedy/post-sampling collapse signature"
             )
+        if "logprob" not in item:
+            pre_sampling = False
         per_letter[letter].append(lp)
 
     missing = [c for c in CHOICES if not per_letter[c]]
@@ -224,8 +248,11 @@ def parse_choice_probs(response: dict, report: TokenizationReport) -> list[float
 
     masses = [_logsumexp(per_letter[c]) for c in CHOICES]
     z = _logsumexp(masses)
-    probs = [math.exp(m - z) for m in masses]
-    return probs
+    probs = [math.exp(m - z) for m in masses]  # unchanged four-choice renormalisation
+    # Diagnostic only: z is log of the raw full-vocabulary mass on the eight surfaces.
+    if pre_sampling:
+        return ChoiceReading(probs, math.exp(z), "pre_sampling_logprob")
+    return ChoiceReading(probs, None, "unavailable_post_sampling_or_legacy")
 
 
 # --------------------------------------------------------------------------------------
@@ -249,6 +276,22 @@ class ServerInfo:
             "build_info": self.build_info,
             "model_hash": self.model_hash,
             "model_hash_basis": self.model_hash_basis,
+        }
+
+    def public_flags(self) -> dict:
+        """Server settings /props actually exposes, minus anything path-like. Anything /props does not
+        report stays the explicit string UNKNOWN: never guessed (e.g. thread count, GPU layers)."""
+        gen = self.props.get("default_generation_settings") or {}
+
+        def pick(value):
+            return value if isinstance(value, (int, float, bool)) else UNKNOWN
+
+        return {
+            "n_ctx": pick(gen.get("n_ctx")),
+            "total_slots": pick(self.props.get("total_slots")),
+            "threads": UNKNOWN,
+            "n_gpu_layers": UNKNOWN,
+            "source": "/props (whitelisted numeric fields only)",
         }
 
 
@@ -277,6 +320,10 @@ class LlamaClient:
         self.n_probs = n_probs
         self._report: TokenizationReport | None = None
         self.last_n_probs_used: int = n_probs
+        # Transient diagnostic: overwritten on every call, never accumulated here. The harness reads it
+        # immediately after each request and keeps only a per-fold aggregate.
+        self.last_coverage: float | None = None
+        self.last_coverage_basis: str = UNKNOWN
         self._tok_cache: dict[str, list[int]] = {}
 
     # -- transport ---------------------------------------------------------------------
@@ -385,11 +432,13 @@ class LlamaClient:
             n = self.n_probs * mult
             resp = self._request("POST", "/completion", self.completion_payload(prompt, n))
             try:
-                vec = parse_choice_probs(resp, self.report)
+                reading = parse_choice_reading(resp, self.report)
             except MissingProbabilities as e:
                 last = e
                 continue  # widen the top-N window and retry
             self.last_n_probs_used = n
-            return vec
+            self.last_coverage = reading.coverage
+            self.last_coverage_basis = reading.coverage_basis
+            return reading.probs
         assert last is not None
         raise last

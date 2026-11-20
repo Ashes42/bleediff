@@ -3,7 +3,10 @@
     What survives subtraction was already in the composite.
 """
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
+
+#: Marker for metadata that was not available and was deliberately not guessed.
+UNKNOWN = "UNKNOWN"
 
 #: The frozen 4-choice grammar.
 CHOICES = ("A", "B", "C", "D")

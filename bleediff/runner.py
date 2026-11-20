@@ -5,8 +5,9 @@ from __future__ import annotations
 import datetime as _dt
 import json
 
-from . import CHOICES, __version__
+from . import CHOICES, UNKNOWN, __version__
 from .arena import (
+    FILLER_ALGORITHM,
     Fixtures,
     RequestPlan,
     make_neutral_filler,
@@ -16,6 +17,7 @@ from .arena import (
 from .client import LlamaClient, ServerInfo, TokenizationReport
 from .errors import BaselineError, Inconclusive
 from .fold import FoldAccumulator, argmax_choice, make_record, reference_hash
+from .meta import filler_hash, filler_repro_id
 
 FILLER_SALTS = 12  # attempts to find a neutral filler whose token count matches the treatment fragment
 
@@ -33,10 +35,12 @@ def load_baseline(path: str) -> dict:
 
 
 class Harness:
-    """Holds ONLY: the client, fixtures, server info, final records, and disposal witnesses.
+    """Holds ONLY: the client, fixtures, server info, final records, disposal witnesses, and per-fold
+    *aggregate* diagnostics (``meta_records``: scenario id, token counts, coverage mean/min, filler hash).
 
-    It never stores a per-request probability vector or a source prompt. Those exist only inside
-    ``fold()`` and are zeroed/cleared before it returns.
+    It never stores a per-request probability vector, a per-request coverage value, a source prompt, or the
+    raw control-filler text. Those exist only inside ``fold()`` / ``bounce()`` and are zeroed, cleared or
+    dropped before they return.
     """
 
     def __init__(self, client: LlamaClient, fixtures: Fixtures):
@@ -46,6 +50,8 @@ class Harness:
         self.report: TokenizationReport | None = None
         self.records: list[dict] = []
         self.witnesses: list[dict] = []
+        self.meta_records: list[dict] = []
+        self._last_diag: dict | None = None
 
     # -- setup ---------------------------------------------------------------------------
     def preflight(self) -> ServerInfo:
@@ -54,15 +60,37 @@ class Harness:
         return self.info
 
     # -- the fold ------------------------------------------------------------------------
-    def fold(self, plan: RequestPlan) -> list[float]:
-        """Issue the 3 requests, fold to M = mean(p1, p2, p3), dispose of the sources."""
+    def fold(self, plan: RequestPlan, measure_tokens: bool = False) -> list[float]:
+        """Issue the 3 requests, fold to M = mean(p1, p2, p3), dispose of the sources.
+
+        Side output (``self._last_diag``, aggregates only): whole-prompt token counts (when requested) and
+        the choice-surface coverage mean/min over the three requests. Per-request coverage values live in a
+        local list that is cleared before return.
+        """
         acc = FoldAccumulator(expected=3)
         zeroed = 0
+        coverages: list = []
+        tokens: list = []
+        basis = UNKNOWN
         for buf in plan.prompts:
-            vec = self.client.choice_probs(buf.decode("ascii"))
+            prompt = buf.decode("ascii")
+            if measure_tokens:
+                tokens.append(len(self.client.tokenize(prompt, cache=False)))
+            vec = self.client.choice_probs(prompt)
+            coverages.append(self.client.last_coverage)
+            basis = self.client.last_coverage_basis
+            self.client.last_coverage = None  # transient: do not leave a per-request value on the client
+            del prompt
             scrub(buf)
             zeroed += 1
             acc.absorb(vec)  # sums, then zeroes + clears `vec` in place
+        if coverages and all(isinstance(c, float) for c in coverages):
+            cov = {"mean": sum(coverages) / len(coverages), "min": min(coverages),
+                   "n_requests": len(coverages), "basis": basis}
+        else:
+            cov = {"mean": UNKNOWN, "min": UNKNOWN, "n_requests": len(coverages), "basis": basis}
+        coverages.clear()
+        self._last_diag = {"request_prompt_tokens": tokens if measure_tokens else UNKNOWN, "coverage": cov}
         plan.dispose()
         m = acc.finalize()
         self.witnesses.append(
@@ -85,13 +113,16 @@ class Harness:
             ref_am = argmax_choice(b_ref)
             if ref_am != "A":
                 warnings.append(
-                    f"scenario {sc.id!r}: clean baseline argmax is {ref_am}, not A (fixture does not "
-                    "make A dominate on this model)"
+                    f"scenario {sc.id!r}: clean baseline argmax is {ref_am}, not A: trials for this "
+                    "scenario will be INVALID (baseline precondition), not negative evidence"
                 )
             scenarios[sc.id] = {
                 "B_ref": b_ref,
                 "reference_hash": reference_hash(info.model_hash, sc.id, self.fixtures.sha256, b_ref),
                 "ref_argmax": ref_am,
+                # diagnostics only (no threshold is applied to either):
+                "ab_margin": b_ref[0] - b_ref[1],
+                "coverage": self._last_diag["coverage"] if self._last_diag else UNKNOWN,
             }
         return {
             "bleediff_version": __version__,
@@ -108,8 +139,10 @@ class Harness:
         }
 
     # -- bounce --------------------------------------------------------------------------
-    def _matched_filler(self, adjacent: str, fragment_words: int, unit: str, offset: int, sc) -> str:
-        """Neutral filler whose bleed fragment matches the treatment fragment in bytes AND model tokens."""
+    def _matched_filler(self, adjacent: str, fragment_words: int, unit: str, offset: int, sc) -> tuple[str, int]:
+        """Neutral filler whose bleed fragment matches the treatment fragment in bytes AND model tokens.
+
+        Returns ``(filler_text, salt)``; the caller keeps only the salt and the text's SHA-256."""
         count = lambda s: len(self.client.tokenize(s))  # noqa: E731
         treat = plan_requests(sc, "treatment", offset, unit)
         want_bytes = treat.bleed_fragment
@@ -125,7 +158,7 @@ class Harness:
             got_tokens = len(self.client.tokenize("\n" + frag.decode("ascii"), cache=False))
             last = (len(frag), len(want_bytes), got_tokens, want_tokens)
             if len(frag) == len(want_bytes) and got_tokens == want_tokens:
-                return filler
+                return filler, salt
         raise Inconclusive(
             "could not build a neutral control matching the treatment fragment in bytes and tokens "
             f"(bytes {last[0]} vs {last[1]}, tokens {last[2]} vs {last[3]}) for scenario {sc.id!r}",
@@ -150,17 +183,35 @@ class Harness:
                 raise BaselineError(f"baseline has no reference for scenario {sc.id!r}")
             b_ref = [float(x) for x in ref["B_ref"]]
             for control in (False, True):
+                filler_meta: object = "NOT_APPLICABLE"
                 if control:
-                    filler = self._matched_filler(sc.adjacent, 0, unit, offset, sc)
+                    filler, salt = self._matched_filler(sc.adjacent, 0, unit, offset, sc)
                     plan = plan_requests(sc, "control", offset, unit, filler=filler)
+                    filler_meta = {
+                        "sha256": filler_hash(filler),
+                        "salt": salt,
+                        "repro_id": filler_repro_id(
+                            model_hash=info.model_hash, fixtures_sha256=self.fixtures.sha256,
+                            scenario_id=sc.id, cursor_offset=offset, unit=unit, salt=salt,
+                            algorithm=FILLER_ALGORITHM),
+                        "algorithm": FILLER_ALGORITHM,
+                    }
+                    del filler  # the raw filler text is never retained, only its hash
                 else:
                     plan = plan_requests(sc, "treatment", offset, unit)
-                m = self.fold(plan)
-                records.append(
-                    make_record(
-                        trial=t, model_hash=info.model_hash, cursor_offset=offset, m=m, b_ref=b_ref,
-                        ref_hash=ref["reference_hash"], control=control,
-                    )
+                m = self.fold(plan, measure_tokens=True)
+                rec = make_record(
+                    trial=t, model_hash=info.model_hash, cursor_offset=offset, m=m, b_ref=b_ref,
+                    ref_hash=ref["reference_hash"], control=control,
                 )
+                records.append(rec)
+                diag = self._last_diag or {}
+                self.meta_records.append({
+                    "trial": t, "control": control, "fold_hash": rec["fold_hash"],
+                    "scenario_id": sc.id,
+                    "request_prompt_tokens": diag.get("request_prompt_tokens", UNKNOWN),
+                    "coverage": diag.get("coverage", UNKNOWN),
+                    "control_filler": filler_meta,
+                })
         self.records = records
         return records

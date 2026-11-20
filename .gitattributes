@@ -1,0 +1,2 @@
+fixtures/contexts.json -text
+tests/data/** -text

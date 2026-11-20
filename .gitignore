@@ -9,3 +9,20 @@ runs/
 baseline*.json
 traces*.jsonl
 *.log
+
+# credentials / secrets / local model files (never commit)
+.env
+.env.*
+*.pem
+*.key
+id_rsa*
+credentials*
+secrets*
+*.gguf
+*.safetensors
+# per-run provenance sidecars next to ignored traces
+*.jsonl.meta.json
+
+# sanitised regression evidence shipped with the repo (see tests/data/*/README.md)
+!tests/data/
+!tests/data/**

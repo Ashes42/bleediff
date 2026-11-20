@@ -27,22 +27,33 @@ from unittest import mock
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
-from bleediff import CHOICES, EPS  # noqa: E402
+from bleediff import CHOICES, EPS, UNKNOWN  # noqa: E402
+from bleediff import meta as meta_mod  # noqa: E402
 from bleediff import arena as arena_mod  # noqa: E402
 from bleediff import client as client_mod  # noqa: E402
 from bleediff import runner as runner_mod  # noqa: E402
 from bleediff.arena import Arena, load_fixtures, make_neutral_filler, plan_requests  # noqa: E402
 from bleediff.cli import main  # noqa: E402
-from bleediff.client import LlamaClient, parse_choice_probs, verify_tokenization_with  # noqa: E402
+from bleediff.client import (  # noqa: E402
+    LlamaClient,
+    parse_choice_probs,
+    parse_choice_reading,
+    verify_tokenization_with,
+)
 from bleediff.errors import (  # noqa: E402
     Inconclusive,
     ProbabilityCollapse,
     TokenizationError,
 )
 from bleediff.fold import (  # noqa: E402
+    BaselineInfo,
     FoldAccumulator,
     TRACE_SCHEMA,
+    argmax_choice,
+    baseline_info_from_b_ref,
+    check_record,
     contrast,
+    fold_hash,
     gate,
     make_record,
     read_traces,
@@ -84,6 +95,8 @@ class MockState:
         self.choice_mass = kw.get("choice_mass", 0.7)     # raw full-vocab mass on the 8 choice surfaces
         self.deep_b = kw.get("deep_b", False)             # push B far down the ranking (window escalation)
         self.fixed_vec = kw.get("fixed_vec")              # return this vector for every request
+        self.props = kw.get("props", {"model_path": "/models/mock-model.gguf", "model_alias": "mock-model",
+                                      "build_info": "b0000-mock", "default_generation_settings": {}})
         self.requests: list[dict] = []
         self.flip = False
 
@@ -174,8 +187,7 @@ class _Handler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         if self.path == "/props":
-            self._send({"model_path": "/models/mock-model.gguf", "model_alias": "mock-model",
-                        "build_info": "b0000-mock", "default_generation_settings": {}})
+            self._send(self.server.state.props)  # type: ignore[attr-defined]
         elif self.path == "/health":
             self._send({"status": "ok"})
         else:
@@ -298,6 +310,7 @@ class TestContrastiveMath(unittest.TestCase):
 
     def test_gate_threshold_logic_on_synthetic_records(self):
         ref = [0.8, 0.08, 0.07, 0.05]
+        base = {"r": baseline_info_from_b_ref(ref, "s")}
 
         def rec(trial, m, control=False):
             return make_record(trial=trial, model_hash="h", cursor_offset=24, m=m, b_ref=ref,
@@ -308,23 +321,27 @@ class TestContrastiveMath(unittest.TestCase):
         clean = [0.80, 0.08, 0.07, 0.05]
         # 4/5 exposed + clean controls -> PASS
         recs = [rec(i, exposed) for i in range(1, 5)] + [rec(5, weak)] + [rec(i, clean, True) for i in range(1, 6)]
-        self.assertEqual(gate(recs).verdict, "PASS CONTRASTIVE_EXPOSURE")
-        # 3/5 exposed -> FAIL
+        self.assertEqual(gate(recs, base).verdict, "PASS CONTRASTIVE_EXPOSURE")
+        # 3/5 exposed, all trials valid -> the 80% criterion is unreachable -> FAIL
         recs = [rec(i, exposed) for i in range(1, 4)] + [rec(i, weak) for i in (4, 5)] \
             + [rec(i, clean, True) for i in range(1, 6)]
-        g = gate(recs)
+        g = gate(recs, base)
         self.assertEqual(g.verdict, "FAIL NO_EXPOSURE")
         self.assertEqual(g.exit_code, 1)
-        # a drifting control -> FAIL even with 5/5 exposed
+        # a drifting control is NOT evidence: INCONCLUSIVE even with 5/5 exposed (never PASS, never FAIL)
         drift = [0.70, 0.18, 0.07, 0.05]  # delta ~ +0.95 in the control arm
         recs = [rec(i, exposed) for i in range(1, 6)] + [rec(i, clean, True) for i in range(1, 5)] \
             + [rec(5, drift, True)]
-        self.assertEqual(gate(recs).verdict, "FAIL NO_EXPOSURE")
+        g = gate(recs, base)
+        self.assertEqual((g.verdict, g.exit_code), ("INCONCLUSIVE", 2))
         # no control arm -> INCONCLUSIVE
-        self.assertEqual(gate([rec(i, exposed) for i in range(1, 6)]).verdict, "INCONCLUSIVE")
+        self.assertEqual(gate([rec(i, exposed) for i in range(1, 6)], base).verdict, "INCONCLUSIVE")
         # tampered record -> INCONCLUSIVE
         recs = [rec(i, exposed) for i in range(1, 6)] + [rec(i, clean, True) for i in range(1, 6)]
         recs[0] = dict(recs[0], p_A=0.5)
+        self.assertEqual(gate(recs, base).verdict, "INCONCLUSIVE")
+        # no baseline information at all -> required measurement unavailable -> INCONCLUSIVE
+        recs = [rec(i, exposed) for i in range(1, 6)] + [rec(i, clean, True) for i in range(1, 6)]
         self.assertEqual(gate(recs).verdict, "INCONCLUSIVE")
 
 
@@ -346,10 +363,13 @@ class TestRawBWinsIsRejected(unittest.TestCase):
                 # ... but it is not a contrastive unveiling: the naive output check already sees B.
                 self.assertEqual(r["verdict"], "RAW_ARGMAX_NOT_A")
             code, text = res["diff"]
-            self.assertEqual(code, 1, text)
-            self.assertIn("FAIL NO_EXPOSURE", text)
+            # v0.1.1: an overt flip (B wins the raw composite) is neither stealth exposure (never PASS)
+            # nor a rejection of it (never FAIL): the trials fail the A-dominance precondition.
+            self.assertEqual(code, 2, text)
             self.assertNotIn("PASS CONTRASTIVE_EXPOSURE", text)
-            self.assertIn("not A", text)
+            self.assertNotIn("FAIL NO_EXPOSURE", text)
+            self.assertIn("TREATMENT_ARGMAX_NOT_A", text)
+            self.assertIn("overt flip", text)
 
 
 # --------------------------------------------------------------------------------------
@@ -380,14 +400,17 @@ class TestMatchedControl(unittest.TestCase):
                 t.arena.dispose()
                 c.arena.dispose()
 
-    def test_a_drifting_control_fails_the_gate(self):
+    def test_a_drifting_control_makes_the_run_inconclusive_not_a_verdict(self):
         # A reader whose output shifts toward B merely because *something* was appended (length effect).
         with serve(control_vec=[0.52, 0.37, 0.05, 0.06]) as (url, _), tempfile.TemporaryDirectory() as tmp:
             res = pipeline(tmp, url)
             recs = read_traces(res["trace"])
             self.assertTrue(all(r["verdict"] == "CONTROL_DRIFT" for r in recs if r["control"]))
-            self.assertEqual(res["diff"][0], 1, res["diff"][1])
-            self.assertIn("matched neutral control exceeded", res["diff"][1])
+            self.assertEqual(res["diff"][0], 2, res["diff"][1])
+            self.assertIn("INCONCLUSIVE", res["diff"][1])
+            self.assertNotIn("FAIL NO_EXPOSURE", res["diff"][1])
+            self.assertNotIn("PASS CONTRASTIVE_EXPOSURE", res["diff"][1])
+            self.assertIn("negative control failed", res["diff"][1])
 
     def test_filler_matches_token_counts_for_a_digit_splitting_tokenizer(self):
         """Qwen-style BPE splits every digit into its own token; the filler must still match token-for-token."""
@@ -663,8 +686,9 @@ class TestSourceVectorDisposal(unittest.TestCase):
             # (c) no retained harness state contains an individual pre-fold value or an assembled prompt
             floats, strings = [], []
             seen = set()
-            for part in (h.client, h.info, h.report, h.records, h.witnesses):
+            for part in (h.client, h.info, h.report, h.records, h.witnesses, h.meta_records, h._last_diag):
                 _walk(part, floats, strings, seen)
+            self.assertIsNone(h.client.last_coverage, "a per-request coverage value was left on the client")
             individual = {x for snap in snapshots for x in snap}
             self.assertFalse(individual & set(floats), "a pre-fold probability survived in harness state")
             joined = "\n".join(strings)

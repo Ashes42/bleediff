@@ -249,6 +249,9 @@ def _neutral_candidates(length: int) -> list[str]:
 
 _SPLIT = re.compile(r"^(\W*)(.*?)(\W*)$", re.S)
 
+#: Identifies the filler-construction algorithm in provenance records (bump if make_neutral_filler changes).
+FILLER_ALGORITHM = "neutral-filler/2"
+
 
 def _shape_preserving(core: str, n: int, words: bool = False) -> str:
     """Same length and character classes as ``core``; every digit/letter is replaced by a different one.

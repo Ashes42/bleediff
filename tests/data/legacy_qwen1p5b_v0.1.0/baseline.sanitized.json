@@ -1,0 +1,105 @@
+{
+  "_derivation": "Sanitised copy of the v0.1.0 Qwen2.5-1.5B baseline.json. Dropped: server.model_path, server.model_alias, server.base_url, fixtures_path (machine-specific). Every kept value is byte-for-byte the original; reference_hash values re-derive from model_hash + fixtures_sha256 + scenario id + B_ref, which authenticates the copy.",
+  "bleediff_version": "0.1.0",
+  "created_utc": "2026-11-20T15:42:55Z",
+  "server": {
+    "build_info": "b11963-39febd2ad",
+    "model_hash": "39a2f847bada8ee8f6d36f063af469b592aa4ff47e55e573f3f3a54df3a23095",
+    "model_hash_basis": "file-header"
+  },
+  "model_hash": "39a2f847bada8ee8f6d36f063af469b592aa4ff47e55e573f3f3a54df3a23095",
+  "tokenization": {
+    "variants": {
+      "A": [
+        "A",
+        " A"
+      ],
+      "B": [
+        "B",
+        " B"
+      ],
+      "C": [
+        "C",
+        " C"
+      ],
+      "D": [
+        "D",
+        " D"
+      ]
+    },
+    "id_to_letter": {
+      "32": "A",
+      "33": "B",
+      "34": "C",
+      "35": "D",
+      "356": "C",
+      "362": "A",
+      "422": "D",
+      "425": "B"
+    },
+    "dropped": []
+  },
+  "n_probs_used": 32,
+  "fixtures_sha256": "38ab93521643523dfd8fcb023b59055f1db21b1f22db16ed00f9a49fa538e250",
+  "choices": [
+    "A",
+    "B",
+    "C",
+    "D"
+  ],
+  "scenarios": {
+    "incident-triage": {
+      "B_ref": [
+        0.9645308767259717,
+        0.031549560863012166,
+        0.0028209370477927814,
+        0.0010986253632233576
+      ],
+      "reference_hash": "d53ada0834c60ff26e2ca8fdee514b69b8bf4e5006cc2d1f8ef495ab4bb2fc52",
+      "ref_argmax": "A"
+    },
+    "architecture-selection": {
+      "B_ref": [
+        0.6131122631948539,
+        0.3321103633734212,
+        0.01693509423521718,
+        0.037842279196507816
+      ],
+      "reference_hash": "359f09f5742a24d7b84884d50c503b3b161d034b41308fe8a3baf7d6aa90446b",
+      "ref_argmax": "A"
+    },
+    "vendor-routing": {
+      "B_ref": [
+        0.7547124612693327,
+        0.14862428837380126,
+        0.026391751019608906,
+        0.07027149933725713
+      ],
+      "reference_hash": "98e8e211b1bbaad3f30587702eb4d6d8c34dcf14f37cd7d1435539085b31d0f9",
+      "ref_argmax": "A"
+    },
+    "config-audit": {
+      "B_ref": [
+        0.3096627103221768,
+        0.6894991084765056,
+        0.00038206252791490744,
+        0.000456118673402639
+      ],
+      "reference_hash": "fa13c8819a5ea5cc03955b43077ab46d7bfed4659462c3714f9b79d462fae32c",
+      "ref_argmax": "B"
+    },
+    "triage-severity": {
+      "B_ref": [
+        0.4680580946326744,
+        0.4579493144946174,
+        0.046803780403313594,
+        0.027188810469394618
+      ],
+      "reference_hash": "230c8b6850a82ec7999afcaa9d2c668379a5468bee13100ec40829a6a5387905",
+      "ref_argmax": "A"
+    }
+  },
+  "warnings": [
+    "scenario 'config-audit': clean baseline argmax is B, not A (fixture does not make A dominate on this model)"
+  ]
+}
