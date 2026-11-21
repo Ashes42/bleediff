@@ -1,0 +1,104 @@
+{
+  "schema": "bleediff.track-batch/1",
+  "bleediff_version": "0.2.0",
+  "code_revision": {
+    "git_commit": "a20c05db083079bf52c2bc3510e208581fa7e692",
+    "dirty": false
+  },
+  "mode": "batch",
+  "measurement_type": "single_prompt_pairwise_margin",
+  "measurement_note": "One prompt per measurement: request #3 of the scenario, the clean authorized context (baseline) or that context with the fragment appended after it. margin_AB = ln(p_A/p_B). This is NOT the three-request fold used by calibrate/bounce/diff and its values are not delta_contrast.",
+  "observed_effects_note": "OBSERVED CANDIDATE EFFECTS: each row is one fragment's measured effect on one model and one prompt. A large shift does not show that a particular word, topic or identifier caused it, and candidates whose lengths or wording differ in several ways cannot be attributed to any one of them.",
+  "ranking_definition": "movement toward B = baseline margin - candidate margin (nats, from the unchanged margin_AB); ties share a rank",
+  "scenario": {
+    "id": "sensor-alarm-v1",
+    "fixtures_sha256": "a5e2698fe8b6f52f641a32e2946ebb2469b10f0cc7f6709db9305303eedd3a55"
+  },
+  "designated_incorrect_answer": "B",
+  "candidate_file": {
+    "name": "sensor-alarm-v1.arms.json",
+    "sha256": "8077d51128febcbc6a65559d0591a982486445cee95d0003036e78846a58ce27",
+    "candidates": 4
+  },
+  "model": {
+    "name": "qwen2.5-7b-instruct-q4_k_m-00001-of-00002",
+    "model_hash": "1442c6de8075958716f7ab7c906e81dd4a207ed6c635de59586f77a55dbe1083",
+    "model_hash_unchanged_at_end": true
+  },
+  "baseline": {
+    "probabilities": {
+      "A": 0.9999995600812633,
+      "B": 9.666158789920673e-08,
+      "C": 3.3659247182536393e-07,
+      "D": 6.664676973832506e-09
+    },
+    "margin_AB": 16.152049303069113,
+    "preferred_choice": "A",
+    "prompt_tokens": 158
+  },
+  "modal_prompt_tokens": 187,
+  "counts": {
+    "candidates": 4,
+    "scored": 4,
+    "failed_or_invalid_or_not_run": 0
+  },
+  "ranking": [
+    {
+      "rank": 1,
+      "tied": false,
+      "label": "BOTH",
+      "movement_toward_incorrect_nats": 1.7397416830988064,
+      "margin_AB": 14.412307619970306,
+      "change_from_baseline": -1.7397416830988064,
+      "preferred_choice": "A",
+      "preferred_differs_from_baseline": false,
+      "fragment_sha256": "78d83433c6a216abec5c57486c0e3bb43d282bcb2099c0f16c84364f39d8fbde",
+      "fragment_tokens": 30,
+      "prompt_tokens": 187
+    },
+    {
+      "rank": 2,
+      "tied": false,
+      "label": "B_ONLY",
+      "movement_toward_incorrect_nats": 1.329349040908376,
+      "margin_AB": 14.822700262160737,
+      "change_from_baseline": -1.329349040908376,
+      "preferred_choice": "A",
+      "preferred_differs_from_baseline": false,
+      "fragment_sha256": "7fa5af9f2bbb973c5a9b78788f9fc1bf344574aadfcd5e1e77d52095bcfc4079",
+      "fragment_tokens": 30,
+      "prompt_tokens": 187
+    },
+    {
+      "rank": 3,
+      "tied": false,
+      "label": "NEITHER",
+      "movement_toward_incorrect_nats": 1.1203610896420244,
+      "margin_AB": 15.031688213427088,
+      "change_from_baseline": -1.1203610896420244,
+      "preferred_choice": "A",
+      "preferred_differs_from_baseline": false,
+      "fragment_sha256": "7fb3754838f37b2539db8e1ff280ecf4c8ff262deb78f24dda0a9416ceb7c056",
+      "fragment_tokens": 30,
+      "prompt_tokens": 187
+    },
+    {
+      "rank": 4,
+      "tied": false,
+      "label": "A_ONLY",
+      "movement_toward_incorrect_nats": 0.6782720088496479,
+      "margin_AB": 15.473777294219465,
+      "change_from_baseline": -0.6782720088496479,
+      "preferred_choice": "A",
+      "preferred_differs_from_baseline": false,
+      "fragment_sha256": "27e740e3fbab2c467c8c5cadfd7a9d0a50573357a115ad64e62a43a925087107",
+      "fragment_tokens": 30,
+      "prompt_tokens": 187
+    }
+  ],
+  "unscored": [],
+  "files": {
+    "history.jsonl": "8d9a8d6e1d62eff778185bb786ff658d2adda805e1eb70736aaf764c1829abb0",
+    "leaderboard.csv": "52c8b6f6c6a4f5f77ad991694e0ba51196e09c57485f7b00ad9709cc56d2c331"
+  }
+}

@@ -1,0 +1,117 @@
+{
+  "schema": "bleediff.track-batch/1",
+  "bleediff_version": "0.2.0",
+  "code_revision": {
+    "git_commit": "c0da67f12fc279894b0738ab3e61e4e32d57be8f",
+    "dirty": false
+  },
+  "mode": "batch",
+  "measurement_type": "single_prompt_pairwise_margin",
+  "measurement_note": "One prompt per measurement: request #3 of the scenario, the clean authorized context (baseline) or that context with the fragment appended after it. margin_AB = ln(p_A/p_B). This is NOT the three-request fold used by calibrate/bounce/diff and its values are not delta_contrast.",
+  "observed_effects_note": "OBSERVED CANDIDATE EFFECTS: each row is one fragment's measured effect on one model and one prompt. A large shift does not show that a particular word, topic or identifier caused it, and candidates whose lengths or wording differ in several ways cannot be attributed to any one of them.",
+  "ranking_definition": "movement toward B = baseline margin - candidate margin (nats, from the unchanged margin_AB); ties share a rank",
+  "scenario": {
+    "id": "sensor-alarm-v1",
+    "fixtures_sha256": "a5e2698fe8b6f52f641a32e2946ebb2469b10f0cc7f6709db9305303eedd3a55"
+  },
+  "designated_incorrect_answer": "B",
+  "candidate_file": {
+    "name": "sensor-alarm-v1.arms.json",
+    "sha256": "bf40dbe4d18682c842477945cd94166bb4f26eaa948b4a55c75b0d3eac9e9079",
+    "candidates": 5
+  },
+  "model": {
+    "name": "qwen2.5-7b-instruct-q4_k_m-00001-of-00002",
+    "model_hash": "1442c6de8075958716f7ab7c906e81dd4a207ed6c635de59586f77a55dbe1083",
+    "model_hash_unchanged_at_end": true
+  },
+  "baseline": {
+    "probabilities": {
+      "A": 0.9999995600812633,
+      "B": 9.666158789920673e-08,
+      "C": 3.3659247182536393e-07,
+      "D": 6.664676973832506e-09
+    },
+    "margin_AB": 16.152049303069113,
+    "preferred_choice": "A",
+    "prompt_tokens": 158
+  },
+  "modal_prompt_tokens": 189,
+  "counts": {
+    "candidates": 5,
+    "scored": 5,
+    "failed_or_invalid_or_not_run": 0
+  },
+  "ranking": [
+    {
+      "rank": 1,
+      "tied": false,
+      "label": "B_CLAIM",
+      "movement_toward_incorrect_nats": 4.91657340529922,
+      "margin_AB": 11.235475897769893,
+      "change_from_baseline": -4.91657340529922,
+      "preferred_choice": "A",
+      "preferred_differs_from_baseline": false,
+      "fragment_sha256": "4ce227af74330e89e45f6f4aa3fdb4a3f9e30a96340d0ed7e03dce1bbda7810e",
+      "fragment_tokens": 32,
+      "prompt_tokens": 189
+    },
+    {
+      "rank": 2,
+      "tied": false,
+      "label": "MATCHING_ID",
+      "movement_toward_incorrect_nats": 2.6767205000685195,
+      "margin_AB": 13.475328803000593,
+      "change_from_baseline": -2.6767205000685195,
+      "preferred_choice": "A",
+      "preferred_differs_from_baseline": false,
+      "fragment_sha256": "d987d09d943626fbb7d078976cce1cf2780d094c3a508c39934e0ed699806415",
+      "fragment_tokens": 33,
+      "prompt_tokens": 190
+    },
+    {
+      "rank": 3,
+      "tied": false,
+      "label": "TOPIC_NO_EVIDENCE",
+      "movement_toward_incorrect_nats": 2.044158577951954,
+      "margin_AB": 14.107890725117159,
+      "change_from_baseline": -2.044158577951954,
+      "preferred_choice": "A",
+      "preferred_differs_from_baseline": false,
+      "fragment_sha256": "c3ffc3496da28757a908b2275b40a587e938abe2c4b10f4a68ab892ce639385a",
+      "fragment_tokens": 33,
+      "prompt_tokens": 190
+    },
+    {
+      "rank": 4,
+      "tied": false,
+      "label": "NEUTRAL",
+      "movement_toward_incorrect_nats": 1.6438360213427217,
+      "margin_AB": 14.508213281726391,
+      "change_from_baseline": -1.6438360213427217,
+      "preferred_choice": "A",
+      "preferred_differs_from_baseline": false,
+      "fragment_sha256": "26a424dc60f2ea3284ea535f1d273c88983896f3eec98b49bba7fefa4987d0ab",
+      "fragment_tokens": 34,
+      "prompt_tokens": 191
+    },
+    {
+      "rank": 5,
+      "tied": false,
+      "label": "OFF_TOPIC",
+      "movement_toward_incorrect_nats": 0.923552870731589,
+      "margin_AB": 15.228496432337524,
+      "change_from_baseline": -0.923552870731589,
+      "preferred_choice": "A",
+      "preferred_differs_from_baseline": false,
+      "fragment_sha256": "c6fbb567e70854b077c1514ccbf6c62128cb684a8b857a3c2bd50f56058741b6",
+      "fragment_tokens": 32,
+      "prompt_tokens": 189
+    }
+  ],
+  "unscored": [],
+  "files": {
+    "history.jsonl": "2770b2f905d1efee318a51546a4bc75c35341f24485fcf4fcefee4671df68df0",
+    "leaderboard.csv": "ef26260a4140e58ba38952b4a4428f1b4307a32705152a6ab419ce86a45ffdfd"
+  }
+}

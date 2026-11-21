@@ -384,6 +384,25 @@ produces? "Not distinguishable" is an expected-possible outcome.
 * Later phases (tokenizer-only feasibility; inference) need separate authorisation. The frozen bounce/diff classifier is
   not used and not modified.
 
+## v0.3.0 single-prompt tools (track, batch, atlas)
+
+Added after the sections above were written; they do not change anything described there. Each score is **one prompt**: request #3
+of a frozen scenario, clean or with a fragment appended after its authorized context, scored by the unchanged
+`LlamaClient.choice_probs` (pre-sampling log-probabilities renormalised over A-D, tokenization verified first).
+`margin_AB = ln(p_A / p_B)`; this is not the three-request fold and not `delta_contrast`.
+
+* `bleediff.track-history/1` (`<out>/history.jsonl`): `session_start` (version, code revision, model identity and hash, server
+  flags, inference request body without prompt and grammar, tokenization report), then `measurement` records (label, fragment and
+  prompt hashes and sizes, probabilities, answer-letter coverage, margin, changes from baseline and previous step, preferred
+  answer, flips and A/B crossings, optional token counts and candidate id), `event` records and a final `session_end`.
+* `bleediff.track-batch/1` (`<out>/batch-manifest.json`): the ranking definition, candidate-file hash, model identity, baseline,
+  ranked and unscored candidates, and SHA-256 values of `history.jsonl` and `leaderboard.csv`.
+* `bleediff.atlas-input/1` (input) and `bleediff.atlas/1` (`atlas.json`): see the docstring of `bleediff/atlas.py` for the manifest
+  fields and the validation performed. The atlas recomputes nothing from a model: margins, preferred answers and shifts are
+  re-derived from the saved probabilities with `track.margin_ab`, `fold.argmax_choice` and `batch.movement_toward`.
+* Flags are descriptive, never thresholds of significance: saturated baseline (highest probability at least 0.995), low
+  answer-letter coverage (below 0.90), token mismatch, incorrect baseline, invalid score.
+
 ## Tests
 
 `tests/test_bleediff.py`, `tests/test_v011_validity.py`, `tests/test_v012_control.py` and

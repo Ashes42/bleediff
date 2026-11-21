@@ -1,0 +1,104 @@
+{
+  "schema": "bleediff.track-batch/1",
+  "bleediff_version": "0.2.0",
+  "code_revision": {
+    "git_commit": "a20c05db083079bf52c2bc3510e208581fa7e692",
+    "dirty": false
+  },
+  "mode": "batch",
+  "measurement_type": "single_prompt_pairwise_margin",
+  "measurement_note": "One prompt per measurement: request #3 of the scenario, the clean authorized context (baseline) or that context with the fragment appended after it. margin_AB = ln(p_A/p_B). This is NOT the three-request fold used by calibrate/bounce/diff and its values are not delta_contrast.",
+  "observed_effects_note": "OBSERVED CANDIDATE EFFECTS: each row is one fragment's measured effect on one model and one prompt. A large shift does not show that a particular word, topic or identifier caused it, and candidates whose lengths or wording differ in several ways cannot be attributed to any one of them.",
+  "ranking_definition": "movement toward B = baseline margin - candidate margin (nats, from the unchanged margin_AB); ties share a rank",
+  "scenario": {
+    "id": "integrity-check-v1",
+    "fixtures_sha256": "a5e2698fe8b6f52f641a32e2946ebb2469b10f0cc7f6709db9305303eedd3a55"
+  },
+  "designated_incorrect_answer": "B",
+  "candidate_file": {
+    "name": "integrity-check-v1.arms.json",
+    "sha256": "0d98ea1430d25874a18fd8328ab1cfc8fcf5c534399c0cc80d594b99b35a04e6",
+    "candidates": 4
+  },
+  "model": {
+    "name": "Llama-3.2-3B-Instruct-Q4_K_M",
+    "model_hash": "b783b9826ac539b24b803f6caa51f159e64777b18223f2927fcc061de194c55e",
+    "model_hash_unchanged_at_end": true
+  },
+  "baseline": {
+    "probabilities": {
+      "A": 0.8497261726462116,
+      "B": 0.010595069425599941,
+      "C": 0.011816317991128119,
+      "D": 0.12786243993706026
+    },
+    "margin_AB": 4.384525403380394,
+    "preferred_choice": "A",
+    "prompt_tokens": 194
+  },
+  "modal_prompt_tokens": 225,
+  "counts": {
+    "candidates": 4,
+    "scored": 4,
+    "failed_or_invalid_or_not_run": 0
+  },
+  "ranking": [
+    {
+      "rank": 1,
+      "tied": false,
+      "label": "BOTH",
+      "movement_toward_incorrect_nats": 1.5061552077531815,
+      "margin_AB": 2.8783701956272125,
+      "change_from_baseline": -1.5061552077531815,
+      "preferred_choice": "A",
+      "preferred_differs_from_baseline": false,
+      "fragment_sha256": "b718cd3fc9dd24322ec6d51c3157c45f8c22610a3fdd0ca64628cf64db31b734",
+      "fragment_tokens": 32,
+      "prompt_tokens": 225
+    },
+    {
+      "rank": 2,
+      "tied": false,
+      "label": "NEITHER",
+      "movement_toward_incorrect_nats": 1.4769613295793533,
+      "margin_AB": 2.9075640738010406,
+      "change_from_baseline": -1.4769613295793533,
+      "preferred_choice": "A",
+      "preferred_differs_from_baseline": false,
+      "fragment_sha256": "b23c4790798a2fb0f72c186ce61cfaad406512ac0577c946501d6c715b9779b6",
+      "fragment_tokens": 32,
+      "prompt_tokens": 225
+    },
+    {
+      "rank": 3,
+      "tied": false,
+      "label": "A_ONLY",
+      "movement_toward_incorrect_nats": 1.3330383151769638,
+      "margin_AB": 3.05148708820343,
+      "change_from_baseline": -1.3330383151769638,
+      "preferred_choice": "A",
+      "preferred_differs_from_baseline": false,
+      "fragment_sha256": "9954a418c053825b0a5272159c45e748b2dbc0fad0e5bab1e540c12ac960086e",
+      "fragment_tokens": 32,
+      "prompt_tokens": 225
+    },
+    {
+      "rank": 4,
+      "tied": false,
+      "label": "B_ONLY",
+      "movement_toward_incorrect_nats": 1.2034435123205185,
+      "margin_AB": 3.1810818910598755,
+      "change_from_baseline": -1.2034435123205185,
+      "preferred_choice": "A",
+      "preferred_differs_from_baseline": false,
+      "fragment_sha256": "2f752b4ba3574f8461a70812109dbd3f18bd360ba8aeda6c5d6c7ec02c1fecfe",
+      "fragment_tokens": 32,
+      "prompt_tokens": 225
+    }
+  ],
+  "unscored": [],
+  "files": {
+    "history.jsonl": "0223dcb72f44c6b7202ebf5282a2b8498b83194cef35626084bf281859188a39",
+    "leaderboard.csv": "d31290a79f34c5021ad7bdd918c54748843fcca3792da5a753e0ac6d85b5c010"
+  }
+}

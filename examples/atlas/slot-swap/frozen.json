@@ -1,0 +1,148 @@
+{
+  "schema": "bleediff.slot-swap-frozen/1",
+  "frozen_utc": "2026-11-21T19:22:50Z",
+  "code_revision": "a20c05db083079bf52c2bc3510e208581fa7e692",
+  "fixtures_sha256": "a5e2698fe8b6f52f641a32e2946ebb2469b10f0cc7f6709db9305303eedd3a55",
+  "completion_requests_before_freeze": 0,
+  "task": "sensor-alarm-v1",
+  "baseline_prompt_tokens": {
+    "qwen": 158,
+    "llama": 152
+  },
+  "candidates": {
+    "NEITHER_S": {
+      "group": "swap",
+      "cell": "neither",
+      "sha256": "7fb3754838f37b2539db8e1ff280ecf4c8ff262deb78f24dda0a9416ceb7c056",
+      "bytes": 127,
+      "words": 23,
+      "fragment_tokens": {
+        "qwen": 30,
+        "llama": 30
+      },
+      "prompt_tokens": {
+        "qwen": 187,
+        "llama": 181
+      },
+      "prompt_sha256": "08bd68680a46b8cfa090fafae12f907036d12ce513950cdac6c7f02f0ffdc21e"
+    },
+    "B_ONLY_S": {
+      "group": "swap",
+      "cell": "b_only_slot1",
+      "sha256": "481bbd82c779e862a103464f522de9296217282762043bf11a7c0dc82d1509e7",
+      "bytes": 122,
+      "words": 23,
+      "fragment_tokens": {
+        "qwen": 30,
+        "llama": 30
+      },
+      "prompt_tokens": {
+        "qwen": 187,
+        "llama": 181
+      },
+      "prompt_sha256": "9ae935108712660fc135650aa65c86688ff0b05b4a724db1f0726831a69cdda7"
+    },
+    "A_ONLY_S": {
+      "group": "swap",
+      "cell": "a_only_slot2",
+      "sha256": "a4894014820f180a81d641d4a44be6a6c89c00912b6272a9b45c2b2eb6d5aef0",
+      "bytes": 124,
+      "words": 23,
+      "fragment_tokens": {
+        "qwen": 30,
+        "llama": 30
+      },
+      "prompt_tokens": {
+        "qwen": 187,
+        "llama": 181
+      },
+      "prompt_sha256": "3676aa43f8b033d5ea746f94020d54e911bdbebb4b1e46966260b7a097687caf"
+    },
+    "BOTH_S": {
+      "group": "swap",
+      "cell": "both_swapped",
+      "sha256": "b5fea67d6c17fb21ea261bdeace2b19d67a4dc6f43cc2c72191718f9be5cad77",
+      "bytes": 119,
+      "words": 23,
+      "fragment_tokens": {
+        "qwen": 30,
+        "llama": 30
+      },
+      "prompt_tokens": {
+        "qwen": 187,
+        "llama": 181
+      },
+      "prompt_sha256": "07d640eba7850884f26610c3d31d514f82e6a18f90f4517a170088bbabd24018"
+    },
+    "ORIG_NEITHER": {
+      "group": "orig",
+      "cell": "neither",
+      "sha256": "7fb3754838f37b2539db8e1ff280ecf4c8ff262deb78f24dda0a9416ceb7c056",
+      "bytes": 127,
+      "words": 23,
+      "fragment_tokens": {
+        "qwen": 30,
+        "llama": 30
+      },
+      "prompt_tokens": {
+        "qwen": 187,
+        "llama": 181
+      },
+      "prompt_sha256": "08bd68680a46b8cfa090fafae12f907036d12ce513950cdac6c7f02f0ffdc21e"
+    },
+    "ORIG_A_ONLY": {
+      "group": "orig",
+      "cell": "a_only_slot1",
+      "sha256": "27e740e3fbab2c467c8c5cadfd7a9d0a50573357a115ad64e62a43a925087107",
+      "bytes": 122,
+      "words": 23,
+      "fragment_tokens": {
+        "qwen": 30,
+        "llama": 30
+      },
+      "prompt_tokens": {
+        "qwen": 187,
+        "llama": 181
+      },
+      "prompt_sha256": "11bbacbe45c82d918a08c32018ec83ed0b86a290d348fde5881f52839a386159"
+    },
+    "ORIG_B_ONLY": {
+      "group": "orig",
+      "cell": "b_only_slot2",
+      "sha256": "7fa5af9f2bbb973c5a9b78788f9fc1bf344574aadfcd5e1e77d52095bcfc4079",
+      "bytes": 124,
+      "words": 23,
+      "fragment_tokens": {
+        "qwen": 30,
+        "llama": 30
+      },
+      "prompt_tokens": {
+        "qwen": 187,
+        "llama": 181
+      },
+      "prompt_sha256": "0b489e78020916b8133ceb81cb52d2d53a465f38874c8f8b47b4356ef71da102"
+    },
+    "ORIG_BOTH": {
+      "group": "orig",
+      "cell": "both_orig",
+      "sha256": "78d83433c6a216abec5c57486c0e3bb43d282bcb2099c0f16c84364f39d8fbde",
+      "bytes": 119,
+      "words": 23,
+      "fragment_tokens": {
+        "qwen": 30,
+        "llama": 30
+      },
+      "prompt_tokens": {
+        "qwen": 187,
+        "llama": 181
+      },
+      "prompt_sha256": "a49fdc65cd61153a220ee7184cfb65a3ade7b66564155cb0ccdf4afcb25c8e7b"
+    }
+  },
+  "design": [
+    "Slot 1 / slot 2 hold a neutral phrase or an answer subject; the neutral phrases stay in their own slots (slot 1 neutral 'the parking rota', slot 2 neutral 'the lunch rota').",
+    "ORIG_* are the exact texts of the earlier answer-mention experiment (A in slot 1, B in slot 2); *_S have B in slot 1 and A in slot 2.",
+    "NEITHER_S and ORIG_NEITHER are the same text (a within-run repeat check).",
+    "No identifiers, verdicts or authority wording; header and trailing sentence identical."
+  ]
+}

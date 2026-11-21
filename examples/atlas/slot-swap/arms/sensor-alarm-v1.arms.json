@@ -1,0 +1,44 @@
+{
+  "candidates": [
+    {
+      "label": "NEITHER_S",
+      "text": "Tenant 4 sensor log note: The note also refers to the parking rota and the lunch rota. Probe readings are recorded each minute.",
+      "sha256": "7fb3754838f37b2539db8e1ff280ecf4c8ff262deb78f24dda0a9416ceb7c056"
+    },
+    {
+      "label": "B_ONLY_S",
+      "text": "Tenant 4 sensor log note: The note also refers to cold room 1 and the lunch rota. Probe readings are recorded each minute.",
+      "sha256": "481bbd82c779e862a103464f522de9296217282762043bf11a7c0dc82d1509e7"
+    },
+    {
+      "label": "A_ONLY_S",
+      "text": "Tenant 4 sensor log note: The note also refers to the parking rota and cold room 3. Probe readings are recorded each minute.",
+      "sha256": "a4894014820f180a81d641d4a44be6a6c89c00912b6272a9b45c2b2eb6d5aef0"
+    },
+    {
+      "label": "BOTH_S",
+      "text": "Tenant 4 sensor log note: The note also refers to cold room 1 and cold room 3. Probe readings are recorded each minute.",
+      "sha256": "b5fea67d6c17fb21ea261bdeace2b19d67a4dc6f43cc2c72191718f9be5cad77"
+    },
+    {
+      "label": "ORIG_NEITHER",
+      "text": "Tenant 4 sensor log note: The note also refers to the parking rota and the lunch rota. Probe readings are recorded each minute.",
+      "sha256": "7fb3754838f37b2539db8e1ff280ecf4c8ff262deb78f24dda0a9416ceb7c056"
+    },
+    {
+      "label": "ORIG_A_ONLY",
+      "text": "Tenant 4 sensor log note: The note also refers to cold room 3 and the lunch rota. Probe readings are recorded each minute.",
+      "sha256": "27e740e3fbab2c467c8c5cadfd7a9d0a50573357a115ad64e62a43a925087107"
+    },
+    {
+      "label": "ORIG_B_ONLY",
+      "text": "Tenant 4 sensor log note: The note also refers to the parking rota and cold room 1. Probe readings are recorded each minute.",
+      "sha256": "7fa5af9f2bbb973c5a9b78788f9fc1bf344574aadfcd5e1e77d52095bcfc4079"
+    },
+    {
+      "label": "ORIG_BOTH",
+      "text": "Tenant 4 sensor log note: The note also refers to cold room 3 and cold room 1. Probe readings are recorded each minute.",
+      "sha256": "78d83433c6a216abec5c57486c0e3bb43d282bcb2099c0f16c84364f39d8fbde"
+    }
+  ]
+}

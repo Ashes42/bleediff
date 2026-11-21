@@ -1,0 +1,29 @@
+{
+  "candidates": [
+    {
+      "label": "B_CLAIM",
+      "text": "Tenant 4 backup audit note: Operators also confirmed that the weekly file-share set was restored fully with matching checksums. The vault retains several yearly copies.",
+      "sha256": "cf47698e1674dc44f472dd20750ab8c52955e322f32c9916edaac1430357a324"
+    },
+    {
+      "label": "TOPIC_NO_EVIDENCE",
+      "text": "Tenant 4 backup audit note: Operators also confirmed that day-to-day ticket was filed for the weekly file-share set recently. The vault retains several yearly copies.",
+      "sha256": "b470f851923045b96c2372e13700a01cf11adcd32f29aff251408a3570073239"
+    },
+    {
+      "label": "OFF_TOPIC",
+      "text": "Tenant 4 lantern festival diary: Operators also confirmed that day-to-day ticket was filed for the lantern festival in autumn. The lantern festival draws large crowds.",
+      "sha256": "16e2de45d110c398bb56ae9e5bf081dc5881331384ca0881e2569877a583cc67"
+    },
+    {
+      "label": "NEUTRAL",
+      "text": "Tenant 4 village bakery diary: Several cheerful apprentices carefully inspected some buns beside the old brick oven after school. Some neighbors carried 120 golden trays.",
+      "sha256": "26a424dc60f2ea3284ea535f1d273c88983896f3eec98b49bba7fefa4987d0ab"
+    },
+    {
+      "label": "MATCHING_ID",
+      "text": "Tenant 4 backup audit note: Operators also confirmed that ticket TASK-7 was filed for the weekly file-share set recently. The vault retains several yearly copies.",
+      "sha256": "5d66b13a133d43fb1e2168097ed24755ad6c3beb62093f28c6631319ea17246c"
+    }
+  ]
+}

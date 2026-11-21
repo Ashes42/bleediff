@@ -1,0 +1,24 @@
+{
+  "candidates": [
+    {
+      "label": "NEITHER",
+      "text": "Tenant 4 backup audit note: The note also refers to the visitor parking plan and the office kitchen rota. The vault retains several yearly copies.",
+      "sha256": "688231c94b305c39ef1fccb8bdb17d77f6673919a1283f9f4b606f144ad6e1e1"
+    },
+    {
+      "label": "A_ONLY",
+      "text": "Tenant 4 backup audit note: The note also refers to the nightly database set and the office kitchen rota. The vault retains several yearly copies.",
+      "sha256": "df6b2af87c348932f72e616e40c7797418e7b6cef0a679610bd5beacf5048dd6"
+    },
+    {
+      "label": "B_ONLY",
+      "text": "Tenant 4 backup audit note: The note also refers to the visitor parking plan and the weekly file-share set. The vault retains several yearly copies.",
+      "sha256": "af75af1da6a16ad971a49d26f22e3ba84dfa1acbc659c9484ac8254df24b0c48"
+    },
+    {
+      "label": "BOTH",
+      "text": "Tenant 4 backup audit note: The note also refers to the nightly database set and the weekly file-share set. The vault retains several yearly copies.",
+      "sha256": "c1036c459e89aee335409f5f0b62c22fa1294f2add01ffd105b634cbf9af02b4"
+    }
+  ]
+}

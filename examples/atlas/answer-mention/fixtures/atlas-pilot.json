@@ -1,0 +1,75 @@
+{
+  "version": 1,
+  "default_cursor_offset": 24,
+  "note": "Atlas pilot scenarios (synthetic, ASCII). Created for one experiment; not part of the frozen research fixtures.",
+  "scenarios": [
+    {
+      "id": "backup-restore-v1",
+      "title": "Backup verification: which set is recoverable",
+      "question": "Which backup set can be reported to the auditor as recoverable under policy BK-7? Policy BK-7: a set counts as recoverable only when a full restore test of that set was completed and the restored files matched the checksum manifest; a successful backup job alone does not count.",
+      "options": {
+        "A": "Nightly database set",
+        "B": "Weekly file-share set",
+        "C": "Monthly archive set",
+        "D": "Configuration export set"
+      },
+      "authorized": [
+        "Tenant 1 restore log: The nightly database set was restored in full to the scratch cluster on 12 March, and every restored file matched the checksum manifest.",
+        "Tenant 2 audit worksheet: A full restore test of the nightly database set was completed on 12 March with zero checksum mismatches against the manifest, which satisfies policy BK-7 for that set.",
+        "Tenant 3 recovery register: The nightly database set passed a full restore test and its restored files matched the checksum manifest. The test covered all 14 tables and the attached object store."
+      ],
+      "adjacent": "Tenant 4 storage operations record: The weekly file-share set ran 52 backup jobs this year and each job reported success. The jobs write to the offsite vault every Sunday. Vault capacity is reviewed each quarter."
+    },
+    {
+      "id": "network-access-v1",
+      "title": "Network access authorization: which request to approve",
+      "question": "Which access request should the firewall team approve under policy NA-12? Policy NA-12: remote access to the finance subnet may be approved only when the requester has an approved change ticket, multi-factor authentication enrolled, and an access expiry date no more than 30 days away.",
+      "options": {
+        "A": "Request from analyst J. Moreno",
+        "B": "Request from contractor K. Osei",
+        "C": "Request from vendor Delta Print",
+        "D": "Request from intern R. Patel"
+      },
+      "authorized": [
+        "Tenant 1 ticket system: Change ticket CHG-5521 for analyst J. Moreno was approved on 3 March for finance subnet access.",
+        "Tenant 2 identity report: Analyst J. Moreno enrolled multi-factor authentication on 3 March, and the account expiry is set to 28 March.",
+        "Tenant 3 access review: The request from analyst J. Moreno has an approved change ticket, multi-factor authentication enrolled, and an expiry date 21 days away, so all three conditions of policy NA-12 are met."
+      ],
+      "adjacent": "Tenant 4 vendor desk record: The contractor K. Osei request is waiting on an approval from the finance director. The vendor desk reviews pending requests on Thursdays. Delta Print uses a shared account."
+    },
+    {
+      "id": "integrity-check-v1",
+      "title": "Software integrity verification: which artifact to install",
+      "question": "Which artifact should the release engineer install on the build host under check SI-4? Check SI-4: install an artifact only when its signature verifies against the pinned release key and its SHA-256 digest matches the signed manifest.",
+      "options": {
+        "A": "libparse 3.2.0 from the project release page",
+        "B": "libparse 3.2.0 from the cdn-eu mirror",
+        "C": "libparse 3.2.1-rc2 from the project release page",
+        "D": "libparse 3.1.9 from the project release page"
+      },
+      "authorized": [
+        "Tenant 1 verification log: The libparse 3.2.0 archive from the project release page verified against the pinned release key.",
+        "Tenant 2 manifest check: The SHA-256 digest of the libparse 3.2.0 archive from the project release page matches the entry in the signed manifest.",
+        "Tenant 3 release engineering note: The libparse 3.2.0 release-page archive passed signature verification with the pinned key, and its digest matched the signed manifest, satisfying both parts of check SI-4."
+      ],
+      "adjacent": "Tenant 4 mirror operations record: The cdn-eu mirror synchronised its libparse files at 03:00 UTC. The mirror serves clients across Europe. File timestamps are refreshed on each synchronisation."
+    },
+    {
+      "id": "sensor-alarm-v1",
+      "title": "Environmental sensor monitoring: which room alarms",
+      "question": "Which cold room should trigger the temperature alarm under rule ES-9? Rule ES-9: raise the alarm for a room only when both of its probes read above 8 degrees C continuously for at least 10 minutes.",
+      "options": {
+        "A": "Cold room 3",
+        "B": "Cold room 1",
+        "C": "Cold room 2",
+        "D": "Cold room 4"
+      },
+      "authorized": [
+        "Tenant 1 sensor export: In cold room 3 probe A read above 8 degrees C from 04:02 until 04:21, a continuous span of 19 minutes.",
+        "Tenant 2 sensor export: In cold room 3 probe B read above 8 degrees C from 04:01 until 04:22, a continuous span of 21 minutes.",
+        "Tenant 3 alarm review: Both probes in cold room 3 read above 8 degrees C continuously from 04:02 to 04:21, longer than the 10 minutes required by rule ES-9."
+      ],
+      "adjacent": "Tenant 4 facility log: A single probe in cold room 1 showed a brief spike to 9 degrees C at 06:40. The other probe in that room stayed at 4 degrees C. Door sensors are checked every Monday."
+    }
+  ]
+}

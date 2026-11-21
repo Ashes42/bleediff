@@ -1,0 +1,474 @@
+{
+  "schema": "bleediff.atlas-input/1",
+  "note": "example dataset 'answer-mention': sanitized saved batch sessions (raw prompt presentation); see examples/atlas/README.md",
+  "sessions": [
+    {
+      "id": "backup-restore-v1/qwen1.5b/raw",
+      "session_dir": "sessions/qwen1.5b/backup-restore-v1",
+      "task": {
+        "id": "backup-restore-v1",
+        "name": "Backup verification"
+      },
+      "model": {
+        "id": "qwen1.5b",
+        "name": "Qwen2.5-1.5B-Instruct Q4_K_M",
+        "model_hash": "39a2f847bada8ee8f6d36f063af469b592aa4ff47e55e573f3f3a54df3a23095"
+      },
+      "presentation": "raw",
+      "correct_answer": "A",
+      "incorrect_answer": "B",
+      "candidates": {
+        "NEITHER": "neither",
+        "A_ONLY": "a_only",
+        "B_ONLY": "b_only",
+        "BOTH": "both"
+      },
+      "evidence": [
+        {
+          "role": "candidate_file",
+          "path": "arms/backup-restore-v1.arms.json",
+          "sha256": "e20dacb650a07b21aa95604ceb84e288c5dfab487a20cf08b4cce2f13a7c3ddc"
+        },
+        {
+          "role": "fixtures",
+          "path": "fixtures/atlas-pilot.json",
+          "sha256": "a5e2698fe8b6f52f641a32e2946ebb2469b10f0cc7f6709db9305303eedd3a55"
+        },
+        {
+          "role": "frozen",
+          "path": "frozen.json",
+          "sha256": "04cc4ef772d5020f6c756c1364fbf757caa4822eb497e5129e99f53f3efbad26"
+        }
+      ]
+    },
+    {
+      "id": "network-access-v1/qwen1.5b/raw",
+      "session_dir": "sessions/qwen1.5b/network-access-v1",
+      "task": {
+        "id": "network-access-v1",
+        "name": "Network access authorization"
+      },
+      "model": {
+        "id": "qwen1.5b",
+        "name": "Qwen2.5-1.5B-Instruct Q4_K_M",
+        "model_hash": "39a2f847bada8ee8f6d36f063af469b592aa4ff47e55e573f3f3a54df3a23095"
+      },
+      "presentation": "raw",
+      "correct_answer": "A",
+      "incorrect_answer": "B",
+      "candidates": {
+        "NEITHER": "neither",
+        "A_ONLY": "a_only",
+        "B_ONLY": "b_only",
+        "BOTH": "both"
+      },
+      "evidence": [
+        {
+          "role": "candidate_file",
+          "path": "arms/network-access-v1.arms.json",
+          "sha256": "07d646c7011e85719f424c16cac919df1e973df981a6808423ab87f9932a6b14"
+        },
+        {
+          "role": "fixtures",
+          "path": "fixtures/atlas-pilot.json",
+          "sha256": "a5e2698fe8b6f52f641a32e2946ebb2469b10f0cc7f6709db9305303eedd3a55"
+        },
+        {
+          "role": "frozen",
+          "path": "frozen.json",
+          "sha256": "04cc4ef772d5020f6c756c1364fbf757caa4822eb497e5129e99f53f3efbad26"
+        }
+      ]
+    },
+    {
+      "id": "integrity-check-v1/qwen1.5b/raw",
+      "session_dir": "sessions/qwen1.5b/integrity-check-v1",
+      "task": {
+        "id": "integrity-check-v1",
+        "name": "Software integrity verification"
+      },
+      "model": {
+        "id": "qwen1.5b",
+        "name": "Qwen2.5-1.5B-Instruct Q4_K_M",
+        "model_hash": "39a2f847bada8ee8f6d36f063af469b592aa4ff47e55e573f3f3a54df3a23095"
+      },
+      "presentation": "raw",
+      "correct_answer": "A",
+      "incorrect_answer": "B",
+      "candidates": {
+        "NEITHER": "neither",
+        "A_ONLY": "a_only",
+        "B_ONLY": "b_only",
+        "BOTH": "both"
+      },
+      "evidence": [
+        {
+          "role": "candidate_file",
+          "path": "arms/integrity-check-v1.arms.json",
+          "sha256": "0d98ea1430d25874a18fd8328ab1cfc8fcf5c534399c0cc80d594b99b35a04e6"
+        },
+        {
+          "role": "fixtures",
+          "path": "fixtures/atlas-pilot.json",
+          "sha256": "a5e2698fe8b6f52f641a32e2946ebb2469b10f0cc7f6709db9305303eedd3a55"
+        },
+        {
+          "role": "frozen",
+          "path": "frozen.json",
+          "sha256": "04cc4ef772d5020f6c756c1364fbf757caa4822eb497e5129e99f53f3efbad26"
+        }
+      ]
+    },
+    {
+      "id": "sensor-alarm-v1/qwen1.5b/raw",
+      "session_dir": "sessions/qwen1.5b/sensor-alarm-v1",
+      "task": {
+        "id": "sensor-alarm-v1",
+        "name": "Environmental sensor monitoring"
+      },
+      "model": {
+        "id": "qwen1.5b",
+        "name": "Qwen2.5-1.5B-Instruct Q4_K_M",
+        "model_hash": "39a2f847bada8ee8f6d36f063af469b592aa4ff47e55e573f3f3a54df3a23095"
+      },
+      "presentation": "raw",
+      "correct_answer": "A",
+      "incorrect_answer": "B",
+      "candidates": {
+        "NEITHER": "neither",
+        "A_ONLY": "a_only",
+        "B_ONLY": "b_only",
+        "BOTH": "both"
+      },
+      "evidence": [
+        {
+          "role": "candidate_file",
+          "path": "arms/sensor-alarm-v1.arms.json",
+          "sha256": "8077d51128febcbc6a65559d0591a982486445cee95d0003036e78846a58ce27"
+        },
+        {
+          "role": "fixtures",
+          "path": "fixtures/atlas-pilot.json",
+          "sha256": "a5e2698fe8b6f52f641a32e2946ebb2469b10f0cc7f6709db9305303eedd3a55"
+        },
+        {
+          "role": "frozen",
+          "path": "frozen.json",
+          "sha256": "04cc4ef772d5020f6c756c1364fbf757caa4822eb497e5129e99f53f3efbad26"
+        }
+      ]
+    },
+    {
+      "id": "backup-restore-v1/llama3b/raw",
+      "session_dir": "sessions/llama3b/backup-restore-v1",
+      "task": {
+        "id": "backup-restore-v1",
+        "name": "Backup verification"
+      },
+      "model": {
+        "id": "llama3b",
+        "name": "Llama-3.2-3B-Instruct Q4_K_M",
+        "model_hash": "b783b9826ac539b24b803f6caa51f159e64777b18223f2927fcc061de194c55e"
+      },
+      "presentation": "raw",
+      "correct_answer": "A",
+      "incorrect_answer": "B",
+      "candidates": {
+        "NEITHER": "neither",
+        "A_ONLY": "a_only",
+        "B_ONLY": "b_only",
+        "BOTH": "both"
+      },
+      "evidence": [
+        {
+          "role": "candidate_file",
+          "path": "arms/backup-restore-v1.arms.json",
+          "sha256": "e20dacb650a07b21aa95604ceb84e288c5dfab487a20cf08b4cce2f13a7c3ddc"
+        },
+        {
+          "role": "fixtures",
+          "path": "fixtures/atlas-pilot.json",
+          "sha256": "a5e2698fe8b6f52f641a32e2946ebb2469b10f0cc7f6709db9305303eedd3a55"
+        },
+        {
+          "role": "frozen",
+          "path": "frozen.json",
+          "sha256": "04cc4ef772d5020f6c756c1364fbf757caa4822eb497e5129e99f53f3efbad26"
+        }
+      ]
+    },
+    {
+      "id": "network-access-v1/llama3b/raw",
+      "session_dir": "sessions/llama3b/network-access-v1",
+      "task": {
+        "id": "network-access-v1",
+        "name": "Network access authorization"
+      },
+      "model": {
+        "id": "llama3b",
+        "name": "Llama-3.2-3B-Instruct Q4_K_M",
+        "model_hash": "b783b9826ac539b24b803f6caa51f159e64777b18223f2927fcc061de194c55e"
+      },
+      "presentation": "raw",
+      "correct_answer": "A",
+      "incorrect_answer": "B",
+      "candidates": {
+        "NEITHER": "neither",
+        "A_ONLY": "a_only",
+        "B_ONLY": "b_only",
+        "BOTH": "both"
+      },
+      "evidence": [
+        {
+          "role": "candidate_file",
+          "path": "arms/network-access-v1.arms.json",
+          "sha256": "07d646c7011e85719f424c16cac919df1e973df981a6808423ab87f9932a6b14"
+        },
+        {
+          "role": "fixtures",
+          "path": "fixtures/atlas-pilot.json",
+          "sha256": "a5e2698fe8b6f52f641a32e2946ebb2469b10f0cc7f6709db9305303eedd3a55"
+        },
+        {
+          "role": "frozen",
+          "path": "frozen.json",
+          "sha256": "04cc4ef772d5020f6c756c1364fbf757caa4822eb497e5129e99f53f3efbad26"
+        }
+      ]
+    },
+    {
+      "id": "integrity-check-v1/llama3b/raw",
+      "session_dir": "sessions/llama3b/integrity-check-v1",
+      "task": {
+        "id": "integrity-check-v1",
+        "name": "Software integrity verification"
+      },
+      "model": {
+        "id": "llama3b",
+        "name": "Llama-3.2-3B-Instruct Q4_K_M",
+        "model_hash": "b783b9826ac539b24b803f6caa51f159e64777b18223f2927fcc061de194c55e"
+      },
+      "presentation": "raw",
+      "correct_answer": "A",
+      "incorrect_answer": "B",
+      "candidates": {
+        "NEITHER": "neither",
+        "A_ONLY": "a_only",
+        "B_ONLY": "b_only",
+        "BOTH": "both"
+      },
+      "evidence": [
+        {
+          "role": "candidate_file",
+          "path": "arms/integrity-check-v1.arms.json",
+          "sha256": "0d98ea1430d25874a18fd8328ab1cfc8fcf5c534399c0cc80d594b99b35a04e6"
+        },
+        {
+          "role": "fixtures",
+          "path": "fixtures/atlas-pilot.json",
+          "sha256": "a5e2698fe8b6f52f641a32e2946ebb2469b10f0cc7f6709db9305303eedd3a55"
+        },
+        {
+          "role": "frozen",
+          "path": "frozen.json",
+          "sha256": "04cc4ef772d5020f6c756c1364fbf757caa4822eb497e5129e99f53f3efbad26"
+        }
+      ]
+    },
+    {
+      "id": "sensor-alarm-v1/llama3b/raw",
+      "session_dir": "sessions/llama3b/sensor-alarm-v1",
+      "task": {
+        "id": "sensor-alarm-v1",
+        "name": "Environmental sensor monitoring"
+      },
+      "model": {
+        "id": "llama3b",
+        "name": "Llama-3.2-3B-Instruct Q4_K_M",
+        "model_hash": "b783b9826ac539b24b803f6caa51f159e64777b18223f2927fcc061de194c55e"
+      },
+      "presentation": "raw",
+      "correct_answer": "A",
+      "incorrect_answer": "B",
+      "candidates": {
+        "NEITHER": "neither",
+        "A_ONLY": "a_only",
+        "B_ONLY": "b_only",
+        "BOTH": "both"
+      },
+      "evidence": [
+        {
+          "role": "candidate_file",
+          "path": "arms/sensor-alarm-v1.arms.json",
+          "sha256": "8077d51128febcbc6a65559d0591a982486445cee95d0003036e78846a58ce27"
+        },
+        {
+          "role": "fixtures",
+          "path": "fixtures/atlas-pilot.json",
+          "sha256": "a5e2698fe8b6f52f641a32e2946ebb2469b10f0cc7f6709db9305303eedd3a55"
+        },
+        {
+          "role": "frozen",
+          "path": "frozen.json",
+          "sha256": "04cc4ef772d5020f6c756c1364fbf757caa4822eb497e5129e99f53f3efbad26"
+        }
+      ]
+    },
+    {
+      "id": "backup-restore-v1/qwen7b/raw",
+      "session_dir": "sessions/qwen7b/backup-restore-v1",
+      "task": {
+        "id": "backup-restore-v1",
+        "name": "Backup verification"
+      },
+      "model": {
+        "id": "qwen7b",
+        "name": "Qwen2.5-7B-Instruct Q4_K_M",
+        "model_hash": "1442c6de8075958716f7ab7c906e81dd4a207ed6c635de59586f77a55dbe1083"
+      },
+      "presentation": "raw",
+      "correct_answer": "A",
+      "incorrect_answer": "B",
+      "candidates": {
+        "NEITHER": "neither",
+        "A_ONLY": "a_only",
+        "B_ONLY": "b_only",
+        "BOTH": "both"
+      },
+      "evidence": [
+        {
+          "role": "candidate_file",
+          "path": "arms/backup-restore-v1.arms.json",
+          "sha256": "e20dacb650a07b21aa95604ceb84e288c5dfab487a20cf08b4cce2f13a7c3ddc"
+        },
+        {
+          "role": "fixtures",
+          "path": "fixtures/atlas-pilot.json",
+          "sha256": "a5e2698fe8b6f52f641a32e2946ebb2469b10f0cc7f6709db9305303eedd3a55"
+        },
+        {
+          "role": "frozen",
+          "path": "frozen.json",
+          "sha256": "04cc4ef772d5020f6c756c1364fbf757caa4822eb497e5129e99f53f3efbad26"
+        }
+      ]
+    },
+    {
+      "id": "network-access-v1/qwen7b/raw",
+      "session_dir": "sessions/qwen7b/network-access-v1",
+      "task": {
+        "id": "network-access-v1",
+        "name": "Network access authorization"
+      },
+      "model": {
+        "id": "qwen7b",
+        "name": "Qwen2.5-7B-Instruct Q4_K_M",
+        "model_hash": "1442c6de8075958716f7ab7c906e81dd4a207ed6c635de59586f77a55dbe1083"
+      },
+      "presentation": "raw",
+      "correct_answer": "A",
+      "incorrect_answer": "B",
+      "candidates": {
+        "NEITHER": "neither",
+        "A_ONLY": "a_only",
+        "B_ONLY": "b_only",
+        "BOTH": "both"
+      },
+      "evidence": [
+        {
+          "role": "candidate_file",
+          "path": "arms/network-access-v1.arms.json",
+          "sha256": "07d646c7011e85719f424c16cac919df1e973df981a6808423ab87f9932a6b14"
+        },
+        {
+          "role": "fixtures",
+          "path": "fixtures/atlas-pilot.json",
+          "sha256": "a5e2698fe8b6f52f641a32e2946ebb2469b10f0cc7f6709db9305303eedd3a55"
+        },
+        {
+          "role": "frozen",
+          "path": "frozen.json",
+          "sha256": "04cc4ef772d5020f6c756c1364fbf757caa4822eb497e5129e99f53f3efbad26"
+        }
+      ]
+    },
+    {
+      "id": "integrity-check-v1/qwen7b/raw",
+      "session_dir": "sessions/qwen7b/integrity-check-v1",
+      "task": {
+        "id": "integrity-check-v1",
+        "name": "Software integrity verification"
+      },
+      "model": {
+        "id": "qwen7b",
+        "name": "Qwen2.5-7B-Instruct Q4_K_M",
+        "model_hash": "1442c6de8075958716f7ab7c906e81dd4a207ed6c635de59586f77a55dbe1083"
+      },
+      "presentation": "raw",
+      "correct_answer": "A",
+      "incorrect_answer": "B",
+      "candidates": {
+        "NEITHER": "neither",
+        "A_ONLY": "a_only",
+        "B_ONLY": "b_only",
+        "BOTH": "both"
+      },
+      "evidence": [
+        {
+          "role": "candidate_file",
+          "path": "arms/integrity-check-v1.arms.json",
+          "sha256": "0d98ea1430d25874a18fd8328ab1cfc8fcf5c534399c0cc80d594b99b35a04e6"
+        },
+        {
+          "role": "fixtures",
+          "path": "fixtures/atlas-pilot.json",
+          "sha256": "a5e2698fe8b6f52f641a32e2946ebb2469b10f0cc7f6709db9305303eedd3a55"
+        },
+        {
+          "role": "frozen",
+          "path": "frozen.json",
+          "sha256": "04cc4ef772d5020f6c756c1364fbf757caa4822eb497e5129e99f53f3efbad26"
+        }
+      ]
+    },
+    {
+      "id": "sensor-alarm-v1/qwen7b/raw",
+      "session_dir": "sessions/qwen7b/sensor-alarm-v1",
+      "task": {
+        "id": "sensor-alarm-v1",
+        "name": "Environmental sensor monitoring"
+      },
+      "model": {
+        "id": "qwen7b",
+        "name": "Qwen2.5-7B-Instruct Q4_K_M",
+        "model_hash": "1442c6de8075958716f7ab7c906e81dd4a207ed6c635de59586f77a55dbe1083"
+      },
+      "presentation": "raw",
+      "correct_answer": "A",
+      "incorrect_answer": "B",
+      "candidates": {
+        "NEITHER": "neither",
+        "A_ONLY": "a_only",
+        "B_ONLY": "b_only",
+        "BOTH": "both"
+      },
+      "evidence": [
+        {
+          "role": "candidate_file",
+          "path": "arms/sensor-alarm-v1.arms.json",
+          "sha256": "8077d51128febcbc6a65559d0591a982486445cee95d0003036e78846a58ce27"
+        },
+        {
+          "role": "fixtures",
+          "path": "fixtures/atlas-pilot.json",
+          "sha256": "a5e2698fe8b6f52f641a32e2946ebb2469b10f0cc7f6709db9305303eedd3a55"
+        },
+        {
+          "role": "frozen",
+          "path": "frozen.json",
+          "sha256": "04cc4ef772d5020f6c756c1364fbf757caa4822eb497e5129e99f53f3efbad26"
+        }
+      ]
+    }
+  ]
+}

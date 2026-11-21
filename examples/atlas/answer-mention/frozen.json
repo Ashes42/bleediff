@@ -1,0 +1,347 @@
+{
+  "schema": "bleediff.answer-mention-frozen/1",
+  "frozen_utc": "2026-11-21T19:03:40Z",
+  "code_revision": "a20c05db083079bf52c2bc3510e208581fa7e692",
+  "fixtures_sha256": "a5e2698fe8b6f52f641a32e2946ebb2469b10f0cc7f6709db9305303eedd3a55",
+  "completion_requests_before_freeze": 0,
+  "tasks": {
+    "backup-restore-v1": {
+      "A_subject": "the nightly database set",
+      "B_subject": "the weekly file-share set",
+      "neutral_slot1": "the visitor parking plan",
+      "neutral_slot2": "the office kitchen rota",
+      "trailing": "The vault retains several yearly copies.",
+      "baseline_prompt_tokens": {
+        "qwen": 157,
+        "llama": 156
+      },
+      "candidates": {
+        "NEITHER": {
+          "sha256": "688231c94b305c39ef1fccb8bdb17d77f6673919a1283f9f4b606f144ad6e1e1",
+          "bytes": 146,
+          "words": 25,
+          "fragment_tokens": {
+            "qwen": 31,
+            "llama": 31
+          },
+          "prompt_tokens": {
+            "qwen": 187,
+            "llama": 186
+          },
+          "prompt_sha256": "d63db2dffca42ef445aa932b9b21da7344ffa42f66686db4766c84b66b89c69e"
+        },
+        "A_ONLY": {
+          "sha256": "df6b2af87c348932f72e616e40c7797418e7b6cef0a679610bd5beacf5048dd6",
+          "bytes": 146,
+          "words": 25,
+          "fragment_tokens": {
+            "qwen": 31,
+            "llama": 31
+          },
+          "prompt_tokens": {
+            "qwen": 187,
+            "llama": 186
+          },
+          "prompt_sha256": "b579dfd79e4c65afb0d787c5b4084fc051622023aa156f144254eea0de3d0de6"
+        },
+        "B_ONLY": {
+          "sha256": "af75af1da6a16ad971a49d26f22e3ba84dfa1acbc659c9484ac8254df24b0c48",
+          "bytes": 148,
+          "words": 25,
+          "fragment_tokens": {
+            "qwen": 31,
+            "llama": 31
+          },
+          "prompt_tokens": {
+            "qwen": 187,
+            "llama": 186
+          },
+          "prompt_sha256": "30ded830d23992a2d9023a5a321e05bdcbca10621b31c24b47c5c15a8be11974"
+        },
+        "BOTH": {
+          "sha256": "c1036c459e89aee335409f5f0b62c22fa1294f2add01ffd105b634cbf9af02b4",
+          "bytes": 148,
+          "words": 25,
+          "fragment_tokens": {
+            "qwen": 31,
+            "llama": 31
+          },
+          "prompt_tokens": {
+            "qwen": 187,
+            "llama": 186
+          },
+          "prompt_sha256": "5c7b2c06ac0dcf4db6240fbff2da1951c8c3ec68541d179cb8a15ac6a9e31715"
+        }
+      },
+      "token_match": {
+        "qwen_range": [
+          31,
+          31
+        ],
+        "llama_range": [
+          31,
+          31
+        ],
+        "byte_range": [
+          146,
+          148
+        ]
+      }
+    },
+    "network-access-v1": {
+      "A_subject": "analyst J. Moreno",
+      "B_subject": "contractor K. Osei",
+      "neutral_slot1": "the parking rota",
+      "neutral_slot2": "the pre-school rota",
+      "trailing": "The finance subnet carries payroll traffic.",
+      "baseline_prompt_tokens": {
+        "qwen": 177,
+        "llama": 172
+      },
+      "candidates": {
+        "NEITHER": {
+          "sha256": "a70d855aafa92ef7fb6ab77d6d056a51fbc3d15fb4a6d3deb76e5a39e56a6b7b",
+          "bytes": 138,
+          "words": 23,
+          "fragment_tokens": {
+            "qwen": 31,
+            "llama": 31
+          },
+          "prompt_tokens": {
+            "qwen": 207,
+            "llama": 202
+          },
+          "prompt_sha256": "a940b348740ff55f39a76a4a108b2e047cb446bab07b6a8e95fc3d9d24b09a6b"
+        },
+        "A_ONLY": {
+          "sha256": "46e51fd11a8c5ce4fdba2cf65def7f3830af7309a5578489523df408a0829d9a",
+          "bytes": 139,
+          "words": 23,
+          "fragment_tokens": {
+            "qwen": 31,
+            "llama": 31
+          },
+          "prompt_tokens": {
+            "qwen": 207,
+            "llama": 202
+          },
+          "prompt_sha256": "78dbd9798c4224889bd7d5262c65f030507cb45d3f16188903d5b4b823e6837b"
+        },
+        "B_ONLY": {
+          "sha256": "ce5ff5582cf81df7f9b11a8d433d1b73aae85646c5b1b617a1f48d5d7715e01f",
+          "bytes": 137,
+          "words": 23,
+          "fragment_tokens": {
+            "qwen": 31,
+            "llama": 31
+          },
+          "prompt_tokens": {
+            "qwen": 207,
+            "llama": 202
+          },
+          "prompt_sha256": "2a170c37cae2753e29716094ffd85e3c2be1ce531f856a1c8dbc8595d7379d33"
+        },
+        "BOTH": {
+          "sha256": "0151cfb01c67971b87abe63991dc967a347c13ba08c56ad3d480d6f559a41055",
+          "bytes": 138,
+          "words": 23,
+          "fragment_tokens": {
+            "qwen": 31,
+            "llama": 31
+          },
+          "prompt_tokens": {
+            "qwen": 207,
+            "llama": 202
+          },
+          "prompt_sha256": "a482cd0cd0633fbdc97d291b5b51bd47734f160bc23fe1c01f9b08e934ebe226"
+        }
+      },
+      "token_match": {
+        "qwen_range": [
+          31,
+          31
+        ],
+        "llama_range": [
+          31,
+          31
+        ],
+        "byte_range": [
+          137,
+          139
+        ]
+      }
+    },
+    "integrity-check-v1": {
+      "A_subject": "the project release page",
+      "B_subject": "the cdn-eu mirror",
+      "neutral_slot1": "the visitor parking plan",
+      "neutral_slot2": "the glee-club rehearsal",
+      "trailing": "The build host installs nightly packages.",
+      "baseline_prompt_tokens": {
+        "qwen": 196,
+        "llama": 194
+      },
+      "candidates": {
+        "NEITHER": {
+          "sha256": "b23c4790798a2fb0f72c186ce61cfaad406512ac0577c946501d6c715b9779b6",
+          "bytes": 148,
+          "words": 24,
+          "fragment_tokens": {
+            "qwen": 32,
+            "llama": 32
+          },
+          "prompt_tokens": {
+            "qwen": 227,
+            "llama": 225
+          },
+          "prompt_sha256": "9bfc984acccf3f0dc718e87c2adeb7d24129ab94be9432a0bb4088d4a991ee5d"
+        },
+        "A_ONLY": {
+          "sha256": "9954a418c053825b0a5272159c45e748b2dbc0fad0e5bab1e540c12ac960086e",
+          "bytes": 148,
+          "words": 24,
+          "fragment_tokens": {
+            "qwen": 32,
+            "llama": 32
+          },
+          "prompt_tokens": {
+            "qwen": 227,
+            "llama": 225
+          },
+          "prompt_sha256": "ed6eaa8cb9ba559fdf0f2dbb46adee2ac7c603f5cee77ca435a0f5e69c4326ae"
+        },
+        "B_ONLY": {
+          "sha256": "2f752b4ba3574f8461a70812109dbd3f18bd360ba8aeda6c5d6c7ec02c1fecfe",
+          "bytes": 142,
+          "words": 24,
+          "fragment_tokens": {
+            "qwen": 32,
+            "llama": 32
+          },
+          "prompt_tokens": {
+            "qwen": 227,
+            "llama": 225
+          },
+          "prompt_sha256": "3129bac36cf41c6df829829ff7d46c78efb72f87a0f2273ca093f71e29322bbc"
+        },
+        "BOTH": {
+          "sha256": "b718cd3fc9dd24322ec6d51c3157c45f8c22610a3fdd0ca64628cf64db31b734",
+          "bytes": 142,
+          "words": 24,
+          "fragment_tokens": {
+            "qwen": 32,
+            "llama": 32
+          },
+          "prompt_tokens": {
+            "qwen": 227,
+            "llama": 225
+          },
+          "prompt_sha256": "86c10ef578a316f48e165493f1788d0686c077cd5463e2c1142699a9693038ae"
+        }
+      },
+      "token_match": {
+        "qwen_range": [
+          32,
+          32
+        ],
+        "llama_range": [
+          32,
+          32
+        ],
+        "byte_range": [
+          142,
+          148
+        ]
+      }
+    },
+    "sensor-alarm-v1": {
+      "A_subject": "cold room 3",
+      "B_subject": "cold room 1",
+      "neutral_slot1": "the parking rota",
+      "neutral_slot2": "the lunch rota",
+      "trailing": "Probe readings are recorded each minute.",
+      "baseline_prompt_tokens": {
+        "qwen": 158,
+        "llama": 152
+      },
+      "candidates": {
+        "NEITHER": {
+          "sha256": "7fb3754838f37b2539db8e1ff280ecf4c8ff262deb78f24dda0a9416ceb7c056",
+          "bytes": 127,
+          "words": 23,
+          "fragment_tokens": {
+            "qwen": 30,
+            "llama": 30
+          },
+          "prompt_tokens": {
+            "qwen": 187,
+            "llama": 181
+          },
+          "prompt_sha256": "08bd68680a46b8cfa090fafae12f907036d12ce513950cdac6c7f02f0ffdc21e"
+        },
+        "A_ONLY": {
+          "sha256": "27e740e3fbab2c467c8c5cadfd7a9d0a50573357a115ad64e62a43a925087107",
+          "bytes": 122,
+          "words": 23,
+          "fragment_tokens": {
+            "qwen": 30,
+            "llama": 30
+          },
+          "prompt_tokens": {
+            "qwen": 187,
+            "llama": 181
+          },
+          "prompt_sha256": "11bbacbe45c82d918a08c32018ec83ed0b86a290d348fde5881f52839a386159"
+        },
+        "B_ONLY": {
+          "sha256": "7fa5af9f2bbb973c5a9b78788f9fc1bf344574aadfcd5e1e77d52095bcfc4079",
+          "bytes": 124,
+          "words": 23,
+          "fragment_tokens": {
+            "qwen": 30,
+            "llama": 30
+          },
+          "prompt_tokens": {
+            "qwen": 187,
+            "llama": 181
+          },
+          "prompt_sha256": "0b489e78020916b8133ceb81cb52d2d53a465f38874c8f8b47b4356ef71da102"
+        },
+        "BOTH": {
+          "sha256": "78d83433c6a216abec5c57486c0e3bb43d282bcb2099c0f16c84364f39d8fbde",
+          "bytes": 119,
+          "words": 23,
+          "fragment_tokens": {
+            "qwen": 30,
+            "llama": 30
+          },
+          "prompt_tokens": {
+            "qwen": 187,
+            "llama": 181
+          },
+          "prompt_sha256": "a49fdc65cd61153a220ee7184cfb65a3ade7b66564155cb0ccdf4afcb25c8e7b"
+        }
+      },
+      "token_match": {
+        "qwen_range": [
+          30,
+          30
+        ],
+        "llama_range": [
+          30,
+          30
+        ],
+        "byte_range": [
+          119,
+          127
+        ]
+      }
+    }
+  },
+  "design": [
+    "2x2 with fixed slots: slot 1 is a neutral phrase or A's subject, slot 2 is a neutral phrase or B's subject; frame 'The note also refers to <slot1> and <slot2>.'",
+    "No identifiers, no verdict or authority wording, no statement about any option; the on-topic header and trailing sentence are identical within a task.",
+    "Neutral phrases were chosen only by token/byte counts on both tokenizers; they avoid every option's subject.",
+    "A is always in slot 1 and B in slot 2 (position is confounded with the answer subject; see the report)."
+  ]
+}

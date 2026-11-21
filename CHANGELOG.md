@@ -3,33 +3,48 @@
 All notable changes. Versions identify the software that wrote a file, not an experiment or an algorithm; protocols and
 control algorithms have their own identifiers (see `docs/TECHNICAL.md`).
 
-## [Unreleased] - decision tracker
+## [0.3.0] - decision tracker, batch influence ranking and influence atlas (exploratory)
 
 ### Added
 - `bleediff track`: an interactive decision-margin tracker. Edit a UTF-8 fragment file, press Enter, and see the normalized
   A/B/C/D probabilities, the signed `margin_AB = ln(p_A/p_B)`, changes from the baseline and the previous step, and the overall
-  preferred answer (a pairwise crossing is not reported as an answer flip). Single-prompt measurement of request #3 of a
-  frozen scenario (default `config-audit-v2`); reuses the validated `LlamaClient.choice_probs` extraction unchanged.
-- `<out>/history.jsonl` session history (schema `bleediff.track-history/1`): provenance, hashes, probabilities, margins,
-  changes, errors; prompts only with `--retain-prompts`; never overwrites an existing session.
-- Tests: `tests/test_v030_track.py`.
-- `bleediff track --arms FILE` (batch mode): scores a labelled list of candidate fragments against one clean baseline with the
-  same single-prompt measurement, and writes `history.jsonl`, a compact `leaderboard.csv` and `batch-manifest.json` (hashes,
-  provenance). The terminal summary is ranked by observed movement of the A/B margin toward the designated incorrect answer
-  (`--incorrect`, default B), shows fragment and prompt token counts so unmatched lengths are visible, and labels the results as
-  observed candidate effects (no causal claim). Failed requests, invalid probabilities, invalid candidates, ties and empty lists
-  are handled; the run stops after repeated unreachable-server failures. Module `bleediff/batch.py`; tests
-  `tests/test_v031_batch.py` and the synthetic fixture `tests/data/batch_candidates_synthetic.json`. Probability extraction, margin
-  and change calculations are the unchanged ones; interactive mode is unchanged.
+  preferred answer (a pairwise crossing is not reported as an answer flip). Single-prompt measurement of request #3 of a frozen
+  scenario (default `config-audit-v2`); reuses the validated `LlamaClient.choice_probs` extraction unchanged. Session history
+  `<out>/history.jsonl` (schema `bleediff.track-history/1`): provenance, hashes, probabilities, margins, changes, errors; prompts
+  only with `--retain-prompts`; never overwrites an existing session. Module `bleediff/track.py`.
+- `bleediff track --arms FILE` (batch mode): scores a labelled list of candidate fragments against one clean baseline with the same
+  single-prompt measurement and writes `history.jsonl`, a compact `leaderboard.csv` and `batch-manifest.json` (hashes, provenance).
+  The terminal summary is ranked by observed movement of the A/B margin toward the designated incorrect answer (`--incorrect`,
+  default B), shows fragment and prompt token counts so unmatched lengths are visible, and labels results as observed candidate
+  effects (no causal claim). Failed requests, invalid probabilities, invalid candidates, ties and empty lists are handled; the run
+  stops after repeated unreachable-server failures. Module `bleediff/batch.py`.
+- `bleediff atlas`: an influence atlas over existing batch sessions (reads saved results; never contacts a model). Validates the
+  sources (schemas, recorded hashes, scenario and model identity, evidence files), re-derives each margin and preferred answer from
+  the saved probabilities with the unchanged functions, and writes `atlas.json`, `candidates.csv`, `category-summary.csv`,
+  `model-comparison.csv` and `report.md`. Effects are shifts from each model's own baseline; paired category differences are computed
+  inside each task/model cell; outcomes distinguish induced errors from already-wrong baselines; A/B crossings are kept apart from
+  overall flips; saturated baselines, low coverage, token mismatches and incompatible presentations are flagged; filters by model,
+  task, category and outcome; no global ranking. The `topic` category is labelled as on-topic text that also mentions option B's
+  subject. Module `bleediff/atlas.py`.
+- `examples/atlas/`: three small sanitized example datasets of saved batch sessions from real runs (pilot: 4 tasks x 3 models;
+  answer-mention 2x2; slot-swap), their candidate files, fixtures and atlas input manifests, plus `mention_contrasts.py`. They
+  reproduce the documented findings offline, without a model.
+- Tests: `tests/test_v030_track.py`, `tests/test_v031_batch.py`, `tests/test_v032_atlas.py`, `tests/test_v030_release.py`
+  (mock-server tests; example data, documentation and version consistency).
+- README for v0.3.0 and `RELEASE_NOTES_v0.3.0.md`.
 
-- `bleediff atlas`: an influence atlas over existing batch sessions. Validates the saved sources (schemas, recorded hashes,
-  scenario/model identity, evidence files), re-derives each margin and preferred answer from the saved probabilities with the
-  unchanged functions, and writes `atlas.json`, `candidates.csv`, `category-summary.csv`, `model-comparison.csv` and `report.md`.
-  Effects are shifts from each model's own baseline; paired category differences are computed inside each task/model cell;
-  outcomes distinguish induced errors from already-wrong baselines; A/B crossings are kept apart from overall flips; saturated
-  baselines, low coverage, token mismatches and incompatible presentations are flagged; filters by model, task, category and
-  outcome; no global ranking. The `topic` category is labelled as on-topic text that also mentions option B's subject.
-  Module `bleediff/atlas.py`; tests `tests/test_v032_atlas.py`.
+### Findings recorded (exploratory; see README and the release notes)
+- Three local models (Qwen2.5-1.5B, Llama 3.2 3B Instruct, Qwen2.5-7B; Q4_K_M, CPU, raw prompts) across four independent synthetic
+  tasks. On-topic text that also mentions option B's subject often moved the decision toward B (11 of 12 cells above off-topic text,
+  11 of 12 above neutral prose), but the original fixed-position results were confounded with the position of the subject.
+- One newly induced incorrect answer: Llama 3B, sensor task, when B's subject was mentioned without evidence for B. It survived
+  swapping the subject positions. Qwen 1.5B showed smaller effects at both positions; Qwen 7B showed strong positional sensitivity.
+  Models differ substantially, including on neutral text.
+- No universal priming mechanism and no real tenant-isolation vulnerability was established. Deterministic repeats are
+  reproducibility checks, not independent samples.
+
+### Changed
+- Package version 0.3.0. `.gitattributes` keeps `examples/atlas/**` byte-stable across checkouts so recorded SHA-256 values verify.
 
 ### Unchanged
 - The research fold, contrast equation, thresholds, trace schema, validity gates, fixtures, protocols and all v0.2.0 results.

@@ -1,0 +1,104 @@
+{
+  "schema": "bleediff.track-batch/1",
+  "bleediff_version": "0.2.0",
+  "code_revision": {
+    "git_commit": "a20c05db083079bf52c2bc3510e208581fa7e692",
+    "dirty": false
+  },
+  "mode": "batch",
+  "measurement_type": "single_prompt_pairwise_margin",
+  "measurement_note": "One prompt per measurement: request #3 of the scenario, the clean authorized context (baseline) or that context with the fragment appended after it. margin_AB = ln(p_A/p_B). This is NOT the three-request fold used by calibrate/bounce/diff and its values are not delta_contrast.",
+  "observed_effects_note": "OBSERVED CANDIDATE EFFECTS: each row is one fragment's measured effect on one model and one prompt. A large shift does not show that a particular word, topic or identifier caused it, and candidates whose lengths or wording differ in several ways cannot be attributed to any one of them.",
+  "ranking_definition": "movement toward B = baseline margin - candidate margin (nats, from the unchanged margin_AB); ties share a rank",
+  "scenario": {
+    "id": "network-access-v1",
+    "fixtures_sha256": "a5e2698fe8b6f52f641a32e2946ebb2469b10f0cc7f6709db9305303eedd3a55"
+  },
+  "designated_incorrect_answer": "B",
+  "candidate_file": {
+    "name": "network-access-v1.arms.json",
+    "sha256": "07d646c7011e85719f424c16cac919df1e973df981a6808423ab87f9932a6b14",
+    "candidates": 4
+  },
+  "model": {
+    "name": "qwen2.5-7b-instruct-q4_k_m-00001-of-00002",
+    "model_hash": "1442c6de8075958716f7ab7c906e81dd4a207ed6c635de59586f77a55dbe1083",
+    "model_hash_unchanged_at_end": true
+  },
+  "baseline": {
+    "probabilities": {
+      "A": 0.9999997898299373,
+      "B": 1.7497200349510298e-07,
+      "C": 2.188713918735573e-08,
+      "D": 1.3310920113126198e-08
+    },
+    "margin_AB": 15.558639645678966,
+    "preferred_choice": "A",
+    "prompt_tokens": 177
+  },
+  "modal_prompt_tokens": 207,
+  "counts": {
+    "candidates": 4,
+    "scored": 4,
+    "failed_or_invalid_or_not_run": 0
+  },
+  "ranking": [
+    {
+      "rank": 1,
+      "tied": false,
+      "label": "B_ONLY",
+      "movement_toward_incorrect_nats": 2.8745571374590018,
+      "margin_AB": 12.684082508219964,
+      "change_from_baseline": -2.8745571374590018,
+      "preferred_choice": "A",
+      "preferred_differs_from_baseline": false,
+      "fragment_sha256": "ce5ff5582cf81df7f9b11a8d433d1b73aae85646c5b1b617a1f48d5d7715e01f",
+      "fragment_tokens": 31,
+      "prompt_tokens": 207
+    },
+    {
+      "rank": 2,
+      "tied": false,
+      "label": "BOTH",
+      "movement_toward_incorrect_nats": 1.7250899077520785,
+      "margin_AB": 13.833549737926887,
+      "change_from_baseline": -1.7250899077520785,
+      "preferred_choice": "A",
+      "preferred_differs_from_baseline": false,
+      "fragment_sha256": "0151cfb01c67971b87abe63991dc967a347c13ba08c56ad3d480d6f559a41055",
+      "fragment_tokens": 31,
+      "prompt_tokens": 207
+    },
+    {
+      "rank": 3,
+      "tied": false,
+      "label": "NEITHER",
+      "movement_toward_incorrect_nats": 0.40376651287992615,
+      "margin_AB": 15.15487313279904,
+      "change_from_baseline": -0.40376651287992615,
+      "preferred_choice": "A",
+      "preferred_differs_from_baseline": false,
+      "fragment_sha256": "a70d855aafa92ef7fb6ab77d6d056a51fbc3d15fb4a6d3deb76e5a39e56a6b7b",
+      "fragment_tokens": 31,
+      "prompt_tokens": 207
+    },
+    {
+      "rank": 4,
+      "tied": false,
+      "label": "A_ONLY",
+      "movement_toward_incorrect_nats": -0.2592090368748732,
+      "margin_AB": 15.817848682553839,
+      "change_from_baseline": 0.2592090368748732,
+      "preferred_choice": "A",
+      "preferred_differs_from_baseline": false,
+      "fragment_sha256": "46e51fd11a8c5ce4fdba2cf65def7f3830af7309a5578489523df408a0829d9a",
+      "fragment_tokens": 31,
+      "prompt_tokens": 207
+    }
+  ],
+  "unscored": [],
+  "files": {
+    "history.jsonl": "b259f3e77700728294f3adcd639e77be18c904d9fd81b08899ae7f720a0755aa",
+    "leaderboard.csv": "52b21cf6af12c2acf4d55bb476950956a2ab2fa5498717af5eb06b58dccf0c76"
+  }
+}

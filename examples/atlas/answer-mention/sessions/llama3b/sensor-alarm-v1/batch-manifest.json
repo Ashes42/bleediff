@@ -1,0 +1,104 @@
+{
+  "schema": "bleediff.track-batch/1",
+  "bleediff_version": "0.2.0",
+  "code_revision": {
+    "git_commit": "a20c05db083079bf52c2bc3510e208581fa7e692",
+    "dirty": false
+  },
+  "mode": "batch",
+  "measurement_type": "single_prompt_pairwise_margin",
+  "measurement_note": "One prompt per measurement: request #3 of the scenario, the clean authorized context (baseline) or that context with the fragment appended after it. margin_AB = ln(p_A/p_B). This is NOT the three-request fold used by calibrate/bounce/diff and its values are not delta_contrast.",
+  "observed_effects_note": "OBSERVED CANDIDATE EFFECTS: each row is one fragment's measured effect on one model and one prompt. A large shift does not show that a particular word, topic or identifier caused it, and candidates whose lengths or wording differ in several ways cannot be attributed to any one of them.",
+  "ranking_definition": "movement toward B = baseline margin - candidate margin (nats, from the unchanged margin_AB); ties share a rank",
+  "scenario": {
+    "id": "sensor-alarm-v1",
+    "fixtures_sha256": "a5e2698fe8b6f52f641a32e2946ebb2469b10f0cc7f6709db9305303eedd3a55"
+  },
+  "designated_incorrect_answer": "B",
+  "candidate_file": {
+    "name": "sensor-alarm-v1.arms.json",
+    "sha256": "8077d51128febcbc6a65559d0591a982486445cee95d0003036e78846a58ce27",
+    "candidates": 4
+  },
+  "model": {
+    "name": "Llama-3.2-3B-Instruct-Q4_K_M",
+    "model_hash": "b783b9826ac539b24b803f6caa51f159e64777b18223f2927fcc061de194c55e",
+    "model_hash_unchanged_at_end": true
+  },
+  "baseline": {
+    "probabilities": {
+      "A": 0.49132559307718887,
+      "B": 0.09543747637190814,
+      "C": 0.10900154284782437,
+      "D": 0.30423538770307856
+    },
+    "margin_AB": 1.6386356949806213,
+    "preferred_choice": "A",
+    "prompt_tokens": 152
+  },
+  "modal_prompt_tokens": 181,
+  "counts": {
+    "candidates": 4,
+    "scored": 4,
+    "failed_or_invalid_or_not_run": 0
+  },
+  "ranking": [
+    {
+      "rank": 1,
+      "tied": false,
+      "label": "B_ONLY",
+      "movement_toward_incorrect_nats": 2.421327590942383,
+      "margin_AB": -0.7826918959617615,
+      "change_from_baseline": -2.421327590942383,
+      "preferred_choice": "B",
+      "preferred_differs_from_baseline": true,
+      "fragment_sha256": "7fa5af9f2bbb973c5a9b78788f9fc1bf344574aadfcd5e1e77d52095bcfc4079",
+      "fragment_tokens": 30,
+      "prompt_tokens": 181
+    },
+    {
+      "rank": 2,
+      "tied": false,
+      "label": "BOTH",
+      "movement_toward_incorrect_nats": 1.2716732025146484,
+      "margin_AB": 0.3669624924659729,
+      "change_from_baseline": -1.2716732025146484,
+      "preferred_choice": "A",
+      "preferred_differs_from_baseline": false,
+      "fragment_sha256": "78d83433c6a216abec5c57486c0e3bb43d282bcb2099c0f16c84364f39d8fbde",
+      "fragment_tokens": 30,
+      "prompt_tokens": 181
+    },
+    {
+      "rank": 3,
+      "tied": false,
+      "label": "NEITHER",
+      "movement_toward_incorrect_nats": 0.5422706604003906,
+      "margin_AB": 1.0963650345802307,
+      "change_from_baseline": -0.5422706604003906,
+      "preferred_choice": "A",
+      "preferred_differs_from_baseline": false,
+      "fragment_sha256": "7fb3754838f37b2539db8e1ff280ecf4c8ff262deb78f24dda0a9416ceb7c056",
+      "fragment_tokens": 30,
+      "prompt_tokens": 181
+    },
+    {
+      "rank": 4,
+      "tied": false,
+      "label": "A_ONLY",
+      "movement_toward_incorrect_nats": -0.713489294052124,
+      "margin_AB": 2.3521249890327454,
+      "change_from_baseline": 0.713489294052124,
+      "preferred_choice": "A",
+      "preferred_differs_from_baseline": false,
+      "fragment_sha256": "27e740e3fbab2c467c8c5cadfd7a9d0a50573357a115ad64e62a43a925087107",
+      "fragment_tokens": 30,
+      "prompt_tokens": 181
+    }
+  ],
+  "unscored": [],
+  "files": {
+    "history.jsonl": "20edbef7bf47f1fda80f8221b17297ef68f5fda62b22ba428b96fb72b1d960ef",
+    "leaderboard.csv": "06373b1fa959aedf314a9544c2ca3977ffd9fb4466aa69fecbd0815b51c77d72"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "candidates": [
+    {
+      "label": "NEITHER",
+      "text": "Tenant 4 access review note: The note also refers to the parking rota and the pre-school rota. The finance subnet carries payroll traffic.",
+      "sha256": "a70d855aafa92ef7fb6ab77d6d056a51fbc3d15fb4a6d3deb76e5a39e56a6b7b"
+    },
+    {
+      "label": "A_ONLY",
+      "text": "Tenant 4 access review note: The note also refers to analyst J. Moreno and the pre-school rota. The finance subnet carries payroll traffic.",
+      "sha256": "46e51fd11a8c5ce4fdba2cf65def7f3830af7309a5578489523df408a0829d9a"
+    },
+    {
+      "label": "B_ONLY",
+      "text": "Tenant 4 access review note: The note also refers to the parking rota and contractor K. Osei. The finance subnet carries payroll traffic.",
+      "sha256": "ce5ff5582cf81df7f9b11a8d433d1b73aae85646c5b1b617a1f48d5d7715e01f"
+    },
+    {
+      "label": "BOTH",
+      "text": "Tenant 4 access review note: The note also refers to analyst J. Moreno and contractor K. Osei. The finance subnet carries payroll traffic.",
+      "sha256": "0151cfb01c67971b87abe63991dc967a347c13ba08c56ad3d480d6f559a41055"
+    }
+  ]
+}

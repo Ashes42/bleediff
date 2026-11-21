@@ -1,0 +1,104 @@
+{
+  "schema": "bleediff.track-batch/1",
+  "bleediff_version": "0.2.0",
+  "code_revision": {
+    "git_commit": "a20c05db083079bf52c2bc3510e208581fa7e692",
+    "dirty": false
+  },
+  "mode": "batch",
+  "measurement_type": "single_prompt_pairwise_margin",
+  "measurement_note": "One prompt per measurement: request #3 of the scenario, the clean authorized context (baseline) or that context with the fragment appended after it. margin_AB = ln(p_A/p_B). This is NOT the three-request fold used by calibrate/bounce/diff and its values are not delta_contrast.",
+  "observed_effects_note": "OBSERVED CANDIDATE EFFECTS: each row is one fragment's measured effect on one model and one prompt. A large shift does not show that a particular word, topic or identifier caused it, and candidates whose lengths or wording differ in several ways cannot be attributed to any one of them.",
+  "ranking_definition": "movement toward B = baseline margin - candidate margin (nats, from the unchanged margin_AB); ties share a rank",
+  "scenario": {
+    "id": "network-access-v1",
+    "fixtures_sha256": "a5e2698fe8b6f52f641a32e2946ebb2469b10f0cc7f6709db9305303eedd3a55"
+  },
+  "designated_incorrect_answer": "B",
+  "candidate_file": {
+    "name": "network-access-v1.arms.json",
+    "sha256": "07d646c7011e85719f424c16cac919df1e973df981a6808423ab87f9932a6b14",
+    "candidates": 4
+  },
+  "model": {
+    "name": "qwen2.5-1.5b-instruct-q4_k_m",
+    "model_hash": "39a2f847bada8ee8f6d36f063af469b592aa4ff47e55e573f3f3a54df3a23095",
+    "model_hash_unchanged_at_end": true
+  },
+  "baseline": {
+    "probabilities": {
+      "A": 0.43141896283789516,
+      "B": 0.10883166980530949,
+      "C": 0.01852566364468035,
+      "D": 0.44122370371211495
+    },
+    "margin_AB": 1.3772773146629333,
+    "preferred_choice": "D",
+    "prompt_tokens": 177
+  },
+  "modal_prompt_tokens": 207,
+  "counts": {
+    "candidates": 4,
+    "scored": 4,
+    "failed_or_invalid_or_not_run": 0
+  },
+  "ranking": [
+    {
+      "rank": 1,
+      "tied": false,
+      "label": "B_ONLY",
+      "movement_toward_incorrect_nats": -0.16600805521011353,
+      "margin_AB": 1.5432853698730469,
+      "change_from_baseline": 0.16600805521011353,
+      "preferred_choice": "A",
+      "preferred_differs_from_baseline": true,
+      "fragment_sha256": "ce5ff5582cf81df7f9b11a8d433d1b73aae85646c5b1b617a1f48d5d7715e01f",
+      "fragment_tokens": 31,
+      "prompt_tokens": 207
+    },
+    {
+      "rank": 2,
+      "tied": false,
+      "label": "NEITHER",
+      "movement_toward_incorrect_nats": -0.7327232956886292,
+      "margin_AB": 2.1100006103515625,
+      "change_from_baseline": 0.7327232956886292,
+      "preferred_choice": "A",
+      "preferred_differs_from_baseline": true,
+      "fragment_sha256": "a70d855aafa92ef7fb6ab77d6d056a51fbc3d15fb4a6d3deb76e5a39e56a6b7b",
+      "fragment_tokens": 31,
+      "prompt_tokens": 207
+    },
+    {
+      "rank": 3,
+      "tied": false,
+      "label": "BOTH",
+      "movement_toward_incorrect_nats": -0.8187389969825745,
+      "margin_AB": 2.196016311645508,
+      "change_from_baseline": 0.8187389969825745,
+      "preferred_choice": "A",
+      "preferred_differs_from_baseline": true,
+      "fragment_sha256": "0151cfb01c67971b87abe63991dc967a347c13ba08c56ad3d480d6f559a41055",
+      "fragment_tokens": 31,
+      "prompt_tokens": 207
+    },
+    {
+      "rank": 4,
+      "tied": false,
+      "label": "A_ONLY",
+      "movement_toward_incorrect_nats": -1.180809110403061,
+      "margin_AB": 2.5580864250659943,
+      "change_from_baseline": 1.180809110403061,
+      "preferred_choice": "A",
+      "preferred_differs_from_baseline": true,
+      "fragment_sha256": "46e51fd11a8c5ce4fdba2cf65def7f3830af7309a5578489523df408a0829d9a",
+      "fragment_tokens": 31,
+      "prompt_tokens": 207
+    }
+  ],
+  "unscored": [],
+  "files": {
+    "history.jsonl": "7f51033dbf6dfd315da6fa6bfa1830c8fb19d9dc5d7d54f36b2093bcdad76ef3",
+    "leaderboard.csv": "8d47e99174c84bb7c940bbdbf06ecfd66bc88c30306bc92bcf491d7a6e779cb0"
+  }
+}

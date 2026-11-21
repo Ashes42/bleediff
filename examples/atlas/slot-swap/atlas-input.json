@@ -1,0 +1,135 @@
+{
+  "schema": "bleediff.atlas-input/1",
+  "note": "example dataset 'slot-swap': sanitized saved batch sessions (raw prompt presentation); see examples/atlas/README.md",
+  "sessions": [
+    {
+      "id": "sensor-alarm-v1/qwen1.5b/raw",
+      "session_dir": "sessions/qwen1.5b/sensor-alarm-v1",
+      "task": {
+        "id": "sensor-alarm-v1",
+        "name": "Environmental sensor monitoring"
+      },
+      "model": {
+        "id": "qwen1.5b",
+        "name": "Qwen2.5-1.5B-Instruct Q4_K_M",
+        "model_hash": "39a2f847bada8ee8f6d36f063af469b592aa4ff47e55e573f3f3a54df3a23095"
+      },
+      "presentation": "raw",
+      "correct_answer": "A",
+      "incorrect_answer": "B",
+      "candidates": {
+        "NEITHER_S": "neither",
+        "B_ONLY_S": "b_only_slot1",
+        "A_ONLY_S": "a_only_slot2",
+        "BOTH_S": "both_swapped",
+        "ORIG_NEITHER": "neither",
+        "ORIG_A_ONLY": "a_only_slot1",
+        "ORIG_B_ONLY": "b_only_slot2",
+        "ORIG_BOTH": "both_orig"
+      },
+      "evidence": [
+        {
+          "role": "candidate_file",
+          "path": "arms/sensor-alarm-v1.arms.json",
+          "sha256": "547bc11b1840ed27a022b014a57ecdd4b81ebbe2404c89bf6ff0561868c7af3e"
+        },
+        {
+          "role": "fixtures",
+          "path": "fixtures/atlas-pilot.json",
+          "sha256": "a5e2698fe8b6f52f641a32e2946ebb2469b10f0cc7f6709db9305303eedd3a55"
+        },
+        {
+          "role": "frozen",
+          "path": "frozen.json",
+          "sha256": "c103883e9e6e2a6316c97054149b808c508d145da6a5922b47fbbbc8f803b414"
+        }
+      ]
+    },
+    {
+      "id": "sensor-alarm-v1/llama3b/raw",
+      "session_dir": "sessions/llama3b/sensor-alarm-v1",
+      "task": {
+        "id": "sensor-alarm-v1",
+        "name": "Environmental sensor monitoring"
+      },
+      "model": {
+        "id": "llama3b",
+        "name": "Llama-3.2-3B-Instruct Q4_K_M",
+        "model_hash": "b783b9826ac539b24b803f6caa51f159e64777b18223f2927fcc061de194c55e"
+      },
+      "presentation": "raw",
+      "correct_answer": "A",
+      "incorrect_answer": "B",
+      "candidates": {
+        "NEITHER_S": "neither",
+        "B_ONLY_S": "b_only_slot1",
+        "A_ONLY_S": "a_only_slot2",
+        "BOTH_S": "both_swapped",
+        "ORIG_NEITHER": "neither",
+        "ORIG_A_ONLY": "a_only_slot1",
+        "ORIG_B_ONLY": "b_only_slot2",
+        "ORIG_BOTH": "both_orig"
+      },
+      "evidence": [
+        {
+          "role": "candidate_file",
+          "path": "arms/sensor-alarm-v1.arms.json",
+          "sha256": "547bc11b1840ed27a022b014a57ecdd4b81ebbe2404c89bf6ff0561868c7af3e"
+        },
+        {
+          "role": "fixtures",
+          "path": "fixtures/atlas-pilot.json",
+          "sha256": "a5e2698fe8b6f52f641a32e2946ebb2469b10f0cc7f6709db9305303eedd3a55"
+        },
+        {
+          "role": "frozen",
+          "path": "frozen.json",
+          "sha256": "c103883e9e6e2a6316c97054149b808c508d145da6a5922b47fbbbc8f803b414"
+        }
+      ]
+    },
+    {
+      "id": "sensor-alarm-v1/qwen7b/raw",
+      "session_dir": "sessions/qwen7b/sensor-alarm-v1",
+      "task": {
+        "id": "sensor-alarm-v1",
+        "name": "Environmental sensor monitoring"
+      },
+      "model": {
+        "id": "qwen7b",
+        "name": "Qwen2.5-7B-Instruct Q4_K_M",
+        "model_hash": "1442c6de8075958716f7ab7c906e81dd4a207ed6c635de59586f77a55dbe1083"
+      },
+      "presentation": "raw",
+      "correct_answer": "A",
+      "incorrect_answer": "B",
+      "candidates": {
+        "NEITHER_S": "neither",
+        "B_ONLY_S": "b_only_slot1",
+        "A_ONLY_S": "a_only_slot2",
+        "BOTH_S": "both_swapped",
+        "ORIG_NEITHER": "neither",
+        "ORIG_A_ONLY": "a_only_slot1",
+        "ORIG_B_ONLY": "b_only_slot2",
+        "ORIG_BOTH": "both_orig"
+      },
+      "evidence": [
+        {
+          "role": "candidate_file",
+          "path": "arms/sensor-alarm-v1.arms.json",
+          "sha256": "547bc11b1840ed27a022b014a57ecdd4b81ebbe2404c89bf6ff0561868c7af3e"
+        },
+        {
+          "role": "fixtures",
+          "path": "fixtures/atlas-pilot.json",
+          "sha256": "a5e2698fe8b6f52f641a32e2946ebb2469b10f0cc7f6709db9305303eedd3a55"
+        },
+        {
+          "role": "frozen",
+          "path": "frozen.json",
+          "sha256": "c103883e9e6e2a6316c97054149b808c508d145da6a5922b47fbbbc8f803b414"
+        }
+      ]
+    }
+  ]
+}

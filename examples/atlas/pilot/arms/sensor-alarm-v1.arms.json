@@ -1,0 +1,29 @@
+{
+  "candidates": [
+    {
+      "label": "B_CLAIM",
+      "text": "Tenant 4 sensor log note: Operators also confirmed that both cold room 1 probes read above 8 degrees continuously. Probe readings are recorded each minute.",
+      "sha256": "4ce227af74330e89e45f6f4aa3fdb4a3f9e30a96340d0ed7e03dce1bbda7810e"
+    },
+    {
+      "label": "TOPIC_NO_EVIDENCE",
+      "text": "Tenant 4 sensor log note: Operators also confirmed that ad-hoc ticket was filed for the cold room 1 probes. Probe readings are recorded each minute.",
+      "sha256": "c3ffc3496da28757a908b2275b40a587e938abe2c4b10f4a68ab892ce639385a"
+    },
+    {
+      "label": "OFF_TOPIC",
+      "text": "Tenant 4 lantern festival diary: Operators also confirmed that ad-hoc ticket was filed for the lantern festival in autumn. The lantern festival draws large crowds.",
+      "sha256": "c6fbb567e70854b077c1514ccbf6c62128cb684a8b857a3c2bd50f56058741b6"
+    },
+    {
+      "label": "NEUTRAL",
+      "text": "Tenant 4 village bakery diary: Several cheerful apprentices carefully inspected some buns beside the old brick oven after school. Some neighbors carried 120 golden trays.",
+      "sha256": "26a424dc60f2ea3284ea535f1d273c88983896f3eec98b49bba7fefa4987d0ab"
+    },
+    {
+      "label": "MATCHING_ID",
+      "text": "Tenant 4 sensor log note: Operators also confirmed that ticket TASK-9 was filed for the cold room 1 probes. Probe readings are recorded each minute.",
+      "sha256": "d987d09d943626fbb7d078976cce1cf2780d094c3a508c39934e0ed699806415"
+    }
+  ]
+}

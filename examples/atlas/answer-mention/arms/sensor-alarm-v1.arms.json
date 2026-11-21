@@ -1,0 +1,24 @@
+{
+  "candidates": [
+    {
+      "label": "NEITHER",
+      "text": "Tenant 4 sensor log note: The note also refers to the parking rota and the lunch rota. Probe readings are recorded each minute.",
+      "sha256": "7fb3754838f37b2539db8e1ff280ecf4c8ff262deb78f24dda0a9416ceb7c056"
+    },
+    {
+      "label": "A_ONLY",
+      "text": "Tenant 4 sensor log note: The note also refers to cold room 3 and the lunch rota. Probe readings are recorded each minute.",
+      "sha256": "27e740e3fbab2c467c8c5cadfd7a9d0a50573357a115ad64e62a43a925087107"
+    },
+    {
+      "label": "B_ONLY",
+      "text": "Tenant 4 sensor log note: The note also refers to the parking rota and cold room 1. Probe readings are recorded each minute.",
+      "sha256": "7fa5af9f2bbb973c5a9b78788f9fc1bf344574aadfcd5e1e77d52095bcfc4079"
+    },
+    {
+      "label": "BOTH",
+      "text": "Tenant 4 sensor log note: The note also refers to cold room 3 and cold room 1. Probe readings are recorded each minute.",
+      "sha256": "78d83433c6a216abec5c57486c0e3bb43d282bcb2099c0f16c84364f39d8fbde"
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "candidates": [
+    {
+      "label": "B_CLAIM",
+      "text": "Tenant 4 access review note: Operators also confirmed that the contractor K. Osei request fulfils all three policy conditions. The finance subnet carries payroll traffic.",
+      "sha256": "27d26d129456fb6fdc93dbc40f3ecfeaced4595e1149579ef96d9273394645d4"
+    },
+    {
+      "label": "TOPIC_NO_EVIDENCE",
+      "text": "Tenant 4 access review note: Operators also confirmed that off-the-shelf ticket was filed for the contractor K. Osei request. The finance subnet carries payroll traffic.",
+      "sha256": "1914fee1f1c035dd91aad156d2a631f3c7b9ad79e16cb2284799a5240c22b2df"
+    },
+    {
+      "label": "OFF_TOPIC",
+      "text": "Tenant 4 lantern festival diary: Operators also confirmed that off-the-shelf ticket was filed for the lantern festival in midsummer. The lantern festival draws large crowds.",
+      "sha256": "355a4a8561d5e935e641b30b06c5fb6dcedd83288e86b9edda733eb217dcd5a0"
+    },
+    {
+      "label": "NEUTRAL",
+      "text": "Tenant 4 village bakery diary: Several cheerful apprentices carefully inspected some buns beside the old brick oven after school. Some neighbors carried 120 golden trays.",
+      "sha256": "26a424dc60f2ea3284ea535f1d273c88983896f3eec98b49bba7fefa4987d0ab"
+    },
+    {
+      "label": "MATCHING_ID",
+      "text": "Tenant 4 access review note: Operators also confirmed that ticket TASK-12 was filed for the contractor K. Osei request. The finance subnet carries payroll traffic.",
+      "sha256": "87581dd8f0d18a2777332ac5a0217e0e32f9121e1fc8c2810551773d9e62003b"
+    }
+  ]
+}

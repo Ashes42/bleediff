@@ -2,32 +2,145 @@
 
 > What survives subtraction was already in the composite.
 
-**Bleediff is a local GGUF evaluation CLI that measures how added context changes a model's A/B/C/D choice
-probabilities, by folding three requests into one composite and comparing it with a clean baseline.** It runs against a
-`llama-server` you start yourself, uses only the Python 3.11+ standard library, and keeps no per-request probability
-vectors or prompts. Version **0.2.0** is an **exploratory research toolkit** with measurements on two models. It is not a
+**Bleediff is a local GGUF evaluation CLI that measures how added context changes a model's A/B/C/D choice probabilities.** It runs
+against a `llama-server` you start yourself, uses only the Python 3.11+ standard library, and keeps no prompts or fragment text
+unless you ask. Version **0.3.0** is an **exploratory research toolkit** with measurements on three local models. It is not a
 security scanner and has not demonstrated a vulnerability.
 
-## What it does
+## What is in v0.3.0
 
-1. A fixed multiple-choice prompt (question, options A-D, evidence from three authorized contexts) is sent to the model
-   three times, once per authorized context. The model's answer-letter probabilities are read before sampling and
-   renormalized over A, B, C, D.
-2. The three probability vectors are averaged into a composite `M = (p1 + p2 + p3) / 3` and then discarded.
-3. A **clean baseline** `B_ref` is the same fold with nothing added. The **residual** for choice c is
-   `R_c = log(M_c + eps) - log(B_ref_c + eps)` and the headline number is `delta_contrast = R_B - R_A` (nats): how much
-   the composite moved toward B relative to A.
-4. In the displacement experiments, request #3's evidence is extended by 25 words of an *adjacent* tenant's text (the
-   "treatment"), or by matched neutral prose (the "control"). Everything else in the prompt is byte-identical.
+| Command | What it does | Needs a model? |
+|---|---|---|
+| `bleediff track` | Interactive decision-margin tracker: edit a text fragment, press Enter, see how the answer probabilities and the A/B margin move. | yes (`llama-server`) |
+| `bleediff track --arms FILE` | Batch influence ranking: score a list of labelled candidate fragments against one clean baseline and rank the observed effects. | yes |
+| `bleediff atlas` | Cross-task, cross-model report over saved batch sessions: validated sources, paired category effects, correctness outcomes, filters. | **no** (reads saved results) |
+| `calibrate`, `bounce`, `diff`, `inspect` | The v0.2.0 three-request fold research CLI (unchanged). | yes |
 
-The question the project asked is whether such displaced context leaves a measurable trace in the output distribution
-even when the final answer does not change. The detailed method, validity gates, trace schema and history are in
-[`docs/TECHNICAL.md`](docs/TECHNICAL.md).
+The v0.2.0 research fold (`M = (p1 + p2 + p3) / 3` against a clean baseline, `delta_contrast = R_B - R_A`), its equations, thresholds,
+trace schema and results are **unchanged**; see [Research findings from v0.2.0](#research-findings-from-v020) and
+[`docs/TECHNICAL.md`](docs/TECHNICAL.md). The three v0.3.0 commands are a different measurement: **one prompt per score** (request
+#3 of a frozen scenario, clean or with a fragment appended after its authorized context), so their values are not
+`delta_contrast`.
 
-## Findings (config-audit-v2; Qwen2.5-1.5B and Qwen2.5-7B, Q4_K_M, CPU, llama.cpp b11963)
+## Quick start (no model needed)
 
-`delta_contrast` in nats; the raw answer (argmax of the composite) is in brackets. Full numbers, including every control,
-are in [`research/data/results-v0.2.0.json`](research/data/results-v0.2.0.json).
+```
+python -m unittest discover -s tests                 # mock llama-server; takes a few minutes
+
+# the Atlas on the bundled example sessions (saved results of real runs; see examples/atlas/README.md)
+python -m bleediff atlas --manifest examples/atlas/pilot/atlas-input.json --out runs/atlas-pilot
+python -m bleediff atlas --manifest examples/atlas/slot-swap/atlas-input.json --out runs/atlas-slot-swap
+python examples/atlas/mention_contrasts.py runs/atlas-slot-swap/atlas.json
+```
+
+`--out` directories must not exist; reports are never overwritten. Nothing here downloads or runs a model.
+
+## The three commands
+
+The real-model commands below need **your own GGUF files and a llama.cpp `llama-server`** (the examples used build
+`b11963-39febd2ad`, CPU, `-c 4096 -ngl 0`). Without them only the test suite (mock server) and `atlas` run.
+
+```
+llama-server -m qwen2.5-1.5b-instruct-q4_k_m.gguf --host 127.0.0.1 --port 8099 -c 4096 -ngl 0 --no-webui
+```
+
+### `bleediff track`: interactive
+
+```
+python -m bleediff track --server http://127.0.0.1:8099 --out runs/my-session
+# edit runs/my-session/fragment.txt in any editor and save it, then press Enter to rescore; `again` remeasures; `quit` ends
+```
+
+The clean baseline is scored first, then each saved edit. Every step shows the normalized A/B/C/D probabilities, the signed margin
+`margin_AB = ln(p_A / p_B)`, the change from the baseline and from the previous step, and the overall preferred answer. The session
+is written to `<out>/history.jsonl` (hashes, probabilities, margins, model and inference provenance); prompts and fragment text are
+**not** saved unless you pass `--retain-prompts`. Missing or non-finite probabilities are errors, never zeros.
+
+### `bleediff track --arms`: batch ranking
+
+```
+python -m bleediff track --server http://127.0.0.1:8099 --arms candidate-fragments.json --out runs/batch-001
+```
+
+`candidate-fragments.json` is a UTF-8 list of `{"label": "...", "text": "..."}` (or `{"candidates": [...]}`, or the
+`{"arms": {label: text}}` / `{"fragments": {...}}` shape; an optional `sha256` per candidate is verified). The baseline is measured
+**once** (tokenizer and server checks, model hash and flags recorded) and every candidate is scored with the same unchanged
+measurement. Outputs: `history.jsonl` (full A-D probabilities, margins, changes, tokenizer counts), `leaderboard.csv` and
+`batch-manifest.json` (hashes, provenance). The terminal summary is ranked by observed movement toward the designated incorrect
+answer (`--incorrect B` by default; ties share a rank) and shows fragment and prompt token counts, so length-unmatched lists are
+visible. Failed requests, invalid probabilities and invalid candidates are recorded as not scored and never imputed. There is no
+automatic prompt generation. Rankings are **observed candidate effects**: a large shift does not show that a particular word caused it.
+
+### `bleediff atlas`: cross-task and cross-model report
+
+```
+python -m bleediff atlas --manifest atlas-input.json --out runs/atlas-report [--model M] [--task T] [--category C] [--outcome O]
+```
+
+The input manifest (`bleediff.atlas-input/1`; see the docstring of `bleediff/atlas.py` and
+[`examples/atlas/pilot/atlas-input.json`](examples/atlas/pilot/atlas-input.json)) maps each batch-session directory to its task,
+model, prompt presentation, correct and designated incorrect answer, candidate categories and evidence files. The atlas validates
+every source (schemas, recorded hashes, scenario and model identity, evidence-file hashes), re-derives each saved margin and
+preferred answer from the saved probabilities with the unchanged functions, and writes `atlas.json`, `candidates.csv`,
+`category-summary.csv`, `model-comparison.csv`, `report.md` and a terminal summary. It never contacts a model. To import your own
+runs, point a manifest at your batch-session directories (copy the example and edit the paths, ids and candidate categories).
+Filters (`--model`, `--task`, `--category`, `--outcome`) apply to the CSVs, report and terminal; `atlas.json` always keeps the
+complete data.
+
+## Reading the numbers
+
+* **A/B margin movement.** `margin_AB = ln(p_A / p_B)`; positive favors A. A candidate's **shift** (movement toward the designated
+  incorrect answer B) is the baseline margin minus the candidate margin, in nats, measured from *that model's own clean baseline*.
+  Magnitudes are model-specific: across models compare signs and within-cell ranks, not raw margins.
+* **A/B ranking crossing vs overall preferred-answer change.** A crossing is the margin changing sign (A above B becomes B above A).
+  An overall preferred-answer change (**flip**) is the highest-probability answer among A-D changing. The two are different: with D
+  leading, A and B can cross without the preferred answer changing. Bleediff records both separately.
+* **Newly induced incorrect answer.** The clean baseline preferred the correct answer and a candidate made the model prefer a wrong
+  one. If the baseline was already wrong (for example Qwen2.5-1.5B preferred D on one task) later changes are *not* reported as
+  newly induced errors; the atlas labels them `baseline_incorrect_*` or `recovered_to_correct`.
+* **Raw vs chat-template measurements.** All bundled results use the *raw* prompt: the frozen text is sent to `/completion` with no
+  chat template, and the answer letter is read at the next-token position. An instruct model's *native chat template* is a different
+  presentation (system and user turns, answer position after the assistant header); its results must not be mixed with raw ones. The
+  atlas groups by declared presentation and never combines them. A native-template check on Llama 3.2 3B (one scenario, six
+  conditions; a local run whose files are not bundled) kept the direction and order of the effects while the shifts grew several-fold
+  from a much more confident baseline and letter coverage fell.
+* **Answer-letter probability coverage.** The share of the model's first-token probability mass that lies on the four answer-letter
+  surfaces before renormalization. Low coverage (flagged below 0.90) means the A-D probabilities rest on less of the model's actual
+  output distribution. **Saturated baselines** (highest probability at least 0.995; Qwen2.5-7B here) leave little room for a visible
+  flip and make shifts large logit changes of an extremely confident answer. Both are reported as separate findings, never as noise.
+
+## Exploratory findings in v0.3.0
+
+Three local models (Qwen2.5-1.5B, Llama 3.2 3B Instruct, Qwen2.5-7B; Q4_K_M, CPU, raw prompts) on four independent synthetic
+tasks (backup verification, network access, software integrity, sensor monitoring). Every session was run twice and was bit-identical;
+those repeats check reproducibility and are **not** independent statistical samples. The bundled example sessions reproduce the
+numbers below (`examples/atlas/README.md`).
+
+* **Mentioning B's subject often increased B preference.** In the pilot, on-topic text that *also mentions option B's subject* (with
+  no evidence for B) moved the decision toward B more than off-topic text in 11 of 12 task-by-model cells (8 of 12 by at least 0.25
+  nats) and more than neutral prose in 11 of 12 (10 of 12). An explicit competing claim exceeded that on-topic text in 0 of 4 tasks for
+  Qwen 1.5B, 3 of 4 for Llama 3B and 4 of 4 for Qwen 7B.
+* **The fixed-position result was confounded.** In the follow-up 2x2 (A's and B's subjects in two slots), mentioning B beat the neutral
+  fragment in 11 of 12 cells, but A's subject always sat in slot 1 and B's in slot 2, so the answer subject and its position were
+  not separated. The original 11/12 results are not evidence of a shared causal mechanism.
+* **One newly induced incorrect answer: Llama 3B, sensor task.** Naming B's subject without evidence for B moved the preferred answer
+  from A to B (A 0.491 / B 0.095 at baseline; A 0.222 / B 0.486 with the fragment).
+* **The Llama effect and the flip survived swapping the subject positions** (B in slot 1: A 0.293 / B 0.386; the both-subjects
+  fragment also flipped). Its B-subject effect was +1.88 nats at slot 2 and +1.37 at slot 1.
+* **Qwen 1.5B showed smaller B-subject effects at both positions** (+0.55 and +0.35 nats) and no flips.
+* **Qwen 7B was strongly position-sensitive** in the sensor experiment: the B-subject effect was +0.21 at slot 2 and -0.26 at slot 1
+  (a sign reversal), on a saturated baseline (margin about +16).
+* **Models differ substantially, including on neutral text**, which moved Qwen 1.5B toward A, Llama 3B toward B, and Qwen 7B in
+  mixed directions.
+* **Not established:** a universal priming mechanism, any real tenant-isolation vulnerability, or a distinction between topic
+  relevance and option-subject priming (the `topic` category is *on-topic text that also mentions option B's subject*).
+  Four hand-written tasks, three models, single wordings per cell and one llama.cpp build are a small exploratory sample.
+
+## Research findings from v0.2.0
+
+Findings of the three-request fold (config-audit-v2; Qwen2.5-1.5B and Qwen2.5-7B, Q4_K_M, CPU, llama.cpp b11963). `delta_contrast`
+in nats; the raw answer (argmax of the composite) is in brackets. Full numbers, including every control, are in
+[`research/data/results-v0.2.0.json`](research/data/results-v0.2.0.json). These results are unchanged.
 
 | | Qwen2.5-1.5B | Qwen2.5-7B |
 |---|---|---|
@@ -42,8 +155,6 @@ are in [`research/data/results-v0.2.0.json`](research/data/results-v0.2.0.json).
 | Controls inside the historical ±0.1 tolerance | 5 of 12 | 0 of 12 |
 | Original B vs controls | above all 12 | above all 12 |
 
-What the measurements show:
-
 * The original treatment exceeded all 12 neutral controls on both models, and the paraphrase kept most of the effect
   (83% on 1.5B, 73% on 7B), so the effect does not require the exact answer-option wording.
 * Reversing the stated state ("passed", "disabled") removed the effect on both models: it fell to the neutral level.
@@ -55,7 +166,7 @@ What the measurements show:
 * Repeated measurements were bit-identical in every tested configuration (each experiment was run twice).
 * Neutral text itself shifts the composite: on both models it pushes toward A, on 7B by about 0.69 nats.
 
-## What this does and does not show
+### What the v0.2.0 results do and do not show
 
 * **The simulated displacement is ordinary text concatenation at the model interface.** The model receives the same bytes
   whether the text arrives as an "over-read" of an adjacent buffer or as authorized in-slot text; the harness cannot tell
@@ -71,21 +182,13 @@ What the measurements show:
   distribution responds to appended text.
 * **The original five-scenario experiment remains INCONCLUSIVE** (one of five trials valid; two clean baselines were not
   A-dominant; four of five matched controls were out of tolerance). Nothing later changes that verdict.
-* **Scope:** one model family (Qwen2.5), one quantization per model (Q4_K_M), one scenario chosen after the fact, selected
-  prompts, single probe texts, CPU runs on one machine and one llama.cpp build. Model-family differences are untested.
+* **Scope of v0.2.0:** one model family (Qwen2.5), one quantization per model (Q4_K_M), one scenario chosen after the fact, selected
+  prompts, single probe texts, CPU runs on one machine and one llama.cpp build. Model-family differences were untested there (v0.3.0
+  adds Llama 3.2 3B; see above).
 
-## Quick start
-
-```
-python -m unittest discover -s tests              # mock llama-server; no model needed
-```
-
-Reproduce the measurements (needs your own GGUF files and a llama.cpp `llama-server`, build `b11963-39febd2ad`;
-CPU only, deterministic on the tested setup but not guaranteed identical on other hardware or builds):
+### Reproducing the v0.2.0 fold measurements
 
 ```
-llama-server -m qwen2.5-1.5b-instruct-q4_k_m.gguf --host 127.0.0.1 --port 8099 -c 4096 -ngl 0 --no-webui
-
 python research/run_arms.py --server http://127.0.0.1:8099 \
     --frozen research/data/frozen-arms.json \
     --controls research/data/neutral-controls-replicates-manifest.json \
@@ -93,101 +196,31 @@ python research/run_arms.py --server http://127.0.0.1:8099 \
 ```
 
 This does a fresh clean calibration, runs the five frozen treatment-type texts and the 12 neutral controls twice, writes
-15-field traces with provenance sidecars and an `analysis.json`. Expected file hashes for the models:
+15-field traces with provenance sidecars and an `analysis.json` (deterministic on the tested setup, not guaranteed identical on other
+hardware or builds). Expected file hashes for the models:
 
 | Model file | SHA-256 |
 |---|---|
 | `qwen2.5-1.5b-instruct-q4_k_m.gguf` | `6a1a2eb6d15622bf3c96857206351ba97e1af16c30d7a74ee38970e434e9407e` |
-| `qwen2.5-7b-instruct-q4_k_m-00001-of-00002.gguf` | `dfce12e3862a5283…` (full values in the results file) |
+| `qwen2.5-7b-instruct-q4_k_m-00001-of-00002.gguf` | `dfce12e3862a5283ccfb88221b48480e58745165de856439950d0f22590580db` |
+| `qwen2.5-7b-instruct-q4_k_m-00002-of-00002.gguf` | `539cf93f78e887edea1c04e2d7d8cdaca9d01dae9c9025bcb8accbe29df3d72a` |
+| `Llama-3.2-3B-Instruct-Q4_K_M.gguf` (v0.3.0 sessions) | `6c1a2b41161032677be168d354123594c0e6e67d2b9227c84f296ad037c728ff` |
 
-Both models share the Qwen2.5 tokenizer, so every frozen text and control keeps exact token parity (34 fragment tokens,
-245 request-3 prompt tokens). Compare your `analysis.json` with `research/data/results-v0.2.0.json`; the saved traces
-in `research/data/` are the ones the numbers above come from. The original CLI (`bleediff calibrate | bounce | diff`)
-and the frozen five-scenario protocol are documented in [`docs/TECHNICAL.md`](docs/TECHNICAL.md).
-
-## Decision tracker (`bleediff track`, experimental)
-
-An interactive way to see how a model's answer moves while you edit text. It scores **one prompt** per step: request #3 of a
-frozen scenario (default `config-audit-v2`), first clean, then with your fragment appended after its authorized context (the
-same insertion point the displacement experiments used).
-
-```
-python -m bleediff track --server http://127.0.0.1:8099 --out runs/my-session
-# edit runs/my-session/fragment.txt in any editor and save it, then press Enter in the terminal to rescore; type quit to end
-```
-
-Each step shows the normalized A/B/C/D probabilities, the signed margin `margin_AB = ln(p_A / p_B)` (positive favors A,
-negative favors B), the change from the baseline and from the previous step, and the overall preferred answer. A pairwise A/B
-crossing is reported as a crossing; it counts as an answer flip only when the highest-probability choice among A-D changes.
-Nothing is imputed: missing or non-finite probabilities are errors. Real output (Qwen2.5-1.5B Q4_K_M, the preserved frozen texts):
-
-```
-BASELINE                                    EDIT 01 (original competing B evidence)
-  A  74.7%   B  22.8%                         A  23.7%   B  74.9%
-Margin A/B: +1.185 nats                     Margin A/B: -1.152 nats
-                                            Change from baseline: -2.337 nats | Preferred answer: B (changed from A)
-EDIT 03 (polarity-reversed evidence): A 84.5%, B 14.6%, margin +1.754 nats, preferred answer A (changed from B)
-```
-
-The session is written to `<out>/history.jsonl` (hashes, probabilities, margins, changes, model and inference provenance;
-prompts and fragment text are **not** saved unless you pass `--retain-prompts`). Existing sessions are never overwritten.
-Options: `--fragment PATH` (edit a file you choose), `--scenario`, `--fixtures`, `--n-probs`, `--timeout`.
-
-### Batch mode: rank a list of candidate fragments
-
-```
-python -m bleediff track --server http://127.0.0.1:8099 --arms candidate-fragments.json --out runs/batch-001
-```
-
-`candidate-fragments.json` is a UTF-8 JSON list of `{"label": ..., "text": ...}` (or `{"candidates": [...]}`, or the
-`{"arms": {label: text}}` / `{"fragments": {...}}` shape of the frozen research files; an optional `sha256` per candidate is
-verified). Bleediff measures the clean baseline **once** (tokenizer and server checks, model hash and flags recorded), then scores
-every candidate with the same unchanged single-prompt measurement, and writes `history.jsonl` (every measurement, full A-D
-probabilities, margins, changes, tokenizer counts), `leaderboard.csv` and `batch-manifest.json` (hashes of both files, the
-candidate file and the model). The terminal summary is ranked by observed movement of the A/B margin toward the designated
-incorrect answer (`--incorrect B` by default; ties share a rank). It also shows each candidate's fragment and prompt token counts
-and flags length-unmatched lists. Failed requests, invalid probabilities and invalid candidates are recorded and shown as not
-scored (never imputed); an empty list, an unreadable file or a failed baseline stops the run with exit code 2.
-
-The ranking lists **observed candidate effects**. A large shift does not show that a particular word, topic or identifier caused
-it, and candidates that differ in several ways at once cannot be attributed to any one of them. There is no automatic prompt
-generation. The mock-server tests are `tests/test_v031_batch.py`.
-
-### Influence Atlas (`bleediff atlas`, experimental)
-
-Aggregates, compares, filters and ranks **existing** batch sessions across tasks and models. It reads saved results only (it never
-contacts a model, needs no server, database or dependency):
-
-```
-python -m bleediff atlas --manifest runs/atlas-input.json --out runs/atlas-report [--model M] [--task T] [--category C] [--outcome O]
-```
-
-The input manifest (`bleediff.atlas-input/1`, see the docstring of `bleediff/atlas.py`) maps each batch-session directory to its
-task, model, prompt presentation, correct and designated incorrect answer, candidate categories (`claim`, `topic`, `offtopic`,
-`neutral`, `id`) and evidence files. Sources are validated first (schemas, recorded hashes, scenario and model identity, evidence
-file hashes; each saved margin and preferred answer is re-derived from the saved probabilities). Outputs: `atlas.json`,
-`candidates.csv`, `category-summary.csv`, `model-comparison.csv`, `report.md` and a terminal summary.
-
-* Every effect is a **shift from that model's own clean baseline** (nats toward the incorrect answer); raw margins are never
-  compared across models. Paired differences (`topic_minus_offtopic`, `topic_minus_neutral`, `claim_minus_topic`,
-  `id_minus_topic`) are computed inside each task/model cell, and only when both categories are present and scored.
-* An A/B crossing is reported separately from an overall answer flip; a model whose baseline is already wrong is never reported as
-  newly misled; saturated baselines, low answer-letter coverage, token mismatches and incompatible presentations are flagged.
-* Ranks order candidates **within one task/model cell** by observed movement. There is no global ranking, and a rank is not a mechanism.
-* The `topic` category is **on-topic text that also mentions option B's subject**. The existing experiments cannot separate topic
-  relevance from option-subject priming, and the atlas says so wherever that category appears.
-
-This is a different measurement from the research fold: it is one request, not `M = (p1 + p2 + p3) / 3`, so its values are
-not `delta_contrast` (a change in request #3's probabilities is three times its change in the composite). A large margin does not
-prove robustness against other edits. The research equations, schemas and results are unchanged.
+Both Qwen models share the Qwen2.5 tokenizer, so every frozen text and control keeps exact token parity (34 fragment tokens,
+245 request-3 prompt tokens). Compare your `analysis.json` with `research/data/results-v0.2.0.json`. The original CLI
+(`bleediff calibrate | bounce | diff`) and the frozen five-scenario protocol are documented in
+[`docs/TECHNICAL.md`](docs/TECHNICAL.md).
 
 ## Repository layout
 
-* `bleediff/` the frozen measurement code (fold, contrast, validity gates, trace schema, control generator, protocols).
+* `bleediff/` the measurement code: the frozen fold, contrast, validity gates and trace schema, plus `track.py`, `batch.py` and
+  `atlas.py` (v0.3.0).
 * `research/` the supported research drivers (`run_arms.py`, `arms.py`, `measure_fragments.py`) and `research/data/`
-  (frozen texts, the 12 preserved neutral controls, saved traces and the results summary).
+  (frozen texts, the 12 preserved neutral controls, saved traces and the v0.2.0 results summary).
+* `examples/atlas/` small sanitized example datasets (saved batch sessions, candidate files, fixtures, atlas input manifests) that
+  reproduce the v0.3.0 findings offline, and `mention_contrasts.py`.
 * `fixtures/` scenario fixtures, preserved controls and the protocol and preregistration documents.
-* `docs/TECHNICAL.md` the detailed method and history; `CHANGELOG.md`; `RELEASE_NOTES_v0.2.0.md`.
+* `docs/TECHNICAL.md` the detailed method and history; `CHANGELOG.md`; `RELEASE_NOTES_v0.2.0.md`, `RELEASE_NOTES_v0.3.0.md`.
 * `tests/` stdlib `unittest` suite (a mock llama-server stands in for the model).
 
 Local run directories (`runs/`), model files and per-run sidecars are git-ignored and are not part of the repository.
