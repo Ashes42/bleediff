@@ -105,6 +105,38 @@ Both models share the Qwen2.5 tokenizer, so every frozen text and control keeps 
 in `research/data/` are the ones the numbers above come from. The original CLI (`bleediff calibrate | bounce | diff`)
 and the frozen five-scenario protocol are documented in [`docs/TECHNICAL.md`](docs/TECHNICAL.md).
 
+## Decision tracker (`bleediff track`, experimental)
+
+An interactive way to see how a model's answer moves while you edit text. It scores **one prompt** per step: request #3 of a
+frozen scenario (default `config-audit-v2`), first clean, then with your fragment appended after its authorized context (the
+same insertion point the displacement experiments used).
+
+```
+python -m bleediff track --server http://127.0.0.1:8099 --out runs/my-session
+# edit runs/my-session/fragment.txt in any editor and save it, then press Enter in the terminal to rescore; type quit to end
+```
+
+Each step shows the normalized A/B/C/D probabilities, the signed margin `margin_AB = ln(p_A / p_B)` (positive favors A,
+negative favors B), the change from the baseline and from the previous step, and the overall preferred answer. A pairwise A/B
+crossing is reported as a crossing; it counts as an answer flip only when the highest-probability choice among A-D changes.
+Nothing is imputed: missing or non-finite probabilities are errors. Real output (Qwen2.5-1.5B Q4_K_M, the preserved frozen texts):
+
+```
+BASELINE                                    EDIT 01 (original competing B evidence)
+  A  74.7%   B  22.8%                         A  23.7%   B  74.9%
+Margin A/B: +1.185 nats                     Margin A/B: -1.152 nats
+                                            Change from baseline: -2.337 nats | Preferred answer: B (changed from A)
+EDIT 03 (polarity-reversed evidence): A 84.5%, B 14.6%, margin +1.754 nats, preferred answer A (changed from B)
+```
+
+The session is written to `<out>/history.jsonl` (hashes, probabilities, margins, changes, model and inference provenance;
+prompts and fragment text are **not** saved unless you pass `--retain-prompts`). Existing sessions are never overwritten.
+Options: `--fragment PATH` (edit a file you choose), `--scenario`, `--fixtures`, `--n-probs`, `--timeout`.
+
+This is a different measurement from the research fold: it is one request, not `M = (p1 + p2 + p3) / 3`, so its values are
+not `delta_contrast` (a change in request #3's probabilities is three times its change in the composite). A large margin does not
+prove robustness against other edits. The research equations, schemas and results are unchanged.
+
 ## Repository layout
 
 * `bleediff/` the frozen measurement code (fold, contrast, validity gates, trace schema, control generator, protocols).

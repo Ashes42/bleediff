@@ -3,6 +3,20 @@
 All notable changes. Versions identify the software that wrote a file, not an experiment or an algorithm; protocols and
 control algorithms have their own identifiers (see `docs/TECHNICAL.md`).
 
+## [Unreleased] - decision tracker
+
+### Added
+- `bleediff track`: an interactive decision-margin tracker. Edit a UTF-8 fragment file, press Enter, and see the normalized
+  A/B/C/D probabilities, the signed `margin_AB = ln(p_A/p_B)`, changes from the baseline and the previous step, and the overall
+  preferred answer (a pairwise crossing is not reported as an answer flip). Single-prompt measurement of request #3 of a
+  frozen scenario (default `config-audit-v2`); reuses the validated `LlamaClient.choice_probs` extraction unchanged.
+- `<out>/history.jsonl` session history (schema `bleediff.track-history/1`): provenance, hashes, probabilities, margins,
+  changes, errors; prompts only with `--retain-prompts`; never overwrites an existing session.
+- Tests: `tests/test_v030_track.py`.
+
+### Unchanged
+- The research fold, contrast equation, thresholds, trace schema, validity gates, fixtures, protocols and all v0.2.0 results.
+
 ## [0.2.0] - exploratory research release
 
 ### Added

@@ -1,4 +1,4 @@
-"""Frozen CLI lexicon: calibrate | bleed | bounce | diff | inspect.
+"""CLI: calibrate | bleed | bounce | diff | inspect (the frozen research lexicon) and track (v0.3 decision-margin tracker).
 
 Exit codes: 0 = PASS / ok, 1 = FAIL NO_EXPOSURE (or bleed preview mismatch), 2 = INCONCLUSIVE.
 """
@@ -47,6 +47,9 @@ from .meta import (
     write_sidecar,
 )
 from .runner import Harness, load_baseline
+from .track import DEFAULT_FIXTURES as TRACK_FIXTURES
+from .track import DEFAULT_SCENARIO as TRACK_SCENARIO
+from .track import cmd_track
 
 DEFAULT_SERVER = "http://127.0.0.1:8080"
 DEFAULT_FIXTURES = os.path.join("fixtures", "contexts.json")
@@ -410,6 +413,19 @@ def build_parser() -> argparse.ArgumentParser:
     i.add_argument("--trial", type=int, required=True)
     i.add_argument("--meta", default=None, help="provenance sidecar (default: <trace>.meta.json if present)")
     i.set_defaults(fn=cmd_inspect)
+
+    t = sub.add_parser("track", help="interactive decision-margin tracker: edit a fragment, press Enter, see how the "
+                                     "A/B/C/D probabilities and the A/B margin moved (single prompt; not the research fold)")
+    t.add_argument("--server", default=DEFAULT_SERVER)
+    t.add_argument("--out", required=True, help="NEW directory for the session history (never overwritten)")
+    t.add_argument("--fixtures", default=TRACK_FIXTURES)
+    t.add_argument("--scenario", default=TRACK_SCENARIO, help="frozen scenario whose request #3 is measured")
+    t.add_argument("--fragment", default=None, help="UTF-8 text file you edit (default: <out>/fragment.txt, created empty)")
+    t.add_argument("--retain-prompts", action="store_true",
+                   help="also keep each measured prompt and fragment under <out>/prompts/ (off by default: only hashes are recorded)")
+    t.add_argument("--n-probs", type=int, default=DEFAULT_N_PROBS)
+    t.add_argument("--timeout", type=float, default=120.0)
+    t.set_defaults(fn=cmd_track)
     return p
 
 
