@@ -47,7 +47,8 @@ OBSERVED_NOTE = ("OBSERVED CANDIDATE EFFECTS: each row is one fragment's measure
 CSV_COLUMNS = ["rank", "label", "status", "movement_toward_incorrect_nats", "margin_AB", "change_from_baseline_nats",
                "p_A", "p_B", "p_C", "p_D", "preferred_choice", "preferred_differs_from_baseline", "pairwise_AB_crossed",
                "fragment_chars", "fragment_bytes", "fragment_words", "fragment_tokens", "prompt_tokens",
-               "prompt_tokens_minus_modal", "fragment_sha256", "error_reason"]
+               "prompt_tokens_minus_modal", "fragment_sha256", "error_reason",
+               "margin_correct_vs_competing", "margin_correct_vs_strongest", "newly_induced_incorrect", "correct_letter", "competing_letter"]
 
 
 class CandidateFileError(Inconclusive):
@@ -191,7 +192,9 @@ def _short(label: str, n: int = 30) -> str:
     return label if len(label) <= n else label[: n - 3] + "..."
 
 
-def _write_csv(path: str, ranked: list[dict], failed: list[dict]) -> None:
+def _write_csv(path: str, ranked: list[dict], failed: list[dict], correct: str = "A", competing: str = "B") -> None:
+    """Columns up to ``error_reason`` are the v0.3.0 columns (margin_AB is the fixed A/B margin, movement_toward_incorrect_nats the semantic
+    competing-answer movement); the last five columns are the semantic-role quantities and the letters they refer to."""
     with open(path, "x", encoding="utf-8", newline="") as fh:
         w = csv.writer(fh, lineterminator="\n")
         w.writerow(CSV_COLUMNS)
@@ -199,10 +202,11 @@ def _write_csv(path: str, ranked: list[dict], failed: list[dict]) -> None:
             p = r["probs"]
             w.writerow([r["rank"], _csv_safe(r["label"]), "ok", f"{r['movement']:.9f}", f"{r['margin']:.9f}", f"{r['change']:.9f}",
                         *[f"{x:.9f}" for x in p], r["preferred"], "yes" if r["flipped"] else "no", "yes" if r["crossed"] else "no",
-                        r["chars"], r["bytes"], r["words"], r["fragment_tokens"], r["prompt_tokens"], r["tok_vs_modal"], r["fragment_sha256"], ""])
+                        r["chars"], r["bytes"], r["words"], r["fragment_tokens"], r["prompt_tokens"], r["tok_vs_modal"], r["fragment_sha256"], "",
+                        f"{r['role_margin']:.9f}", f"{r['role_margin_strongest']:.9f}", "yes" if r["induced"] else "no", correct, competing])
         for r in failed:
             w.writerow(["", _csv_safe(r["label"]), r["status"], "", "", "", "", "", "", "", "", "", "", r["chars"], r["bytes"], r["words"],
-                        "", "", "", r["fragment_sha256"], r["error_reason"]])
+                        "", "", "", r["fragment_sha256"], r["error_reason"], "", "", "", correct, competing])
 
 
 def cmd_batch(args) -> int:
@@ -247,6 +251,8 @@ def cmd_batch(args) -> int:
                     "prompt_tokens": len(client.tokenize(prompt, cache=False))}
 
         session.token_counter = counter
+        if not roles_default:
+            session.role_labels = (correct, incorrect)                # the baseline print then names the A/B margin and the role margin separately
         session.open_history()
         file_sha = file_sha256(args.arms)
         print("BLEEDIFF TRACK (batch)", file=out)
@@ -347,7 +353,7 @@ def cmd_batch(args) -> int:
             r["tok_vs_modal"] = (r["prompt_tokens"] - modal) if (modal is not None and r["prompt_tokens"] is not None) else ""
         ranked = rank_rows(scored)
         csv_path = os.path.join(out_dir, "leaderboard.csv")
-        _write_csv(csv_path, ranked, failed)
+        _write_csv(csv_path, ranked, failed, correct, incorrect)
         hist_path = os.path.join(out_dir, "history.jsonl")
         manifest = {
             "schema": BATCH_SCHEMA, "bleediff_version": __version__, "code_revision": code_revision(), "mode": "batch",
@@ -377,7 +383,7 @@ def cmd_batch(args) -> int:
         with open(os.path.join(out_dir, "batch-manifest.json"), "x", encoding="utf-8", newline="\n") as fh:
             json.dump(manifest, fh, indent=2)
             fh.write("\n")
-        _print_summary(out, ranked, failed, base, base_tokens, modal, incorrect, unchanged, out_dir, roles=(None if roles_default else (correct, base_roles)))
+        _print_summary(out, ranked, failed, base, base_tokens, modal, incorrect, unchanged, out_dir, roles=(None if roles_default else (correct, base_roles)), base_correct=base_roles["preferred_is_correct"])
         if not scored:
             print("ERROR [NO_CANDIDATE_SCORED]: no candidate could be scored; see the failures above.", file=out)
             return 2
@@ -387,7 +393,7 @@ def cmd_batch(args) -> int:
         return 2
 
 
-def _print_summary(out, ranked, failed, base, base_tokens, modal, incorrect, unchanged, out_dir, roles=None) -> None:
+def _print_summary(out, ranked, failed, base, base_tokens, modal, incorrect, unchanged, out_dir, roles=None, base_correct=True) -> None:
     """``roles`` is None for the A/B role pair (v0.3.0 output, unchanged) or (correct_letter, baseline_role_scores) for other roles."""
     print("", file=out)
     print(f"RANKED BY MOVEMENT TOWARD {incorrect} (observed candidate effects)", file=out)
@@ -396,7 +402,9 @@ def _print_summary(out, ranked, failed, base, base_tokens, modal, incorrect, unc
     else:
         print(f"Baseline: margin correct({roles[0]})/competing({incorrect}) {_signed(roles[1]['margin_correct_vs_competing'])} nats, preferred {base['preferred']}, "
               f"prompt tokens {base_tokens}", file=out)
-        print("  'margin' below is ln(p_correct / p_competing), the role margin. The A/B margin is not shown: the roles are not A and B.", file=out)
+        print("  'margin' below is ln(p_correct / p_competing), the role margin; 'move->' is minus its change from the baseline (movement toward the "
+              "competing answer). The A/B margin is not shown (margin_AB in the files): the roles are not A and B. 'flip' is any change of the "
+              "preferred answer, a different quantity from a newly induced incorrect answer.", file=out)
     head = f"{'rank':>4}  {'label':<30} {'move->' + incorrect:>9} {'margin':>8} {'pref':>5} {'flip':>5} {'ftok':>5} {'ptok':>5} {'dTok':>5}"
     print(head, file=out)
     for r in ranked:
@@ -409,6 +417,12 @@ def _print_summary(out, ranked, failed, base, base_tokens, modal, incorrect, unc
               f"{(('%+d' % dt) if dt != '' else '-'):>5}", file=out)
     if any(r["tied"] for r in ranked):
         print("  '=' marks tied candidates (equal movement; they share a rank).", file=out)
+    if not base_correct:
+        print(f"  Baseline already prefers a wrong answer ({base['preferred']}): no change below is reported as a newly induced incorrect answer.", file=out)
+    else:
+        induced = [r["label"] for r in ranked if r["induced"]]
+        print(f"  Newly induced incorrect answers (correct baseline, the candidate's preferred answer is wrong): {len(induced)}"
+              + (": " + ", ".join(_short(x, 24) for x in induced) if induced else ""), file=out)
     sizes = sorted({r["prompt_tokens"] for r in ranked if r["prompt_tokens"] is not None})
     if len(sizes) > 1:
         print(f"  LENGTH-UNMATCHED: candidate prompt token counts range {sizes[0]}-{sizes[-1]} (modal {modal}); dTok is each candidate's "

@@ -214,6 +214,7 @@ class TrackSession:
     previous: dict | None = None
     ok_measurements: list = field(default_factory=list)
     token_counter: object = None             # batch mode: callable(prompt, fragment) -> dict of tokenizer counts
+    role_labels: object = None               # batch mode, roles not at A/B: (correct_letter, competing_letter) so the baseline print names its margins
     _history: object = None
 
     # -- persistence -----------------------------------------------------------------
@@ -311,8 +312,17 @@ class TrackSession:
             return result
         self.baseline = result
         self.previous = result
-        self._print("", "BASELINE", *format_probs(result["probs"], self.out),
-                    f"Margin A/B: {_signed(result['margin'])} nats", f"Preferred answer: {result['preferred']}")
+        margin_lines = [f"Margin A/B: {_signed(result['margin'])} nats"]
+        if self.role_labels is not None:                 # batch mode with answers at other letters: say which margin is which
+            from .roles import role_scores
+            correct, competing = self.role_labels
+            margin_lines = [f"Margin A/B (letters A and B only; NOT the role margin): {_signed(result['margin'])} nats"]
+            try:
+                rm = role_scores(result["probs"], correct, competing)["margin_correct_vs_competing"]
+                margin_lines.append(f"Role margin ln(p_{correct} / p_{competing}) (correct {correct} vs competing {competing}): {_signed(rm)} nats")
+            except MeasurementError:
+                margin_lines.append(f"Role margin (correct {correct} vs competing {competing}): undefined for this baseline")
+        self._print("", "BASELINE", *format_probs(result["probs"], self.out), *margin_lines, f"Preferred answer: {result['preferred']}")
         return result
 
     def rescore(self, *, force: bool = False) -> dict | Exception | None:

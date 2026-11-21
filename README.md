@@ -71,6 +71,14 @@ answer (`--incorrect B` by default; ties share a rank) and shows fragment and pr
 visible. Failed requests, invalid probabilities and invalid candidates are recorded as not scored and never imputed. There is no
 automatic prompt generation. Rankings are **observed candidate effects**: a large shift does not show that a particular word caused it.
 
+**Answers at other letters.** The A/B margin `ln(p_A / p_B)` describes the letters A and B only. When an answer-choice permutation puts the
+correct and the competing answers elsewhere, pass `--correct C --incorrect D` (any two different letters; `--correct` is optional while
+`--incorrect` is A or B, as in v0.3.0). Bleediff then scores the **semantic roles**: the correct-versus-competing margin
+`ln(p_correct / p_competing)`, the correct-versus-strongest-incorrect margin, the movement toward the competing answer, overall
+preferred-answer flips and newly induced incorrect answers (only when the clean baseline was correct). The terminal, `leaderboard.csv`
+(last five columns) and the Atlas label which margin is which, and the fixed A/B margin stays available as `margin_AB`. A summary of the
+first four-mapping experiment is in [`docs/FOUR_MAPPING_SUMMARY.md`](docs/FOUR_MAPPING_SUMMARY.md).
+
 ### `bleediff atlas`: cross-task and cross-model report
 
 ```

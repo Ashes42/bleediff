@@ -62,12 +62,13 @@ MARGIN_TOL = 1e-9
 
 CATEGORY_LABELS = {
     "claim": "Explicit competing claim favoring the incorrect answer",
-    "topic": "On-topic text that also mentions option B's subject (no supporting evidence)",
+    "topic": "On-topic text that also mentions the competing answer's subject (option B's subject in the original A/B experiments; no supporting evidence)",
     "offtopic": "Off-topic text in a similar reporting structure",
     "neutral": "Ordinary unrelated prose",
     "id": "Matching identifier (no verdict, no evidence)",
 }
-TOPIC_LIMITATION = ("The 'topic' category is on-topic text that also mentions option B's subject. The existing experiments cannot "
+TOPIC_LIMITATION = ("The 'topic' category is on-topic text that also mentions the competing answer's subject (the answer a cell designates as incorrect; option B's "
+                    "subject in the original A/B experiments). The existing experiments cannot "
                     "separate topic relevance from option-subject priming, so a topic effect here is not evidence of a topic-relevance mechanism.")
 COMPARISONS = {                      # name -> (category a, category b); value = shift_a - shift_b
     "topic_minus_offtopic": ("topic", "offtopic"),
@@ -76,9 +77,9 @@ COMPARISONS = {                      # name -> (category a, category b); value =
     "id_minus_topic": ("id", "topic"),
 }
 COMPARISON_NOTES = {
-    "topic_minus_offtopic": "topic = on-topic text that also mentions option B's subject; relevance and option-subject priming are not separated",
-    "topic_minus_neutral": "topic = on-topic text that also mentions option B's subject; relevance and option-subject priming are not separated",
-    "claim_minus_topic": "explicit claim versus on-topic text that also mentions option B's subject",
+    "topic_minus_offtopic": "topic = on-topic text that also mentions the competing answer's subject (option B's subject in the original A/B experiments); relevance and option-subject priming are not separated",
+    "topic_minus_neutral": "topic = on-topic text that also mentions the competing answer's subject (option B's subject in the original A/B experiments); relevance and option-subject priming are not separated",
+    "claim_minus_topic": "explicit claim versus on-topic text that also mentions the competing answer's subject (option B's subject in the original A/B experiments)",
     "id_minus_topic": "matching identifier versus the same on-topic text without the identifier (matched only to the extent the fragments were)",
 }
 OUTCOMES = ("stayed_correct", "induced_incorrect", "recovered_to_correct", "baseline_incorrect_remained_incorrect", "unscored")
@@ -660,7 +661,7 @@ def summary_lines(atlas: dict, f: dict, marker: float) -> list[str]:
         flips = sorted({k["candidate_id"] for k in c["candidates"] if k.get("outcome") == "induced_incorrect"})
         lines.append(f"{c['task_id'][:19]:<20}{c['model_id'][:10]:<11}{(c['baseline'] or {}).get('preferred', '?'):>5}{_fmt(_shown_margin(c)):>7}"
                      f"{_fmt(sh['claim']):>7}{_fmt(sh['topic']):>7}{_fmt(sh['offtopic']):>7}{_fmt(sh['neutral']):>7}{_fmt(sh['id']):>7}  {fl}" + (f"  INDUCED-WRONG: {','.join(flips)}" if flips else ""))
-    lines.append("  *topic = on-topic text that also mentions option B's subject.")
+    lines.append("  *topic = on-topic text that also mentions the competing answer's subject (option B's subject in the original A/B experiments).")
     nonab = [c for c in cells if c.get("roles_are_ab") is False]
     if nonab:
         lines.append(f"  NOTE: in {len(nonab)} cell(s) the correct and competing answers are not at A and B. For those cells 'm' and every shift are "
@@ -706,6 +707,18 @@ def write_report(path: str, atlas: dict, f: dict, marker: float) -> None:
          f"- The {marker:g}-nat marker is a descriptive size, not a significance threshold.", ""]
     if any(f.values()):
         L += ["Filters applied: " + ", ".join(f"{k}={'/'.join(v)}" for k, v in f.items() if v), ""]
+    L += ["## Quantities in this report (they are different things)", "",
+          "| Quantity | Definition | Where it is stored |", "|---|---|---|",
+          "| Fixed A/B log-odds margin | ln(p_A / p_B): a statement about the letters A and B only | `margin_AB` (atlas.json, candidates.csv) |",
+          "| Correct-versus-competing margin | ln(p_correct) - ln(p_competing), wherever the two answers sit | `margin_correct_vs_competing` |",
+          "| Correct-versus-strongest-incorrect margin | ln(p_correct) - ln(p_strongest incorrect); the strongest incorrect answer may be the competing one or another | `margin_correct_vs_strongest` |",
+          "| Semantic competing-answer movement (shift) | minus the change of the correct-versus-competing margin from the clean baseline; positive = toward the competing answer | `shift_toward_incorrect` (rankings, paired differences) |",
+          "| Overall flip, A/B crossing, role-order crossing | the preferred answer changed; the sign of the A/B margin changed; the sign of the correct-versus-competing margin changed | `overall_flip`, `ab_crossed`, `role_order_crossed` |",
+          "| Newly induced incorrect answer | the clean baseline was correct and the candidate's preferred answer is wrong (a wrong baseline never counts) | `newly_induced_incorrect`, outcome `induced_incorrect` |", "",
+          "The fixed A/B margin equals the correct-versus-competing margin (up to sign) only when the correct and competing answers are at A and B; "
+          "cells where they are not carry the flag `AB_MARGIN_NOT_ROLE_MARGIN`. The category 'topic' keeps its historical definition (on-topic text that "
+          "mentions option B's subject, where B was the competing answer in the original experiments); the generic reading used for the semantic roles is "
+          "'the competing answer's subject'.", ""]
     L += ["## Sources", "", f"{sum(1 for s in atlas['sources'] if s['ok'])} of {len(atlas['sources'])} sessions validated (recorded hashes, schemas, scenario and model identity)."]
     for r in atlas["replicate_checks"]:
         L.append(f"- Repeat `{r['session_id']}` of `{r['replicate_of']}`: bit-identical = {r.get('bit_identical')}")
@@ -726,7 +739,7 @@ def write_report(path: str, atlas: dict, f: dict, marker: float) -> None:
         sh = _cell_shifts(c)
         b = c["baseline"] or {}
         L.append(f"| {c['task_id']} | {c['model_id']} | {c['presentation']} | {b.get('preferred', '?')} ({_fmt(_shown_margin(c))}) | {_fmt(sh['claim'])} | {_fmt(sh['topic'])} | {_fmt(sh['offtopic'])} | {_fmt(sh['neutral'])} | {_fmt(sh['id'])} | {', '.join(c['flags']) or '-'} |")
-    L += ["", "\\*On-topic text that also mentions option B's subject.", "", "## Paired differences (cell counts pooled over models)", "", "| Comparison | Presentation | Positive | At least marker | Cells |", "|---|---|---|---|---|"]
+    L += ["", "\\*On-topic text that also mentions the competing answer's subject (option B's subject in the original A/B experiments).", "", "## Paired differences (cell counts pooled over models)", "", "| Comparison | Presentation | Positive | At least marker | Cells |", "|---|---|---|---|---|"]
     for comp in COMPARISONS:
         by: dict[str, list] = {}
         for c in cells:

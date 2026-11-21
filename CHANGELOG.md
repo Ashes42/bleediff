@@ -3,6 +3,28 @@
 All notable changes. Versions identify the software that wrote a file, not an experiment or an algorithm; protocols and
 control algorithms have their own identifiers (see `docs/TECHNICAL.md`).
 
+## Pending for the next release - semantic answer roles
+
+### Added
+- `bleediff/roles.py` and `track --arms --correct/--incorrect A-D`: semantic-role scoring for the correct and the competing answers wherever
+  their letters are (correct-versus-competing margin, correct-versus-strongest-incorrect margin, movement toward the competing answer,
+  overall flips, role-order crossings, newly induced incorrect answers only when the baseline was correct). Batch sessions record
+  `semantic_roles` records and the designated correct answer; the Atlas re-derives role scores from the saved probabilities, flags
+  cells whose A/B margin is not the role margin (`AB_MARGIN_NOT_ROLE_MARGIN`), adds semantic columns, a quantities legend and a semantic
+  roles section.
+- `leaderboard.csv` gains five trailing columns (`margin_correct_vs_competing`, `margin_correct_vs_strongest`,
+  `newly_induced_incorrect`, `correct_letter`, `competing_letter`); the earlier columns are unchanged.
+- `docs/FOUR_MAPPING_SUMMARY.md`: a concise, exploratory summary of the four-mapping counterfactual experiment (local evidence, not bundled).
+
+### Changed
+- The batch baseline print says "Margin A/B (letters A and B only; NOT the role margin)" and prints the role margin when the roles are not
+  at A and B; the batch summary reports newly induced incorrect answers separately from flips. Output for roles at A and B is otherwise unchanged.
+- Atlas wording for the historical `topic` category now says "the competing answer's subject (option B's subject in the original A/B
+  experiments)"; the historical definition is preserved.
+
+### Unchanged
+- The research fold, all v0.3.0 evidence and the published releases; margins, probabilities and rankings for roles at A and B.
+
 ## [0.3.0] - decision tracker, batch influence ranking and influence atlas (exploratory)
 
 ### Added
