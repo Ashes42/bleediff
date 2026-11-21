@@ -404,8 +404,8 @@ the live commands above.
 ## Git identity
 
 The repository is configured with a repo-local, non-personal author (`user.name=bleediff`,
-`user.email=noreply@bleediff.invalid`), and a test fails if the effective author or any file contains a
-personal Gmail address. Fresh clones need the same two `git config` lines.
+`user.email=noreply@bleediff.invalid`), and a test fails if the repo-local author (when one is set), any commit in history or any file contains a
+personal Gmail address. A fresh clone has no repo-local author, so that one check is skipped there.
 
 ## License
 

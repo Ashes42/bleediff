@@ -873,11 +873,14 @@ class TestGitIdentity(unittest.TestCase):
     def _git(self, *args):
         return subprocess.run(["git", *args], cwd=ROOT, capture_output=True, text=True).stdout.strip()
 
-    def test_effective_author_config_is_not_a_personal_gmail(self):
-        email = self._git("config", "user.email")
-        self.assertTrue(email, "set a repo-local user.email (privacy-safe noreply address)")
+    def test_repo_local_author_config_is_not_a_personal_gmail(self):
+        # Only the REPOSITORY's own configuration is checked. A fresh clone has none (it inherits the contributor's global
+        # identity, which is theirs to choose), so the check is skipped there; commit history is covered by the next test.
+        email = self._git("config", "--local", "user.email")
+        if not email:
+            self.skipTest("no repo-local author configured (fresh clone); history and files are checked separately")
         self.assertIsNone(self.PERSONAL.fullmatch(email), f"personal address configured: {email!r}")
-        self.assertTrue(self._git("config", "user.name"))
+        self.assertTrue(self._git("config", "--local", "user.name"))
 
     def test_existing_commits_do_not_carry_a_personal_gmail(self):
         log = self._git("log", "--all", "--format=%ae%n%ce")

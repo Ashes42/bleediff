@@ -4,3 +4,4 @@ fixtures/controls/** -text
 fixtures/protocols/** -text
 fixtures/semantic-v2/** -text
 fixtures/config-audit-robustness/** -text
+research/data/** -text

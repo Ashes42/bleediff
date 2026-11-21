@@ -17,6 +17,8 @@ control algorithms have their own identifiers (see `docs/TECHNICAL.md`).
 - The research summary no longer fails for a run that has no `B_original` arm or no controls of its own (a cue-probe-only
   run crashed at its final summary step in the untracked driver used for the original experiments); it falls back to a
   supplied reference range or reports the fields as absent.
+- Tracked research data is byte-stable across Windows checkouts (`.gitattributes`), so its recorded SHA-256 values verify in a
+  fresh clone; the git-identity test no longer fails in a fresh clone (it checks the repo-local author only when one is set).
 
 ### Findings recorded (exploratory; see README)
 - config-audit-v2 original B residual +0.857 (Qwen2.5-1.5B) and +0.654 (Qwen2.5-7B), above all 12 neutral controls on both.
