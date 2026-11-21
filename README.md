@@ -133,6 +133,26 @@ The session is written to `<out>/history.jsonl` (hashes, probabilities, margins,
 prompts and fragment text are **not** saved unless you pass `--retain-prompts`). Existing sessions are never overwritten.
 Options: `--fragment PATH` (edit a file you choose), `--scenario`, `--fixtures`, `--n-probs`, `--timeout`.
 
+### Batch mode: rank a list of candidate fragments
+
+```
+python -m bleediff track --server http://127.0.0.1:8099 --arms candidate-fragments.json --out runs/batch-001
+```
+
+`candidate-fragments.json` is a UTF-8 JSON list of `{"label": ..., "text": ...}` (or `{"candidates": [...]}`, or the
+`{"arms": {label: text}}` / `{"fragments": {...}}` shape of the frozen research files; an optional `sha256` per candidate is
+verified). Bleediff measures the clean baseline **once** (tokenizer and server checks, model hash and flags recorded), then scores
+every candidate with the same unchanged single-prompt measurement, and writes `history.jsonl` (every measurement, full A-D
+probabilities, margins, changes, tokenizer counts), `leaderboard.csv` and `batch-manifest.json` (hashes of both files, the
+candidate file and the model). The terminal summary is ranked by observed movement of the A/B margin toward the designated
+incorrect answer (`--incorrect B` by default; ties share a rank). It also shows each candidate's fragment and prompt token counts
+and flags length-unmatched lists. Failed requests, invalid probabilities and invalid candidates are recorded and shown as not
+scored (never imputed); an empty list, an unreadable file or a failed baseline stops the run with exit code 2.
+
+The ranking lists **observed candidate effects**. A large shift does not show that a particular word, topic or identifier caused
+it, and candidates that differ in several ways at once cannot be attributed to any one of them. There is no automatic prompt
+generation. The mock-server tests are `tests/test_v031_batch.py`.
+
 This is a different measurement from the research fold: it is one request, not `M = (p1 + p2 + p3) / 3`, so its values are
 not `delta_contrast` (a change in request #3's probabilities is three times its change in the composite). A large margin does not
 prove robustness against other edits. The research equations, schemas and results are unchanged.

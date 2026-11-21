@@ -423,6 +423,11 @@ def build_parser() -> argparse.ArgumentParser:
     t.add_argument("--fragment", default=None, help="UTF-8 text file you edit (default: <out>/fragment.txt, created empty)")
     t.add_argument("--retain-prompts", action="store_true",
                    help="also keep each measured prompt and fragment under <out>/prompts/ (off by default: only hashes are recorded)")
+    t.add_argument("--arms", default=None, metavar="CANDIDATES.json",
+                   help="batch mode: a UTF-8 JSON file of labelled candidate fragments; each is scored against one clean baseline "
+                        "and ranked by observed movement toward the incorrect answer (see bleediff/batch.py for the format)")
+    t.add_argument("--incorrect", choices=["A", "B"], default="B",
+                   help="batch mode: the designated incorrect answer the ranking is measured toward (default B)")
     t.add_argument("--n-probs", type=int, default=DEFAULT_N_PROBS)
     t.add_argument("--timeout", type=float, default=120.0)
     t.set_defaults(fn=cmd_track)

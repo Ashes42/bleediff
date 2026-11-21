@@ -213,6 +213,7 @@ class TrackSession:
     baseline: dict | None = None
     previous: dict | None = None
     ok_measurements: list = field(default_factory=list)
+    token_counter: object = None             # batch mode: callable(prompt, fragment) -> dict of tokenizer counts
     _history: object = None
 
     # -- persistence -----------------------------------------------------------------
@@ -253,8 +254,11 @@ class TrackSession:
         })
 
     # -- measuring -------------------------------------------------------------------
-    def _measure_prompt(self, label: str, fragment: str | None, *, forced: bool = False) -> dict | None:
-        """Score one prompt and record it. Returns the measurement dict, or None when the measurement failed (recorded)."""
+    def _measure_prompt(self, label: str, fragment: str | None, *, forced: bool = False, extra: dict | None = None) -> dict | None:
+        """Score one prompt and record it. Returns the measurement dict, or an Inconclusive error when it failed (recorded).
+
+        ``extra`` (batch mode) adds fields such as the candidate label to the record; ``token_counter`` (batch mode) adds
+        tokenizer counts. Neither touches the probabilities or the margin."""
         self.steps += 1
         step = self.steps
         prompt = build_prompt(self.scenario, fragment)
@@ -262,7 +266,7 @@ class TrackSession:
                     "fragment": {"present": bool(fragment), "sha256": _sha(fragment) if fragment else None,
                                  "chars": len(fragment) if fragment else 0, "bytes": len(fragment.encode("utf-8")) if fragment else 0,
                                  "words": len(fragment.split()) if fragment else 0},
-                    "prompt": {"sha256": _sha(prompt), "chars": len(prompt)}, "forced_repeat": forced}
+                    "prompt": {"sha256": _sha(prompt), "chars": len(prompt)}, "forced_repeat": forced, **(extra or {})}
         if self.retain_prompts:
             os.makedirs(os.path.join(self.out_dir, "prompts"), exist_ok=True)
             with open(os.path.join(self.out_dir, "prompts", f"step-{step:02d}.txt"), "x", encoding="utf-8", newline="\n") as fh:
@@ -271,6 +275,8 @@ class TrackSession:
                 with open(os.path.join(self.out_dir, "prompts", f"step-{step:02d}.fragment.txt"), "x", encoding="utf-8", newline="\n") as fh:
                     fh.write(fragment)
         try:
+            if self.token_counter is not None:
+                base_rec["tokens"] = self.token_counter(prompt, fragment)
             probs = self.client.choice_probs(prompt)
             coverage = {"value": self.client.last_coverage, "basis": self.client.last_coverage_basis}
             n_probs_used = self.client.last_n_probs_used
@@ -280,7 +286,7 @@ class TrackSession:
             return e                                         # type: ignore[return-value]
         preferred = argmax_choice(probs)
         cur = {"step": step, "label": label, "probs": list(probs), "margin": margin, "preferred": preferred,
-               "fragment_sha": base_rec["fragment"]["sha256"], "prompt_sha": base_rec["prompt"]["sha256"]}
+               "fragment_sha": base_rec["fragment"]["sha256"], "prompt_sha": base_rec["prompt"]["sha256"], "tokens": base_rec.get("tokens")}
         rec = {**base_rec, "status": "ok", "error": None, "probabilities": dict(zip(CHOICES, probs)), "coverage": coverage,
                "n_probs_used": n_probs_used, "margin_AB": margin, "pairwise_order": pairwise_order(margin), "preferred_choice": preferred}
         if self.baseline is not None:
@@ -395,6 +401,9 @@ def run_interactive(session: TrackSession, input_fn=None) -> str:
 
 def cmd_track(args, *, input_fn=None) -> int:
     """Entry point used by ``bleediff track``. Errors are printed clearly and return exit code 2."""
+    if getattr(args, "arms", None):          # batch mode: score a list of candidate fragments (see bleediff/batch.py)
+        from .batch import cmd_batch
+        return cmd_batch(args)
     out = sys.stdout
     input_fn = input_fn or input             # looked up at call time so the builtin can be replaced in tests
     try:

@@ -1,0 +1,12 @@
+{
+  "note": "SYNTHETIC candidate fragments for the batch-mode tests. Nothing here is research evidence; the mock server answers by marker word.",
+  "candidates": [
+    {"label": "alpha-toward-B", "text": "ALPHA candidate fragment that the mock server answers B-leaning."},
+    {"label": "bravo-mild", "text": "BRAVO candidate fragment with a mild effect."},
+    {"label": "charlie-tie-one", "text": "CHARLIE one: a first fragment with the same effect as its twin."},
+    {"label": "charlie-tie-two", "text": "CHARLIE two: a second fragment with the same effect as its twin."},
+    {"label": "delta-toward-A", "text": "DELTA candidate fragment that moves toward A."},
+    {"label": "echo-overall-flip", "text": "ECHO candidate fragment that changes the overall preferred answer to B."},
+    {"label": "=formula-looking-label", "text": "FOXTROT candidate whose label starts with an equals sign."}
+  ]
+}

@@ -13,6 +13,14 @@ control algorithms have their own identifiers (see `docs/TECHNICAL.md`).
 - `<out>/history.jsonl` session history (schema `bleediff.track-history/1`): provenance, hashes, probabilities, margins,
   changes, errors; prompts only with `--retain-prompts`; never overwrites an existing session.
 - Tests: `tests/test_v030_track.py`.
+- `bleediff track --arms FILE` (batch mode): scores a labelled list of candidate fragments against one clean baseline with the
+  same single-prompt measurement, and writes `history.jsonl`, a compact `leaderboard.csv` and `batch-manifest.json` (hashes,
+  provenance). The terminal summary is ranked by observed movement of the A/B margin toward the designated incorrect answer
+  (`--incorrect`, default B), shows fragment and prompt token counts so unmatched lengths are visible, and labels the results as
+  observed candidate effects (no causal claim). Failed requests, invalid probabilities, invalid candidates, ties and empty lists
+  are handled; the run stops after repeated unreachable-server failures. Module `bleediff/batch.py`; tests
+  `tests/test_v031_batch.py` and the synthetic fixture `tests/data/batch_candidates_synthetic.json`. Probability extraction, margin
+  and change calculations are the unchanged ones; interactive mode is unchanged.
 
 ### Unchanged
 - The research fold, contrast equation, thresholds, trace schema, validity gates, fixtures, protocols and all v0.2.0 results.
