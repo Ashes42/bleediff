@@ -12,6 +12,7 @@ import sys
 import unittest
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+FIRST_NAME = "".join(chr(c) for c in (65, 115, 104, 108, 101, 121))   # the maintainer's first name, built at run time so no new literal enters history
 sys.path.insert(0, ROOT)
 sys.path.insert(0, os.path.join(ROOT, "tests"))
 
@@ -215,15 +216,15 @@ class TestDocumentation(unittest.TestCase):
                        "Nothing here is a universal claim", "9 (m1) and 1 (m2), 10 in total", "No real tenant-isolation vulnerability was demonstrated"):
             self.assertIn(needle, t, needle)
         self.assertIsNone(self.PERSONAL.search(t))
-        self.assertNotIn("Ashley", t)
+        self.assertNotIn(FIRST_NAME, t)
 
     def test_readme_and_changelog_describe_semantic_roles(self):
         readme = " ".join(read(os.path.join(ROOT, "README.md")).split())
         for needle in ("--correct C --incorrect D", "semantic roles", "margin_AB", "docs/FOUR_MAPPING_SUMMARY.md", "only when the clean baseline was correct"):
             self.assertIn(needle, readme, needle)
         cl = read(os.path.join(ROOT, "CHANGELOG.md"))
-        self.assertIn("Pending for the next release - semantic answer roles", cl)
-        self.assertLess(cl.index("Pending for the next release"), cl.index("## [0.3.0]"))
+        self.assertIn("## [0.4.0] - semantic answer roles", cl)
+        self.assertLess(cl.index("## [0.4.0]"), cl.index("## [0.3.0]"))
         self.assertNotIn("Unreleased", cl)
         self.assertIsNone(self.PERSONAL.search(cl))
 

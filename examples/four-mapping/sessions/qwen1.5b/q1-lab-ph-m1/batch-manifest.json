@@ -1,0 +1,117 @@
+{
+  "schema": "bleediff.track-batch/1",
+  "bleediff_version": "0.3.0",
+  "code_revision": {
+    "git_commit": "fa514eedf6cb85a7da28ae21caa0277a0f9a4fa7",
+    "dirty": false
+  },
+  "mode": "batch",
+  "measurement_type": "single_prompt_pairwise_margin",
+  "measurement_note": "One prompt per measurement: request #3 of the scenario, the clean authorized context (baseline) or that context with the fragment appended after it. margin_AB = ln(p_A/p_B). This is NOT the three-request fold used by calibrate/bounce/diff and its values are not delta_contrast.",
+  "observed_effects_note": "OBSERVED CANDIDATE EFFECTS: each row is one fragment's measured effect on one model and one prompt. A large shift does not show that a particular word, topic or identifier caused it, and candidates whose lengths or wording differ in several ways cannot be attributed to any one of them.",
+  "ranking_definition": "movement toward B = baseline margin - candidate margin (nats, from the unchanged margin_AB); ties share a rank",
+  "scenario": {
+    "id": "q1-lab-ph-m1",
+    "fixtures_sha256": "e795a5c4f2abf4e2b7c2c7e5efee8829d54274703ebe964dfd555ad0aedc9043"
+  },
+  "designated_incorrect_answer": "B",
+  "candidate_file": {
+    "name": "q1-lab-ph.arms.json",
+    "sha256": "50c567f894d8adad021d837d168f205673b67076d738d6c4c64e40920b8cc5a0",
+    "candidates": 5
+  },
+  "model": {
+    "name": "qwen2.5-1.5b-instruct-q4_k_m",
+    "model_hash": "39a2f847bada8ee8f6d36f063af469b592aa4ff47e55e573f3f3a54df3a23095",
+    "model_hash_unchanged_at_end": true
+  },
+  "baseline": {
+    "probabilities": {
+      "A": 0.18968744427018733,
+      "B": 0.14013860766428474,
+      "C": 0.11321269884788197,
+      "D": 0.5569612492176459
+    },
+    "margin_AB": 0.3027456998825073,
+    "preferred_choice": "D",
+    "prompt_tokens": 140
+  },
+  "modal_prompt_tokens": 183,
+  "counts": {
+    "candidates": 5,
+    "scored": 5,
+    "failed_or_invalid_or_not_run": 0
+  },
+  "ranking": [
+    {
+      "rank": 1,
+      "tied": false,
+      "label": "NEGATED",
+      "movement_toward_incorrect_nats": 1.3742350339889524,
+      "margin_AB": -1.071489334106445,
+      "change_from_baseline": -1.3742350339889524,
+      "preferred_choice": "B",
+      "preferred_differs_from_baseline": true,
+      "fragment_sha256": "d5d032163ad9fe310b86c3916b4cdd1016c8f856a13ecb483c4f81b3d57b45cc",
+      "fragment_tokens": 44,
+      "prompt_tokens": 183
+    },
+    {
+      "rank": 2,
+      "tied": false,
+      "label": "COMPETING",
+      "movement_toward_incorrect_nats": 0.7026898860931396,
+      "margin_AB": -0.3999441862106323,
+      "change_from_baseline": -0.7026898860931396,
+      "preferred_choice": "B",
+      "preferred_differs_from_baseline": true,
+      "fragment_sha256": "81be0ca27740a466013c4d58279ad01713600ca2072cec0141f6f696d929d0c7",
+      "fragment_tokens": 45,
+      "prompt_tokens": 184
+    },
+    {
+      "rank": 3,
+      "tied": false,
+      "label": "RELEVANT",
+      "movement_toward_incorrect_nats": 0.6856174468994141,
+      "margin_AB": -0.38287174701690674,
+      "change_from_baseline": -0.6856174468994141,
+      "preferred_choice": "D",
+      "preferred_differs_from_baseline": false,
+      "fragment_sha256": "47b4dbef1e4866186382bd6770a1e1e20373f78618bff0cddaccf9bd85bbb9e1",
+      "fragment_tokens": 44,
+      "prompt_tokens": 183
+    },
+    {
+      "rank": 4,
+      "tied": false,
+      "label": "REPEATED",
+      "movement_toward_incorrect_nats": 0.5838888883590698,
+      "margin_AB": -0.2811431884765625,
+      "change_from_baseline": -0.5838888883590698,
+      "preferred_choice": "D",
+      "preferred_differs_from_baseline": false,
+      "fragment_sha256": "8df174ec068bf3737da7de3497672c5610e2ae5fc9e4836408bab9010e0f7492",
+      "fragment_tokens": 46,
+      "prompt_tokens": 185
+    },
+    {
+      "rank": 5,
+      "tied": false,
+      "label": "NEUTRAL",
+      "movement_toward_incorrect_nats": -0.0073168277740478516,
+      "margin_AB": 0.3100625276565552,
+      "change_from_baseline": 0.0073168277740478516,
+      "preferred_choice": "D",
+      "preferred_differs_from_baseline": false,
+      "fragment_sha256": "914335add4137ec041f31ae0b4bd1da3396dd8d4f43a6f67e2b23f14daf02a93",
+      "fragment_tokens": 44,
+      "prompt_tokens": 183
+    }
+  ],
+  "unscored": [],
+  "files": {
+    "history.jsonl": "ba0e96a08360a686941877ad6d728fdf0d15472049dc09a77f26fc5f3aeb359b",
+    "leaderboard.csv": "6c63dc2ec6346110f380a327e7f37aebb8c6ab6647ff0b48c8f8e04808a91278"
+  }
+}

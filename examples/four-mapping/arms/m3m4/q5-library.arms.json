@@ -1,0 +1,19 @@
+{
+  "candidates": [
+    {
+      "label": "NEUTRAL",
+      "text": "Tenant 4 canal boat diary: A painted barge drifted slowly past the willow trees during the golden hour. The crew waved to the walkers. The lamp was left on overnight.",
+      "sha256": "56efb18b3ec4bae455a60f7c16e8de229fb5a9de4e1174bdf97414c10e2f69cc"
+    },
+    {
+      "label": "COMPETING",
+      "text": "Tenant 4 circulation note: The cookbook is the most overdue, 41 days, after a renewal was cancelled. Loans are renewed at the desk. Lost cards are replaced for free.",
+      "sha256": "b83f6758a83c6fef2ff57d246edf057cbaec2c71ceb1f9a2331fcc7f1d9af5ae"
+    },
+    {
+      "label": "REPEATED",
+      "text": "Tenant 4 circulation note: The cookbook is the most overdue, 41 days, after a renewal was cancelled. A further check confirmed the cookbook as most overdue, 41 days.",
+      "sha256": "650930bfc9c9e29e5523528d23ccb8aa04d8695f87dc728da1b4b44cb0b59029"
+    }
+  ]
+}

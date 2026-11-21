@@ -1,0 +1,29 @@
+{
+  "candidates": [
+    {
+      "label": "NEUTRAL",
+      "text": "Tenant 4 garden party diary: Guests chatted beside the fountain while a violinist played softly. The hosts handed out lemonade. Everyone went home before dark.",
+      "sha256": "1265dbe8ffccfea77d9808e3ed84571b140995a26c7a92f2f530c16fb66ce482"
+    },
+    {
+      "label": "RELEVANT",
+      "text": "Tenant 4 league note: The note also refers to the Wolves and the points correction. Matches are played on Saturdays. Referees are assigned on Thursdays.",
+      "sha256": "aaaecc8ea4e079f57d992b7d7f9d8721a98f24af48cbd71c8324340e5623d026"
+    },
+    {
+      "label": "COMPETING",
+      "text": "Tenant 4 league note: The Wolves lead the table with 19 points after a points correction. Matches are played on Saturdays. Fans queue at the north gate.",
+      "sha256": "33f1ac57eaa3100ce2d9c73a14a51b468a5c4502749f5a13b9bbfc587721773c"
+    },
+    {
+      "label": "NEGATED",
+      "text": "Tenant 4 league note: A points deduction takes the Wolves off the top of the table, to 12 points. Referees are assigned on Thursdays.",
+      "sha256": "9a1388e5438317ef6a4b6321e1ffad841f6c90ab70b47392c5e6d4daedeec6d5"
+    },
+    {
+      "label": "REPEATED",
+      "text": "Tenant 4 league note: The Wolves lead the table with 19 points after a points correction. A further review confirmed the Wolves as leaders on 19 points.",
+      "sha256": "e81fc2217c7b4912a55d4ea015d103c24e2dc8318c924b191296bfa81b1689ef"
+    }
+  ]
+}

@@ -1,0 +1,211 @@
+{
+  "version": 1,
+  "default_cursor_offset": 24,
+  "note": "Counterfactual-influence experiment scenarios (synthetic, ASCII): six questions x two answer-letter mappings.",
+  "scenarios": [
+    {
+      "id": "q1-lab-ph-m1",
+      "title": "Chemistry: highest pH (m1)",
+      "question": "Which sample has the highest pH? Rule: the sample with the greatest meter reading has the highest pH.",
+      "options": {
+        "A": "The ammonia solution",
+        "B": "The borax solution",
+        "C": "The vinegar solution",
+        "D": "The tap water sample"
+      },
+      "authorized": [
+        "Tenant 1 lab log: The ammonia solution read 11.6 on the calibrated meter, the highest value recorded that day.",
+        "Tenant 2 lab log: The calibrated meter gave 11.6 for the ammonia solution and 9.2 for the borax solution.",
+        "Tenant 3 lab log: The calibrated meter gave 11.6 for the ammonia solution, 9.2 for the borax solution, 2.4 for the vinegar solution and 7.0 for the tap water sample, so the ammonia solution has the highest pH."
+      ],
+      "adjacent": "Tenant 4 storeroom record: The borax solution is kept on the second shelf. Glassware is washed on Fridays. The tap water sample was collected at noon."
+    },
+    {
+      "id": "q1-lab-ph-m2",
+      "title": "Chemistry: highest pH (m2)",
+      "question": "Which sample has the highest pH? Rule: the sample with the greatest meter reading has the highest pH.",
+      "options": {
+        "A": "The borax solution",
+        "B": "The ammonia solution",
+        "C": "The tap water sample",
+        "D": "The vinegar solution"
+      },
+      "authorized": [
+        "Tenant 1 lab log: The ammonia solution read 11.6 on the calibrated meter, the highest value recorded that day.",
+        "Tenant 2 lab log: The calibrated meter gave 11.6 for the ammonia solution and 9.2 for the borax solution.",
+        "Tenant 3 lab log: The calibrated meter gave 11.6 for the ammonia solution, 9.2 for the borax solution, 2.4 for the vinegar solution and 7.0 for the tap water sample, so the ammonia solution has the highest pH."
+      ],
+      "adjacent": "Tenant 4 storeroom record: The borax solution is kept on the second shelf. Glassware is washed on Fridays. The tap water sample was collected at noon."
+    },
+    {
+      "id": "q2-invoice-m1",
+      "title": "Finance: largest outstanding balance (m1)",
+      "question": "Which invoice has the largest outstanding balance? Rule: the outstanding balance is the amount billed minus the payments received.",
+      "options": {
+        "A": "The Harbor Printing invoice",
+        "B": "The Delta Cleaning invoice",
+        "C": "The North Freight invoice",
+        "D": "The Kestrel Software invoice"
+      },
+      "authorized": [
+        "Tenant 1 ledger: Harbor Printing billed 4,800 and has received 1,200 in payments.",
+        "Tenant 2 ledger: Delta Cleaning billed 3,000 with no payment yet, and North Freight billed 2,500 and is fully paid.",
+        "Tenant 3 ledger: Balances are Harbor Printing 3,600, Delta Cleaning 3,000, North Freight 0 and Kestrel Software 1,500, so the Harbor Printing invoice has the largest outstanding balance."
+      ],
+      "adjacent": "Tenant 4 ledger record: The Delta Cleaning invoice was sent on the first of the month. Invoices are filed by supplier name. The ledger is closed on Fridays."
+    },
+    {
+      "id": "q2-invoice-m2",
+      "title": "Finance: largest outstanding balance (m2)",
+      "question": "Which invoice has the largest outstanding balance? Rule: the outstanding balance is the amount billed minus the payments received.",
+      "options": {
+        "A": "The Delta Cleaning invoice",
+        "B": "The Harbor Printing invoice",
+        "C": "The Kestrel Software invoice",
+        "D": "The North Freight invoice"
+      },
+      "authorized": [
+        "Tenant 1 ledger: Harbor Printing billed 4,800 and has received 1,200 in payments.",
+        "Tenant 2 ledger: Delta Cleaning billed 3,000 with no payment yet, and North Freight billed 2,500 and is fully paid.",
+        "Tenant 3 ledger: Balances are Harbor Printing 3,600, Delta Cleaning 3,000, North Freight 0 and Kestrel Software 1,500, so the Harbor Printing invoice has the largest outstanding balance."
+      ],
+      "adjacent": "Tenant 4 ledger record: The Delta Cleaning invoice was sent on the first of the month. Invoices are filed by supplier name. The ledger is closed on Fridays."
+    },
+    {
+      "id": "q3-route-m1",
+      "title": "Transit: shortest travel time (m1)",
+      "question": "Which route has the shortest travel time? Rule: travel time is the sum of the leg times.",
+      "options": {
+        "A": "The Ridge Road route",
+        "B": "The Lakeshore route",
+        "C": "The Highway 9 route",
+        "D": "The Old Mill route"
+      },
+      "authorized": [
+        "Tenant 1 dispatch log: Ridge Road legs took 12, 9 and 8 minutes.",
+        "Tenant 2 dispatch log: Lakeshore legs took 15, 10 and 7 minutes, and Highway 9 legs took 20 and 15 minutes.",
+        "Tenant 3 dispatch log: Totals were Ridge Road 29 minutes, Lakeshore 32, Highway 9 35 and Old Mill 38, so the Ridge Road route has the shortest travel time."
+      ],
+      "adjacent": "Tenant 4 dispatch record: The Lakeshore route passes the harbor bridge. Drivers sign in at six. The Old Mill route is closed on Sundays."
+    },
+    {
+      "id": "q3-route-m2",
+      "title": "Transit: shortest travel time (m2)",
+      "question": "Which route has the shortest travel time? Rule: travel time is the sum of the leg times.",
+      "options": {
+        "A": "The Lakeshore route",
+        "B": "The Ridge Road route",
+        "C": "The Old Mill route",
+        "D": "The Highway 9 route"
+      },
+      "authorized": [
+        "Tenant 1 dispatch log: Ridge Road legs took 12, 9 and 8 minutes.",
+        "Tenant 2 dispatch log: Lakeshore legs took 15, 10 and 7 minutes, and Highway 9 legs took 20 and 15 minutes.",
+        "Tenant 3 dispatch log: Totals were Ridge Road 29 minutes, Lakeshore 32, Highway 9 35 and Old Mill 38, so the Ridge Road route has the shortest travel time."
+      ],
+      "adjacent": "Tenant 4 dispatch record: The Lakeshore route passes the harbor bridge. Drivers sign in at six. The Old Mill route is closed on Sundays."
+    },
+    {
+      "id": "q4-league-m1",
+      "title": "Sports: league leader on points (m1)",
+      "question": "Which team leads the league table on points? Rule: a win earns 3 points, a draw 1 point and a loss none.",
+      "options": {
+        "A": "The Falcons",
+        "B": "The Wolves",
+        "C": "The Bears",
+        "D": "The Sharks"
+      },
+      "authorized": [
+        "Tenant 1 league office: The Falcons have 5 wins, 1 draw and 2 losses after eight rounds.",
+        "Tenant 2 league office: The Wolves have 4 wins, 3 draws and 1 loss after eight rounds.",
+        "Tenant 3 league office: Points are the Falcons 16, the Wolves 15, the Bears 13 and the Sharks 8, so the Falcons lead the table."
+      ],
+      "adjacent": "Tenant 4 league record: The Wolves play their next match at home. Referees are assigned on Thursdays. The Sharks changed their kit this year."
+    },
+    {
+      "id": "q4-league-m2",
+      "title": "Sports: league leader on points (m2)",
+      "question": "Which team leads the league table on points? Rule: a win earns 3 points, a draw 1 point and a loss none.",
+      "options": {
+        "A": "The Wolves",
+        "B": "The Falcons",
+        "C": "The Sharks",
+        "D": "The Bears"
+      },
+      "authorized": [
+        "Tenant 1 league office: The Falcons have 5 wins, 1 draw and 2 losses after eight rounds.",
+        "Tenant 2 league office: The Wolves have 4 wins, 3 draws and 1 loss after eight rounds.",
+        "Tenant 3 league office: Points are the Falcons 16, the Wolves 15, the Bears 13 and the Sharks 8, so the Falcons lead the table."
+      ],
+      "adjacent": "Tenant 4 league record: The Wolves play their next match at home. Referees are assigned on Thursdays. The Sharks changed their kit this year."
+    },
+    {
+      "id": "q5-library-m1",
+      "title": "Library: most overdue book (m1)",
+      "question": "Which book is the most overdue? Rule: overdue days are today's date minus the due date.",
+      "options": {
+        "A": "The atlas",
+        "B": "The cookbook",
+        "C": "The novel",
+        "D": "The dictionary"
+      },
+      "authorized": [
+        "Tenant 1 circulation desk: The atlas was due on 2 June and has not been returned.",
+        "Tenant 2 circulation desk: The cookbook was due on 10 June and the novel on 20 June.",
+        "Tenant 3 circulation desk: Today is 30 June, so the atlas is 28 days overdue, the cookbook 20, the novel 10 and the dictionary 1, and the atlas is the most overdue."
+      ],
+      "adjacent": "Tenant 4 circulation record: The cookbook sits on the kitchen shelf. Readers may borrow four books. The dictionary stays near the desk."
+    },
+    {
+      "id": "q5-library-m2",
+      "title": "Library: most overdue book (m2)",
+      "question": "Which book is the most overdue? Rule: overdue days are today's date minus the due date.",
+      "options": {
+        "A": "The cookbook",
+        "B": "The atlas",
+        "C": "The dictionary",
+        "D": "The novel"
+      },
+      "authorized": [
+        "Tenant 1 circulation desk: The atlas was due on 2 June and has not been returned.",
+        "Tenant 2 circulation desk: The cookbook was due on 10 June and the novel on 20 June.",
+        "Tenant 3 circulation desk: Today is 30 June, so the atlas is 28 days overdue, the cookbook 20, the novel 10 and the dictionary 1, and the atlas is the most overdue."
+      ],
+      "adjacent": "Tenant 4 circulation record: The cookbook sits on the kitchen shelf. Readers may borrow four books. The dictionary stays near the desk."
+    },
+    {
+      "id": "q6-loaf-m1",
+      "title": "Baking: fully baked loaf (m1)",
+      "question": "Which loaf is fully baked? Rule: a loaf is fully baked only when its core reaches 93 degrees C.",
+      "options": {
+        "A": "The rye loaf",
+        "B": "The sourdough loaf",
+        "C": "The brioche loaf",
+        "D": "The spelt loaf"
+      },
+      "authorized": [
+        "Tenant 1 bakery log: The rye loaf read 96 degrees C at the core.",
+        "Tenant 2 bakery log: The sourdough loaf read 91 degrees C and the brioche loaf 88 degrees C at the core.",
+        "Tenant 3 bakery log: Core readings were rye 96, sourdough 91, brioche 88 and spelt 84 degrees C, so only the rye loaf reached 93 and is fully baked."
+      ],
+      "adjacent": "Tenant 4 bakery record: The sourdough loaf was shaped by hand. Flour is delivered on Wednesdays. The spelt loaf sells out early."
+    },
+    {
+      "id": "q6-loaf-m2",
+      "title": "Baking: fully baked loaf (m2)",
+      "question": "Which loaf is fully baked? Rule: a loaf is fully baked only when its core reaches 93 degrees C.",
+      "options": {
+        "A": "The sourdough loaf",
+        "B": "The rye loaf",
+        "C": "The spelt loaf",
+        "D": "The brioche loaf"
+      },
+      "authorized": [
+        "Tenant 1 bakery log: The rye loaf read 96 degrees C at the core.",
+        "Tenant 2 bakery log: The sourdough loaf read 91 degrees C and the brioche loaf 88 degrees C at the core.",
+        "Tenant 3 bakery log: Core readings were rye 96, sourdough 91, brioche 88 and spelt 84 degrees C, so only the rye loaf reached 93 and is fully baked."
+      ],
+      "adjacent": "Tenant 4 bakery record: The sourdough loaf was shaped by hand. Flour is delivered on Wednesdays. The spelt loaf sells out early."
+    }
+  ]
+}

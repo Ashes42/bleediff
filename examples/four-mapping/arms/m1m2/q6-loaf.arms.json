@@ -1,0 +1,29 @@
+{
+  "candidates": [
+    {
+      "label": "NEUTRAL",
+      "text": "Tenant 4 garden party diary: Guests chatted beside the fountain while a violinist played softly. The hosts handed out lemonade. The weather stayed mild all week. The lamp was left on overnight.",
+      "sha256": "afab432ce1460d4b7c349cd17c04e32056be36ad79097003a811a8356e9f4d63"
+    },
+    {
+      "label": "RELEVANT",
+      "text": "Tenant 4 bakery note: The note also mentions the sourdough loaf and the probe. Probes were wiped between loaves. The timer was set by hand. Aprons hang by the door.",
+      "sha256": "181b4c95a669d3a59dfe4b669a5261fad9a348a25ff7acc7df796c6004f59401"
+    },
+    {
+      "label": "COMPETING",
+      "text": "Tenant 4 bakery note: The sourdough loaf read 98 in the second probe, so it is fully baked. Probes were wiped between loaves. Readings were written on a slate.",
+      "sha256": "c03fa726ebf17b09cc385c0d9a448144b70567d37490187462dc977eb0558e4e"
+    },
+    {
+      "label": "NEGATED",
+      "text": "Tenant 4 bakery note: In the second probe the sourdough loaf did not reach 93 and read 89. Probes were wiped between loaves. Readings were written on a slate.",
+      "sha256": "1019a7a1b543942717dbed2f40569d8d8037f7330ee8166a785edee230c7aaa1"
+    },
+    {
+      "label": "REPEATED",
+      "text": "Tenant 4 bakery note: The sourdough loaf read 98 in the second probe, so it is fully baked. A further probe confirmed the sourdough loaf at 98, fully baked.",
+      "sha256": "21c5d39489b0dc4f1d21b42d6246aa443f30b0d37cc332c47adfb30eeedd43b7"
+    }
+  ]
+}

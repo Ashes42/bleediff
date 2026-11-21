@@ -1,0 +1,656 @@
+{
+  "schema": "bleediff.four-position-frozen/1",
+  "frozen_utc": "2026-11-21T21:02:31Z",
+  "code_revision": "fa514eedf6cb85a7da28ae21caa0277a0f9a4fa7",
+  "worktree_note": "code_revision is the commit the working tree was based on; the semantic-role extension (bleediff/roles.py, batch.py, atlas.py) is uncommitted at freeze time",
+  "fixtures_sha256": "d60e7091b095eee76bd294133b6097f0b7ca49dea4b0f6abfe1d83f9e50fab2b",
+  "completion_requests_before_freeze": 0,
+  "v04_frozen_sha256_referenced": "6933538052f2bfaa9dccda5c37f8b9bd5de757d9e23f36a0d1e4d86b5674ddde",
+  "mappings": {
+    "m1": {
+      "A": "K",
+      "B": "T",
+      "C": "X",
+      "D": "Y"
+    },
+    "m2": {
+      "A": "T",
+      "B": "K",
+      "C": "Y",
+      "D": "X"
+    },
+    "m3": {
+      "A": "X",
+      "B": "Y",
+      "C": "K",
+      "D": "T"
+    },
+    "m4": {
+      "A": "Y",
+      "B": "X",
+      "C": "T",
+      "D": "K"
+    }
+  },
+  "mapping_rule": "m3 and m4 put the correct answer at C or D with the competing answer at the other; the remaining distractors X, Y take A, B in that order for m3 and in the reverse order (Y, X) for m4",
+  "mapping_letters": {
+    "m1": {
+      "correct": "A",
+      "competing": "B"
+    },
+    "m2": {
+      "correct": "B",
+      "competing": "A"
+    },
+    "m3": {
+      "correct": "C",
+      "competing": "D"
+    },
+    "m4": {
+      "correct": "D",
+      "competing": "C"
+    }
+  },
+  "split": {
+    "q1-lab-ph": "exploration",
+    "q2-invoice": "exploration",
+    "q3-route": "exploration",
+    "q4-league": "exploration",
+    "q5-library": "validation",
+    "q6-loaf": "validation"
+  },
+  "candidates_used": [
+    "NEUTRAL",
+    "COMPETING",
+    "REPEATED"
+  ],
+  "questions": {
+    "q1-lab-ph": {
+      "split": "exploration",
+      "answer_roles_text": {
+        "K": "The ammonia solution",
+        "T": "The borax solution",
+        "X": "The vinegar solution",
+        "Y": "The tap water sample"
+      },
+      "mappings": {
+        "m3": {
+          "baseline_prompt_tokens": {
+            "qwen": 140,
+            "llama": 139
+          },
+          "baseline_prompt_sha256": "5102a2fee8cf3c0755b29bfb2e1f0932ad1caa86a7d9cea0429bc28896c0a58c"
+        },
+        "m4": {
+          "baseline_prompt_tokens": {
+            "qwen": 140,
+            "llama": 139
+          },
+          "baseline_prompt_sha256": "72e80c69b464bc849536668a375a4929abc51fa9a931ffc2a269ff3e9878b657"
+        }
+      },
+      "candidates": {
+        "NEUTRAL": {
+          "sha256": "914335add4137ec041f31ae0b4bd1da3396dd8d4f43a6f67e2b23f14daf02a93",
+          "bytes": 198,
+          "words": 35,
+          "fragment_tokens": {
+            "qwen": 44,
+            "llama": 44
+          },
+          "identical_to_v04": true,
+          "prompt_tokens": {
+            "m3": {
+              "qwen": 183,
+              "llama": 182
+            },
+            "m4": {
+              "qwen": 183,
+              "llama": 182
+            }
+          }
+        },
+        "COMPETING": {
+          "sha256": "81be0ca27740a466013c4d58279ad01713600ca2072cec0141f6f696d929d0c7",
+          "bytes": 189,
+          "words": 32,
+          "fragment_tokens": {
+            "qwen": 45,
+            "llama": 44
+          },
+          "identical_to_v04": true,
+          "prompt_tokens": {
+            "m3": {
+              "qwen": 184,
+              "llama": 182
+            },
+            "m4": {
+              "qwen": 184,
+              "llama": 182
+            }
+          }
+        },
+        "REPEATED": {
+          "sha256": "8df174ec068bf3737da7de3497672c5610e2ae5fc9e4836408bab9010e0f7492",
+          "bytes": 163,
+          "words": 29,
+          "fragment_tokens": {
+            "qwen": 46,
+            "llama": 44
+          },
+          "identical_to_v04": true,
+          "prompt_tokens": {
+            "m3": {
+              "qwen": 185,
+              "llama": 182
+            },
+            "m4": {
+              "qwen": 185,
+              "llama": 182
+            }
+          }
+        }
+      },
+      "token_match": {
+        "qwen_range": [
+          44,
+          46
+        ],
+        "llama_range": [
+          44,
+          44
+        ]
+      }
+    },
+    "q2-invoice": {
+      "split": "exploration",
+      "answer_roles_text": {
+        "K": "The Harbor Printing invoice",
+        "T": "The Delta Cleaning invoice",
+        "X": "The North Freight invoice",
+        "Y": "The Kestrel Software invoice"
+      },
+      "mappings": {
+        "m3": {
+          "baseline_prompt_tokens": {
+            "qwen": 140,
+            "llama": 134
+          },
+          "baseline_prompt_sha256": "1dfc37b0df0989ce7a963182ea565d8f15a353d922256dfbdc3fc12608a19135"
+        },
+        "m4": {
+          "baseline_prompt_tokens": {
+            "qwen": 140,
+            "llama": 134
+          },
+          "baseline_prompt_sha256": "08cc1732fcf5f991436d77d793a625815f5c279e875abcb7a8f2ed07eb942f49"
+        }
+      },
+      "candidates": {
+        "NEUTRAL": {
+          "sha256": "374b793d0170897ac5efc00bd7237e86264bd0ea6a472f3e8c2c7d59d1dc7b3a",
+          "bytes": 194,
+          "words": 33,
+          "fragment_tokens": {
+            "qwen": 43,
+            "llama": 43
+          },
+          "identical_to_v04": true,
+          "prompt_tokens": {
+            "m3": {
+              "qwen": 182,
+              "llama": 176
+            },
+            "m4": {
+              "qwen": 182,
+              "llama": 176
+            }
+          }
+        },
+        "COMPETING": {
+          "sha256": "9fc51c5fdea2d0133dc6a93c11ee6acb6000958741e534cfc689ee9bef2ed028",
+          "bytes": 196,
+          "words": 32,
+          "fragment_tokens": {
+            "qwen": 45,
+            "llama": 43
+          },
+          "identical_to_v04": true,
+          "prompt_tokens": {
+            "m3": {
+              "qwen": 184,
+              "llama": 176
+            },
+            "m4": {
+              "qwen": 184,
+              "llama": 176
+            }
+          }
+        },
+        "REPEATED": {
+          "sha256": "9959a7838d5a7b93be62132bd55a4861e548a276fd1e44b0307898a738dc3bed",
+          "bytes": 193,
+          "words": 29,
+          "fragment_tokens": {
+            "qwen": 47,
+            "llama": 43
+          },
+          "identical_to_v04": true,
+          "prompt_tokens": {
+            "m3": {
+              "qwen": 186,
+              "llama": 176
+            },
+            "m4": {
+              "qwen": 186,
+              "llama": 176
+            }
+          }
+        }
+      },
+      "token_match": {
+        "qwen_range": [
+          43,
+          47
+        ],
+        "llama_range": [
+          43,
+          43
+        ]
+      }
+    },
+    "q3-route": {
+      "split": "exploration",
+      "answer_roles_text": {
+        "K": "The Ridge Road route",
+        "T": "The Lakeshore route",
+        "X": "The Highway 9 route",
+        "Y": "The Old Mill route"
+      },
+      "mappings": {
+        "m3": {
+          "baseline_prompt_tokens": {
+            "qwen": 132,
+            "llama": 128
+          },
+          "baseline_prompt_sha256": "ce11c48e70da301cbb6de4b8afa12fd4dddca2b9edd4a84ba77cc12370ad08c0"
+        },
+        "m4": {
+          "baseline_prompt_tokens": {
+            "qwen": 132,
+            "llama": 128
+          },
+          "baseline_prompt_sha256": "845dc705a47d3043c0248849b127e48557590f7a62df361b94b6507ac41b38a1"
+        }
+      },
+      "candidates": {
+        "NEUTRAL": {
+          "sha256": "84d9e13bdf3d30bc21e8aba8ce8ddff782ec00c1b97492bd7fec48ea10959a52",
+          "bytes": 180,
+          "words": 33,
+          "fragment_tokens": {
+            "qwen": 40,
+            "llama": 40
+          },
+          "identical_to_v04": true,
+          "prompt_tokens": {
+            "m3": {
+              "qwen": 171,
+              "llama": 167
+            },
+            "m4": {
+              "qwen": 171,
+              "llama": 167
+            }
+          }
+        },
+        "COMPETING": {
+          "sha256": "2248690a75a6b7f9736ecdf80fdce133a3318993205c1a25b397a438c08feb30",
+          "bytes": 171,
+          "words": 30,
+          "fragment_tokens": {
+            "qwen": 41,
+            "llama": 40
+          },
+          "identical_to_v04": true,
+          "prompt_tokens": {
+            "m3": {
+              "qwen": 172,
+              "llama": 167
+            },
+            "m4": {
+              "qwen": 172,
+              "llama": 167
+            }
+          }
+        },
+        "REPEATED": {
+          "sha256": "9597fc44d8abdee62604b9ff6773030c9e1582b850f6098f2c7db36e054d6938",
+          "bytes": 169,
+          "words": 28,
+          "fragment_tokens": {
+            "qwen": 42,
+            "llama": 40
+          },
+          "identical_to_v04": true,
+          "prompt_tokens": {
+            "m3": {
+              "qwen": 173,
+              "llama": 167
+            },
+            "m4": {
+              "qwen": 173,
+              "llama": 167
+            }
+          }
+        }
+      },
+      "token_match": {
+        "qwen_range": [
+          40,
+          42
+        ],
+        "llama_range": [
+          40,
+          40
+        ]
+      }
+    },
+    "q4-league": {
+      "split": "exploration",
+      "answer_roles_text": {
+        "K": "The Falcons",
+        "T": "The Wolves",
+        "X": "The Bears",
+        "Y": "The Sharks"
+      },
+      "mappings": {
+        "m3": {
+          "baseline_prompt_tokens": {
+            "qwen": 121,
+            "llama": 118
+          },
+          "baseline_prompt_sha256": "a1ffffb510118df30f48ca8cdc427e89cb83f9dd104c27cd369ab785cede97c4"
+        },
+        "m4": {
+          "baseline_prompt_tokens": {
+            "qwen": 121,
+            "llama": 118
+          },
+          "baseline_prompt_sha256": "50fcc398b045e9c6132b48ddc388a52801336a37af7e1ad4bfc42b9cc09af4ad"
+        }
+      },
+      "candidates": {
+        "NEUTRAL": {
+          "sha256": "1265dbe8ffccfea77d9808e3ed84571b140995a26c7a92f2f530c16fb66ce482",
+          "bytes": 159,
+          "words": 25,
+          "fragment_tokens": {
+            "qwen": 34,
+            "llama": 34
+          },
+          "identical_to_v04": true,
+          "prompt_tokens": {
+            "m3": {
+              "qwen": 154,
+              "llama": 151
+            },
+            "m4": {
+              "qwen": 154,
+              "llama": 151
+            }
+          }
+        },
+        "COMPETING": {
+          "sha256": "33f1ac57eaa3100ce2d9c73a14a51b468a5c4502749f5a13b9bbfc587721773c",
+          "bytes": 152,
+          "words": 27,
+          "fragment_tokens": {
+            "qwen": 35,
+            "llama": 34
+          },
+          "identical_to_v04": true,
+          "prompt_tokens": {
+            "m3": {
+              "qwen": 155,
+              "llama": 151
+            },
+            "m4": {
+              "qwen": 155,
+              "llama": 151
+            }
+          }
+        },
+        "REPEATED": {
+          "sha256": "e81fc2217c7b4912a55d4ea015d103c24e2dc8318c924b191296bfa81b1689ef",
+          "bytes": 152,
+          "words": 27,
+          "fragment_tokens": {
+            "qwen": 36,
+            "llama": 34
+          },
+          "identical_to_v04": true,
+          "prompt_tokens": {
+            "m3": {
+              "qwen": 156,
+              "llama": 151
+            },
+            "m4": {
+              "qwen": 156,
+              "llama": 151
+            }
+          }
+        }
+      },
+      "token_match": {
+        "qwen_range": [
+          34,
+          36
+        ],
+        "llama_range": [
+          34,
+          34
+        ]
+      }
+    },
+    "q5-library": {
+      "split": "validation",
+      "answer_roles_text": {
+        "K": "The atlas",
+        "T": "The cookbook",
+        "X": "The novel",
+        "Y": "The dictionary"
+      },
+      "mappings": {
+        "m3": {
+          "baseline_prompt_tokens": {
+            "qwen": 123,
+            "llama": 119
+          },
+          "baseline_prompt_sha256": "06694f0b971505179c5ac11839dcdae1dac25f66f87418401718886cf41ec68b"
+        },
+        "m4": {
+          "baseline_prompt_tokens": {
+            "qwen": 123,
+            "llama": 119
+          },
+          "baseline_prompt_sha256": "3d6c2ec6b0f214f491f6034b8c6a3454a2e7e0f57ded5b05130de5cec87e4171"
+        }
+      },
+      "candidates": {
+        "NEUTRAL": {
+          "sha256": "56efb18b3ec4bae455a60f7c16e8de229fb5a9de4e1174bdf97414c10e2f69cc",
+          "bytes": 166,
+          "words": 30,
+          "fragment_tokens": {
+            "qwen": 38,
+            "llama": 38
+          },
+          "identical_to_v04": true,
+          "prompt_tokens": {
+            "m3": {
+              "qwen": 160,
+              "llama": 156
+            },
+            "m4": {
+              "qwen": 160,
+              "llama": 156
+            }
+          }
+        },
+        "COMPETING": {
+          "sha256": "b83f6758a83c6fef2ff57d246edf057cbaec2c71ceb1f9a2331fcc7f1d9af5ae",
+          "bytes": 165,
+          "words": 29,
+          "fragment_tokens": {
+            "qwen": 39,
+            "llama": 38
+          },
+          "identical_to_v04": true,
+          "prompt_tokens": {
+            "m3": {
+              "qwen": 161,
+              "llama": 156
+            },
+            "m4": {
+              "qwen": 161,
+              "llama": 156
+            }
+          }
+        },
+        "REPEATED": {
+          "sha256": "650930bfc9c9e29e5523528d23ccb8aa04d8695f87dc728da1b4b44cb0b59029",
+          "bytes": 165,
+          "words": 28,
+          "fragment_tokens": {
+            "qwen": 40,
+            "llama": 38
+          },
+          "identical_to_v04": true,
+          "prompt_tokens": {
+            "m3": {
+              "qwen": 162,
+              "llama": 156
+            },
+            "m4": {
+              "qwen": 162,
+              "llama": 156
+            }
+          }
+        }
+      },
+      "token_match": {
+        "qwen_range": [
+          38,
+          40
+        ],
+        "llama_range": [
+          38,
+          38
+        ]
+      }
+    },
+    "q6-loaf": {
+      "split": "validation",
+      "answer_roles_text": {
+        "K": "The rye loaf",
+        "T": "The sourdough loaf",
+        "X": "The brioche loaf",
+        "Y": "The spelt loaf"
+      },
+      "mappings": {
+        "m3": {
+          "baseline_prompt_tokens": {
+            "qwen": 141,
+            "llama": 135
+          },
+          "baseline_prompt_sha256": "77df240f534e1dc1e9ed2172aaf2b6a0e10ca0ee7df546d1aa65fe31b80bbd6f"
+        },
+        "m4": {
+          "baseline_prompt_tokens": {
+            "qwen": 141,
+            "llama": 135
+          },
+          "baseline_prompt_sha256": "5ba9a5ce5300c907499793ba4c3a34ce3b67d5de07bcc50cb34d89513849a04a"
+        }
+      },
+      "candidates": {
+        "NEUTRAL": {
+          "sha256": "afab432ce1460d4b7c349cd17c04e32056be36ad79097003a811a8356e9f4d63",
+          "bytes": 193,
+          "words": 32,
+          "fragment_tokens": {
+            "qwen": 42,
+            "llama": 42
+          },
+          "identical_to_v04": true,
+          "prompt_tokens": {
+            "m3": {
+              "qwen": 182,
+              "llama": 176
+            },
+            "m4": {
+              "qwen": 182,
+              "llama": 176
+            }
+          }
+        },
+        "COMPETING": {
+          "sha256": "c03fa726ebf17b09cc385c0d9a448144b70567d37490187462dc977eb0558e4e",
+          "bytes": 159,
+          "words": 29,
+          "fragment_tokens": {
+            "qwen": 43,
+            "llama": 42
+          },
+          "identical_to_v04": true,
+          "prompt_tokens": {
+            "m3": {
+              "qwen": 183,
+              "llama": 176
+            },
+            "m4": {
+              "qwen": 183,
+              "llama": 176
+            }
+          }
+        },
+        "REPEATED": {
+          "sha256": "21c5d39489b0dc4f1d21b42d6246aa443f30b0d37cc332c47adfb30eeedd43b7",
+          "bytes": 156,
+          "words": 29,
+          "fragment_tokens": {
+            "qwen": 44,
+            "llama": 42
+          },
+          "identical_to_v04": true,
+          "prompt_tokens": {
+            "m3": {
+              "qwen": 184,
+              "llama": 176
+            },
+            "m4": {
+              "qwen": 184,
+              "llama": 176
+            }
+          }
+        }
+      },
+      "token_match": {
+        "qwen_range": [
+          42,
+          44
+        ],
+        "llama_range": [
+          42,
+          42
+        ]
+      }
+    }
+  },
+  "design": [
+    "Reuses the six frozen questions, answer texts, authorized contexts and the three treatments NEUTRAL, COMPETING (explicit competing evidence) and REPEATED (the competing claim stated twice) of the v0.4 run, byte for byte.",
+    "m1 and m2 are NOT re-run in this experiment as new evidence: their v0.4 sessions are reused for comparison, after a compatibility control (a re-measurement of selected m1/m2 cells with the current code must be bit-identical).",
+    "The four mappings do not exhaust the 24 possible answer-letter permutations."
+  ]
+}

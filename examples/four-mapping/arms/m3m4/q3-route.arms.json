@@ -1,0 +1,19 @@
+{
+  "candidates": [
+    {
+      "label": "NEUTRAL",
+      "text": "Tenant 4 lighthouse tour diary: A small group climbed the winding stairs to the lamp room on a windy morning. The guide described the old lenses. A small band played near the gate.",
+      "sha256": "84d9e13bdf3d30bc21e8aba8ce8ddff782ec00c1b97492bd7fec48ea10959a52"
+    },
+    {
+      "label": "COMPETING",
+      "text": "Tenant 4 dispatch note: The reopened bridge makes the Lakeshore route the shortest at 24 minutes. Times are in minutes. Drivers sign in at six. Shift notes are read aloud.",
+      "sha256": "2248690a75a6b7f9736ecdf80fdce133a3318993205c1a25b397a438c08feb30"
+    },
+    {
+      "label": "REPEATED",
+      "text": "Tenant 4 dispatch note: The reopened bridge makes the Lakeshore route the shortest at 24 minutes. A second report also found the Lakeshore route shortest, at 24 minutes.",
+      "sha256": "9597fc44d8abdee62604b9ff6773030c9e1582b850f6098f2c7db36e054d6938"
+    }
+  ]
+}

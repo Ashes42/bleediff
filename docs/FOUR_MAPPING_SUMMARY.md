@@ -71,6 +71,17 @@ only the three treatments shared by all four mappings.
 
 ## Evidence
 
-The measurements are in local, git-ignored run directories (the v0.4 and v0.5 runs) that are **not** part of the repository: frozen texts and
-hashes, saved sessions, the compatibility control, an Atlas report and the analysis tables with a hash list. The scoring that produced the
+A sanitized bundle of the saved sessions (first run of each pair), the frozen texts and candidate files is in
+[`examples/four-mapping/`](../examples/four-mapping/README.md). Every number in this document is recomputed from it offline:
+
+```
+python -m bleediff atlas --manifest examples/four-mapping/atlas-input.json --out runs/four-mapping
+python examples/four-mapping/verify_summary.py runs/four-mapping/atlas.json
+```
+
+The compatibility control (re-measured m1/m2 sessions) and the full local run directories are not bundled. The scoring that produced the
 role quantities is `bleediff/roles.py`, exercised by `tests/test_v033_roles.py` and `tests/test_v034_labels.py`.
+
+The statements "Qwen 1.5B: the effects reverse across mappings and are dominated by answer-letter behavior" and "Llama 3B: the competing
+evidence moved the decision toward the competing answer" describe the **tested configurations** only (these two models, one quantization,
+this question set and four mappings); they are not claims about model families.

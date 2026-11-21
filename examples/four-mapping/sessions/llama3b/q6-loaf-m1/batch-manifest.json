@@ -1,0 +1,117 @@
+{
+  "schema": "bleediff.track-batch/1",
+  "bleediff_version": "0.3.0",
+  "code_revision": {
+    "git_commit": "fa514eedf6cb85a7da28ae21caa0277a0f9a4fa7",
+    "dirty": false
+  },
+  "mode": "batch",
+  "measurement_type": "single_prompt_pairwise_margin",
+  "measurement_note": "One prompt per measurement: request #3 of the scenario, the clean authorized context (baseline) or that context with the fragment appended after it. margin_AB = ln(p_A/p_B). This is NOT the three-request fold used by calibrate/bounce/diff and its values are not delta_contrast.",
+  "observed_effects_note": "OBSERVED CANDIDATE EFFECTS: each row is one fragment's measured effect on one model and one prompt. A large shift does not show that a particular word, topic or identifier caused it, and candidates whose lengths or wording differ in several ways cannot be attributed to any one of them.",
+  "ranking_definition": "movement toward B = baseline margin - candidate margin (nats, from the unchanged margin_AB); ties share a rank",
+  "scenario": {
+    "id": "q6-loaf-m1",
+    "fixtures_sha256": "e795a5c4f2abf4e2b7c2c7e5efee8829d54274703ebe964dfd555ad0aedc9043"
+  },
+  "designated_incorrect_answer": "B",
+  "candidate_file": {
+    "name": "q6-loaf.arms.json",
+    "sha256": "70fcab96a96d1d739f2844c2539006c166fce018f5c07b3a553e13a5fd9475c5",
+    "candidates": 5
+  },
+  "model": {
+    "name": "Llama-3.2-3B-Instruct-Q4_K_M",
+    "model_hash": "b783b9826ac539b24b803f6caa51f159e64777b18223f2927fcc061de194c55e",
+    "model_hash_unchanged_at_end": true
+  },
+  "baseline": {
+    "probabilities": {
+      "A": 0.9452918372664975,
+      "B": 0.01560766809924575,
+      "C": 0.007047215415738169,
+      "D": 0.03205327921851855
+    },
+    "margin_AB": 4.1037313640117645,
+    "preferred_choice": "A",
+    "prompt_tokens": 135
+  },
+  "modal_prompt_tokens": 176,
+  "counts": {
+    "candidates": 5,
+    "scored": 5,
+    "failed_or_invalid_or_not_run": 0
+  },
+  "ranking": [
+    {
+      "rank": 1,
+      "tied": false,
+      "label": "REPEATED",
+      "movement_toward_incorrect_nats": 3.8171675503253937,
+      "margin_AB": 0.28656381368637096,
+      "change_from_baseline": -3.8171675503253937,
+      "preferred_choice": "A",
+      "preferred_differs_from_baseline": false,
+      "fragment_sha256": "21c5d39489b0dc4f1d21b42d6246aa443f30b0d37cc332c47adfb30eeedd43b7",
+      "fragment_tokens": 42,
+      "prompt_tokens": 176
+    },
+    {
+      "rank": 2,
+      "tied": false,
+      "label": "COMPETING",
+      "movement_toward_incorrect_nats": 2.9652808010578156,
+      "margin_AB": 1.138450562953949,
+      "change_from_baseline": -2.9652808010578156,
+      "preferred_choice": "A",
+      "preferred_differs_from_baseline": false,
+      "fragment_sha256": "c03fa726ebf17b09cc385c0d9a448144b70567d37490187462dc977eb0558e4e",
+      "fragment_tokens": 42,
+      "prompt_tokens": 176
+    },
+    {
+      "rank": 3,
+      "tied": false,
+      "label": "RELEVANT",
+      "movement_toward_incorrect_nats": 1.9653666019439693,
+      "margin_AB": 2.1383647620677952,
+      "change_from_baseline": -1.9653666019439693,
+      "preferred_choice": "A",
+      "preferred_differs_from_baseline": false,
+      "fragment_sha256": "181b4c95a669d3a59dfe4b669a5261fad9a348a25ff7acc7df796c6004f59401",
+      "fragment_tokens": 42,
+      "prompt_tokens": 176
+    },
+    {
+      "rank": 4,
+      "tied": false,
+      "label": "NEGATED",
+      "movement_toward_incorrect_nats": 1.403928965330124,
+      "margin_AB": 2.6998023986816406,
+      "change_from_baseline": -1.403928965330124,
+      "preferred_choice": "A",
+      "preferred_differs_from_baseline": false,
+      "fragment_sha256": "1019a7a1b543942717dbed2f40569d8d8037f7330ee8166a785edee230c7aaa1",
+      "fragment_tokens": 42,
+      "prompt_tokens": 176
+    },
+    {
+      "rank": 5,
+      "tied": false,
+      "label": "NEUTRAL",
+      "movement_toward_incorrect_nats": 0.49095164239406586,
+      "margin_AB": 3.6127797216176987,
+      "change_from_baseline": -0.49095164239406586,
+      "preferred_choice": "A",
+      "preferred_differs_from_baseline": false,
+      "fragment_sha256": "afab432ce1460d4b7c349cd17c04e32056be36ad79097003a811a8356e9f4d63",
+      "fragment_tokens": 42,
+      "prompt_tokens": 176
+    }
+  ],
+  "unscored": [],
+  "files": {
+    "history.jsonl": "5cfc60e68e30ebf2c938121e6e6cf08bae5152671c4a17348e1106a4ec4c6e1f",
+    "leaderboard.csv": "d2fd69e4ee5a3d18fb4bdcdae6eab6ad02428f9bd44b61173e12c6550c3629cb"
+  }
+}

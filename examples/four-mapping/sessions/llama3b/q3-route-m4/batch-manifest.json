@@ -1,0 +1,110 @@
+{
+  "schema": "bleediff.track-batch/1",
+  "bleediff_version": "0.3.0",
+  "code_revision": {
+    "git_commit": "fa514eedf6cb85a7da28ae21caa0277a0f9a4fa7",
+    "dirty": true
+  },
+  "mode": "batch",
+  "measurement_type": "single_prompt_pairwise_margin",
+  "measurement_note": "One prompt per measurement: request #3 of the scenario, the clean authorized context (baseline) or that context with the fragment appended after it. margin_AB = ln(p_A/p_B). This is NOT the three-request fold used by calibrate/bounce/diff and its values are not delta_contrast.",
+  "observed_effects_note": "OBSERVED CANDIDATE EFFECTS: each row is one fragment's measured effect on one model and one prompt. A large shift does not show that a particular word, topic or identifier caused it, and candidates whose lengths or wording differ in several ways cannot be attributed to any one of them.",
+  "ranking_definition": "movement toward C = -(change of ln(p_correct) - ln(p_competing)) with correct = D and competing = C (nats, semantic roles; not the A/B margin); ties share a rank",
+  "scenario": {
+    "id": "q3-route-m4",
+    "fixtures_sha256": "d60e7091b095eee76bd294133b6097f0b7ca49dea4b0f6abfe1d83f9e50fab2b"
+  },
+  "designated_incorrect_answer": "C",
+  "designated_correct_answer": "D",
+  "semantic_roles": {
+    "correct_letter": "D",
+    "competing_letter": "C",
+    "roles_are_ab": false,
+    "note": "Role margins compare the correct and the competing semantic answers wherever their letters are. The A/B margin (margin_AB) is a statement about the letters A and B and equals a role margin only when the two roles occupy A and B."
+  },
+  "candidate_file": {
+    "name": "q3-route.arms.json",
+    "sha256": "8b659e7058f59326d264085c23d3e1400b2a0d23af3daf27f95f4d509b71183a",
+    "candidates": 3
+  },
+  "model": {
+    "name": "Llama-3.2-3B-Instruct-Q4_K_M",
+    "model_hash": "b783b9826ac539b24b803f6caa51f159e64777b18223f2927fcc061de194c55e",
+    "model_hash_unchanged_at_end": true
+  },
+  "baseline": {
+    "probabilities": {
+      "A": 0.014288056725168741,
+      "B": 0.015032532536574598,
+      "C": 0.0030867514600120827,
+      "D": 0.9675926592782447
+    },
+    "margin_AB": -0.050792694091796875,
+    "preferred_choice": "D",
+    "prompt_tokens": 128,
+    "margin_correct_vs_competing": 5.747691961723015,
+    "margin_correct_vs_strongest": 4.1645945038372725,
+    "preferred_is_correct": true
+  },
+  "modal_prompt_tokens": 167,
+  "counts": {
+    "candidates": 3,
+    "scored": 3,
+    "failed_or_invalid_or_not_run": 0
+  },
+  "ranking": [
+    {
+      "rank": 1,
+      "tied": false,
+      "label": "REPEATED",
+      "movement_toward_incorrect_nats": 5.6949385132366865,
+      "margin_AB": -0.8133087158203125,
+      "change_from_baseline": -0.7625160217285156,
+      "preferred_choice": "D",
+      "preferred_differs_from_baseline": false,
+      "fragment_sha256": "9597fc44d8abdee62604b9ff6773030c9e1582b850f6098f2c7db36e054d6938",
+      "fragment_tokens": 40,
+      "prompt_tokens": 167,
+      "margin_correct_vs_competing": 0.052753448486328236,
+      "margin_correct_vs_strongest": 0.052753448486328236,
+      "newly_induced_incorrect": false
+    },
+    {
+      "rank": 2,
+      "tied": false,
+      "label": "COMPETING",
+      "movement_toward_incorrect_nats": 4.463941487270042,
+      "margin_AB": -0.34224319458007835,
+      "change_from_baseline": -0.29145050048828147,
+      "preferred_choice": "D",
+      "preferred_differs_from_baseline": false,
+      "fragment_sha256": "2248690a75a6b7f9736ecdf80fdce133a3318993205c1a25b397a438c08feb30",
+      "fragment_tokens": 40,
+      "prompt_tokens": 167,
+      "margin_correct_vs_competing": 1.2837504744529724,
+      "margin_correct_vs_strongest": 1.2837504744529724,
+      "newly_induced_incorrect": false
+    },
+    {
+      "rank": 3,
+      "tied": false,
+      "label": "NEUTRAL",
+      "movement_toward_incorrect_nats": 2.3869513597065657,
+      "margin_AB": 1.3571357727050781,
+      "change_from_baseline": 1.407928466796875,
+      "preferred_choice": "D",
+      "preferred_differs_from_baseline": false,
+      "fragment_sha256": "84d9e13bdf3d30bc21e8aba8ce8ddff782ec00c1b97492bd7fec48ea10959a52",
+      "fragment_tokens": 40,
+      "prompt_tokens": 167,
+      "margin_correct_vs_competing": 3.360740602016449,
+      "margin_correct_vs_strongest": 1.4400328993797302,
+      "newly_induced_incorrect": false
+    }
+  ],
+  "unscored": [],
+  "files": {
+    "history.jsonl": "31a98266398b786e152cb6780041e5b0c00acc4412b1d4369604a75c3b6a8da2",
+    "leaderboard.csv": "0fb52f50ec260a040d5ef4179371834b1f56bf36200101896d47c3f6e6ef6ace"
+  }
+}

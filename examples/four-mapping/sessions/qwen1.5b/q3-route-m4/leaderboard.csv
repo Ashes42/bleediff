@@ -1,0 +1,4 @@
+rank,label,status,movement_toward_incorrect_nats,margin_AB,change_from_baseline_nats,p_A,p_B,p_C,p_D,preferred_choice,preferred_differs_from_baseline,pairwise_AB_crossed,fragment_chars,fragment_bytes,fragment_words,fragment_tokens,prompt_tokens,prompt_tokens_minus_modal,fragment_sha256,error_reason
+1,REPEATED,ok,1.403881013,0.971933305,-0.500627458,0.516659401,0.195478530,0.082920280,0.204941788,A,yes,no,169,169,28,42,173,2,9597fc44d8abdee62604b9ff6773030c9e1582b850f6098f2c7db36e054d6938,
+2,NEUTRAL,ok,1.024951994,3.043922514,1.571361750,0.810395453,0.038613418,0.032751224,0.118239905,A,yes,no,180,180,33,40,171,0,84d9e13bdf3d30bc21e8aba8ce8ddff782ec00c1b97492bd7fec48ea10959a52,
+3,COMPETING,ok,0.719087660,0.826364577,-0.646196187,0.374268958,0.163794092,0.078268102,0.383668848,D,no,no,171,171,30,41,172,1,2248690a75a6b7f9736ecdf80fdce133a3318993205c1a25b397a438c08feb30,

@@ -3,9 +3,12 @@
 All notable changes. Versions identify the software that wrote a file, not an experiment or an algorithm; protocols and
 control algorithms have their own identifiers (see `docs/TECHNICAL.md`).
 
-## Pending for the next release - semantic answer roles
+## [0.4.0] - semantic answer roles and the four-mapping evidence bundle (exploratory)
 
 ### Added
+- `examples/four-mapping/`: a sanitized evidence bundle (48 saved sessions, frozen texts, candidate files, fixtures, Atlas input manifest,
+  `SHA256SUMS.txt`) and `verify_summary.py`, an offline script that recomputes every number in `docs/FOUR_MAPPING_SUMMARY.md` from it.
+- `RELEASE_NOTES_v0.4.0.md`.
 - `bleediff/roles.py` and `track --arms --correct/--incorrect A-D`: semantic-role scoring for the correct and the competing answers wherever
   their letters are (correct-versus-competing margin, correct-versus-strongest-incorrect margin, movement toward the competing answer,
   overall flips, role-order crossings, newly induced incorrect answers only when the baseline was correct). Batch sessions record
@@ -14,7 +17,8 @@ control algorithms have their own identifiers (see `docs/TECHNICAL.md`).
   roles section.
 - `leaderboard.csv` gains five trailing columns (`margin_correct_vs_competing`, `margin_correct_vs_strongest`,
   `newly_induced_incorrect`, `correct_letter`, `competing_letter`); the earlier columns are unchanged.
-- `docs/FOUR_MAPPING_SUMMARY.md`: a concise, exploratory summary of the four-mapping counterfactual experiment (local evidence, not bundled).
+- `docs/FOUR_MAPPING_SUMMARY.md`: a concise, exploratory summary of the four-mapping counterfactual experiment, reproducible from the bundle.
+- `.gitattributes`: `examples/four-mapping/** -text` so the hashed bundle files are byte-identical on every platform.
 
 ### Changed
 - The batch baseline print says "Margin A/B (letters A and B only; NOT the role margin)" and prints the role margin when the roles are not

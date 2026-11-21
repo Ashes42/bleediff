@@ -64,13 +64,16 @@ class TestVersionAndDocs(unittest.TestCase):
         import tomllib
 
         with open(os.path.join(ROOT, "pyproject.toml"), "rb") as fh:
-            self.assertEqual(tomllib.load(fh)["project"]["version"], "0.3.0")
-        self.assertEqual(bleediff.__version__, "0.3.0")
+            self.assertEqual(tomllib.load(fh)["project"]["version"], "0.4.0")
+        self.assertEqual(bleediff.__version__, "0.4.0")
         cl = read(os.path.join(ROOT, "CHANGELOG.md"))
+        self.assertLess(cl.index("## [0.4.0]"), cl.index("## [0.3.0]"))
         self.assertLess(cl.index("## [0.3.0]"), cl.index("## [0.2.0]"))
         self.assertNotIn("Unreleased", cl)
+        self.assertNotIn("Pending for the next release", cl)
         self.assertIn("v0.3.0", read(os.path.join(ROOT, "RELEASE_NOTES_v0.3.0.md")).splitlines()[0])
-        self.assertIn("**0.3.0**", read(os.path.join(ROOT, "README.md")))
+        self.assertIn("v0.4.0", read(os.path.join(ROOT, "RELEASE_NOTES_v0.4.0.md")).splitlines()[0])
+        self.assertIn("**0.4.0**", read(os.path.join(ROOT, "README.md")))
         self.assertTrue(os.path.isfile(os.path.join(ROOT, "RELEASE_NOTES_v0.2.0.md")))
 
     def test_readme_documents_the_three_commands_and_the_distinctions(self):
@@ -88,7 +91,7 @@ class TestVersionAndDocs(unittest.TestCase):
             self.assertIn(needle, t, needle)
 
     def test_docs_and_examples_carry_no_personal_or_local_data(self):
-        files = [os.path.join(ROOT, n) for n in ("README.md", "CHANGELOG.md", "RELEASE_NOTES_v0.3.0.md", "RELEASE_NOTES_v0.2.0.md")] + list(example_files())
+        files = [os.path.join(ROOT, n) for n in ("README.md", "CHANGELOG.md", "RELEASE_NOTES_v0.4.0.md", "RELEASE_NOTES_v0.3.0.md", "RELEASE_NOTES_v0.2.0.md")] + list(example_files())
         for p in files:
             self.assertIsNone(PERSONAL.search(read(p)), p)
             self.assertNotIn("Ashley", read(p), p)

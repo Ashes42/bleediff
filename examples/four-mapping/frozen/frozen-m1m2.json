@@ -1,0 +1,895 @@
+{
+  "schema": "bleediff.counterfactual-frozen/1",
+  "frozen_utc": "2026-11-21T20:26:41Z",
+  "code_revision": "fa514eedf6cb85a7da28ae21caa0277a0f9a4fa7",
+  "fixtures_sha256": "e795a5c4f2abf4e2b7c2c7e5efee8829d54274703ebe964dfd555ad0aedc9043",
+  "completion_requests_before_freeze": 0,
+  "mappings": {
+    "m1": {
+      "A": "K",
+      "B": "T",
+      "C": "X",
+      "D": "Y"
+    },
+    "m2": {
+      "A": "T",
+      "B": "K",
+      "C": "Y",
+      "D": "X"
+    }
+  },
+  "split": {
+    "q1-lab-ph": "exploration",
+    "q2-invoice": "exploration",
+    "q3-route": "exploration",
+    "q4-league": "exploration",
+    "q5-library": "validation",
+    "q6-loaf": "validation"
+  },
+  "questions": {
+    "q1-lab-ph": {
+      "split": "exploration",
+      "title": "Chemistry: highest pH",
+      "answer_roles": {
+        "K_correct": "The ammonia solution",
+        "T_competing_incorrect": "The borax solution",
+        "X": "The vinegar solution",
+        "Y": "The tap water sample"
+      },
+      "mappings": {
+        "m1": {
+          "correct_letter": "A",
+          "competing_letter": "B",
+          "baseline_prompt_tokens": {
+            "qwen": 140,
+            "llama": 139
+          }
+        },
+        "m2": {
+          "correct_letter": "B",
+          "competing_letter": "A",
+          "baseline_prompt_tokens": {
+            "qwen": 140,
+            "llama": 139
+          }
+        }
+      },
+      "candidates": {
+        "NEUTRAL": {
+          "sha256": "914335add4137ec041f31ae0b4bd1da3396dd8d4f43a6f67e2b23f14daf02a93",
+          "bytes": 198,
+          "words": 35,
+          "fragment_tokens": {
+            "qwen": 44,
+            "llama": 44
+          },
+          "prompt_tokens": {
+            "m1": {
+              "qwen": 183,
+              "llama": 182
+            },
+            "m2": {
+              "qwen": 183,
+              "llama": 182
+            }
+          }
+        },
+        "RELEVANT": {
+          "sha256": "47b4dbef1e4866186382bd6770a1e1e20373f78618bff0cddaccf9bd85bbb9e1",
+          "bytes": 195,
+          "words": 33,
+          "fragment_tokens": {
+            "qwen": 44,
+            "llama": 44
+          },
+          "prompt_tokens": {
+            "m1": {
+              "qwen": 183,
+              "llama": 182
+            },
+            "m2": {
+              "qwen": 183,
+              "llama": 182
+            }
+          }
+        },
+        "COMPETING": {
+          "sha256": "81be0ca27740a466013c4d58279ad01713600ca2072cec0141f6f696d929d0c7",
+          "bytes": 189,
+          "words": 32,
+          "fragment_tokens": {
+            "qwen": 45,
+            "llama": 44
+          },
+          "prompt_tokens": {
+            "m1": {
+              "qwen": 184,
+              "llama": 182
+            },
+            "m2": {
+              "qwen": 184,
+              "llama": 182
+            }
+          }
+        },
+        "NEGATED": {
+          "sha256": "d5d032163ad9fe310b86c3916b4cdd1016c8f856a13ecb483c4f81b3d57b45cc",
+          "bytes": 168,
+          "words": 30,
+          "fragment_tokens": {
+            "qwen": 44,
+            "llama": 44
+          },
+          "prompt_tokens": {
+            "m1": {
+              "qwen": 183,
+              "llama": 182
+            },
+            "m2": {
+              "qwen": 183,
+              "llama": 182
+            }
+          }
+        },
+        "REPEATED": {
+          "sha256": "8df174ec068bf3737da7de3497672c5610e2ae5fc9e4836408bab9010e0f7492",
+          "bytes": 163,
+          "words": 29,
+          "fragment_tokens": {
+            "qwen": 46,
+            "llama": 44
+          },
+          "prompt_tokens": {
+            "m1": {
+              "qwen": 185,
+              "llama": 182
+            },
+            "m2": {
+              "qwen": 185,
+              "llama": 182
+            }
+          }
+        }
+      },
+      "token_match": {
+        "qwen_range": [
+          44,
+          46
+        ],
+        "llama_range": [
+          44,
+          44
+        ],
+        "byte_range": [
+          163,
+          198
+        ],
+        "word_range": [
+          29,
+          35
+        ]
+      }
+    },
+    "q2-invoice": {
+      "split": "exploration",
+      "title": "Finance: largest outstanding balance",
+      "answer_roles": {
+        "K_correct": "The Harbor Printing invoice",
+        "T_competing_incorrect": "The Delta Cleaning invoice",
+        "X": "The North Freight invoice",
+        "Y": "The Kestrel Software invoice"
+      },
+      "mappings": {
+        "m1": {
+          "correct_letter": "A",
+          "competing_letter": "B",
+          "baseline_prompt_tokens": {
+            "qwen": 140,
+            "llama": 134
+          }
+        },
+        "m2": {
+          "correct_letter": "B",
+          "competing_letter": "A",
+          "baseline_prompt_tokens": {
+            "qwen": 140,
+            "llama": 134
+          }
+        }
+      },
+      "candidates": {
+        "NEUTRAL": {
+          "sha256": "374b793d0170897ac5efc00bd7237e86264bd0ea6a472f3e8c2c7d59d1dc7b3a",
+          "bytes": 194,
+          "words": 33,
+          "fragment_tokens": {
+            "qwen": 43,
+            "llama": 43
+          },
+          "prompt_tokens": {
+            "m1": {
+              "qwen": 182,
+              "llama": 176
+            },
+            "m2": {
+              "qwen": 182,
+              "llama": 176
+            }
+          }
+        },
+        "RELEVANT": {
+          "sha256": "70b0416dde5329cb993a4f79eef3bbc603fabeee91dc22ba8283104ae4f9eee8",
+          "bytes": 193,
+          "words": 35,
+          "fragment_tokens": {
+            "qwen": 43,
+            "llama": 43
+          },
+          "prompt_tokens": {
+            "m1": {
+              "qwen": 182,
+              "llama": 176
+            },
+            "m2": {
+              "qwen": 182,
+              "llama": 176
+            }
+          }
+        },
+        "COMPETING": {
+          "sha256": "9fc51c5fdea2d0133dc6a93c11ee6acb6000958741e534cfc689ee9bef2ed028",
+          "bytes": 196,
+          "words": 32,
+          "fragment_tokens": {
+            "qwen": 45,
+            "llama": 43
+          },
+          "prompt_tokens": {
+            "m1": {
+              "qwen": 184,
+              "llama": 176
+            },
+            "m2": {
+              "qwen": 184,
+              "llama": 176
+            }
+          }
+        },
+        "NEGATED": {
+          "sha256": "301432e94b3e5f8094f346c921f7caa7dbc07a05f88e78cf5807a5ef50ca5de4",
+          "bytes": 193,
+          "words": 33,
+          "fragment_tokens": {
+            "qwen": 45,
+            "llama": 43
+          },
+          "prompt_tokens": {
+            "m1": {
+              "qwen": 184,
+              "llama": 176
+            },
+            "m2": {
+              "qwen": 184,
+              "llama": 176
+            }
+          }
+        },
+        "REPEATED": {
+          "sha256": "9959a7838d5a7b93be62132bd55a4861e548a276fd1e44b0307898a738dc3bed",
+          "bytes": 193,
+          "words": 29,
+          "fragment_tokens": {
+            "qwen": 47,
+            "llama": 43
+          },
+          "prompt_tokens": {
+            "m1": {
+              "qwen": 186,
+              "llama": 176
+            },
+            "m2": {
+              "qwen": 186,
+              "llama": 176
+            }
+          }
+        }
+      },
+      "token_match": {
+        "qwen_range": [
+          43,
+          47
+        ],
+        "llama_range": [
+          43,
+          43
+        ],
+        "byte_range": [
+          193,
+          196
+        ],
+        "word_range": [
+          29,
+          35
+        ]
+      }
+    },
+    "q3-route": {
+      "split": "exploration",
+      "title": "Transit: shortest travel time",
+      "answer_roles": {
+        "K_correct": "The Ridge Road route",
+        "T_competing_incorrect": "The Lakeshore route",
+        "X": "The Highway 9 route",
+        "Y": "The Old Mill route"
+      },
+      "mappings": {
+        "m1": {
+          "correct_letter": "A",
+          "competing_letter": "B",
+          "baseline_prompt_tokens": {
+            "qwen": 132,
+            "llama": 128
+          }
+        },
+        "m2": {
+          "correct_letter": "B",
+          "competing_letter": "A",
+          "baseline_prompt_tokens": {
+            "qwen": 132,
+            "llama": 128
+          }
+        }
+      },
+      "candidates": {
+        "NEUTRAL": {
+          "sha256": "84d9e13bdf3d30bc21e8aba8ce8ddff782ec00c1b97492bd7fec48ea10959a52",
+          "bytes": 180,
+          "words": 33,
+          "fragment_tokens": {
+            "qwen": 40,
+            "llama": 40
+          },
+          "prompt_tokens": {
+            "m1": {
+              "qwen": 171,
+              "llama": 167
+            },
+            "m2": {
+              "qwen": 171,
+              "llama": 167
+            }
+          }
+        },
+        "RELEVANT": {
+          "sha256": "52b50653e8a0fab8b1895069d08f0a190640648dfdca598ab0d88727c1ed2578",
+          "bytes": 169,
+          "words": 31,
+          "fragment_tokens": {
+            "qwen": 40,
+            "llama": 40
+          },
+          "prompt_tokens": {
+            "m1": {
+              "qwen": 171,
+              "llama": 167
+            },
+            "m2": {
+              "qwen": 171,
+              "llama": 167
+            }
+          }
+        },
+        "COMPETING": {
+          "sha256": "2248690a75a6b7f9736ecdf80fdce133a3318993205c1a25b397a438c08feb30",
+          "bytes": 171,
+          "words": 30,
+          "fragment_tokens": {
+            "qwen": 41,
+            "llama": 40
+          },
+          "prompt_tokens": {
+            "m1": {
+              "qwen": 172,
+              "llama": 167
+            },
+            "m2": {
+              "qwen": 172,
+              "llama": 167
+            }
+          }
+        },
+        "NEGATED": {
+          "sha256": "dae23a2f10be3af1000301b19b2e688d5bbfc9186483fd4fccab02abb70f2938",
+          "bytes": 169,
+          "words": 30,
+          "fragment_tokens": {
+            "qwen": 41,
+            "llama": 40
+          },
+          "prompt_tokens": {
+            "m1": {
+              "qwen": 172,
+              "llama": 167
+            },
+            "m2": {
+              "qwen": 172,
+              "llama": 167
+            }
+          }
+        },
+        "REPEATED": {
+          "sha256": "9597fc44d8abdee62604b9ff6773030c9e1582b850f6098f2c7db36e054d6938",
+          "bytes": 169,
+          "words": 28,
+          "fragment_tokens": {
+            "qwen": 42,
+            "llama": 40
+          },
+          "prompt_tokens": {
+            "m1": {
+              "qwen": 173,
+              "llama": 167
+            },
+            "m2": {
+              "qwen": 173,
+              "llama": 167
+            }
+          }
+        }
+      },
+      "token_match": {
+        "qwen_range": [
+          40,
+          42
+        ],
+        "llama_range": [
+          40,
+          40
+        ],
+        "byte_range": [
+          169,
+          180
+        ],
+        "word_range": [
+          28,
+          33
+        ]
+      }
+    },
+    "q4-league": {
+      "split": "exploration",
+      "title": "Sports: league leader on points",
+      "answer_roles": {
+        "K_correct": "The Falcons",
+        "T_competing_incorrect": "The Wolves",
+        "X": "The Bears",
+        "Y": "The Sharks"
+      },
+      "mappings": {
+        "m1": {
+          "correct_letter": "A",
+          "competing_letter": "B",
+          "baseline_prompt_tokens": {
+            "qwen": 121,
+            "llama": 118
+          }
+        },
+        "m2": {
+          "correct_letter": "B",
+          "competing_letter": "A",
+          "baseline_prompt_tokens": {
+            "qwen": 121,
+            "llama": 118
+          }
+        }
+      },
+      "candidates": {
+        "NEUTRAL": {
+          "sha256": "1265dbe8ffccfea77d9808e3ed84571b140995a26c7a92f2f530c16fb66ce482",
+          "bytes": 159,
+          "words": 25,
+          "fragment_tokens": {
+            "qwen": 34,
+            "llama": 34
+          },
+          "prompt_tokens": {
+            "m1": {
+              "qwen": 154,
+              "llama": 151
+            },
+            "m2": {
+              "qwen": 154,
+              "llama": 151
+            }
+          }
+        },
+        "RELEVANT": {
+          "sha256": "aaaecc8ea4e079f57d992b7d7f9d8721a98f24af48cbd71c8324340e5623d026",
+          "bytes": 152,
+          "words": 25,
+          "fragment_tokens": {
+            "qwen": 34,
+            "llama": 34
+          },
+          "prompt_tokens": {
+            "m1": {
+              "qwen": 154,
+              "llama": 151
+            },
+            "m2": {
+              "qwen": 154,
+              "llama": 151
+            }
+          }
+        },
+        "COMPETING": {
+          "sha256": "33f1ac57eaa3100ce2d9c73a14a51b468a5c4502749f5a13b9bbfc587721773c",
+          "bytes": 152,
+          "words": 27,
+          "fragment_tokens": {
+            "qwen": 35,
+            "llama": 34
+          },
+          "prompt_tokens": {
+            "m1": {
+              "qwen": 155,
+              "llama": 151
+            },
+            "m2": {
+              "qwen": 155,
+              "llama": 151
+            }
+          }
+        },
+        "NEGATED": {
+          "sha256": "9a1388e5438317ef6a4b6321e1ffad841f6c90ab70b47392c5e6d4daedeec6d5",
+          "bytes": 133,
+          "words": 24,
+          "fragment_tokens": {
+            "qwen": 35,
+            "llama": 34
+          },
+          "prompt_tokens": {
+            "m1": {
+              "qwen": 155,
+              "llama": 151
+            },
+            "m2": {
+              "qwen": 155,
+              "llama": 151
+            }
+          }
+        },
+        "REPEATED": {
+          "sha256": "e81fc2217c7b4912a55d4ea015d103c24e2dc8318c924b191296bfa81b1689ef",
+          "bytes": 152,
+          "words": 27,
+          "fragment_tokens": {
+            "qwen": 36,
+            "llama": 34
+          },
+          "prompt_tokens": {
+            "m1": {
+              "qwen": 156,
+              "llama": 151
+            },
+            "m2": {
+              "qwen": 156,
+              "llama": 151
+            }
+          }
+        }
+      },
+      "token_match": {
+        "qwen_range": [
+          34,
+          36
+        ],
+        "llama_range": [
+          34,
+          34
+        ],
+        "byte_range": [
+          133,
+          159
+        ],
+        "word_range": [
+          24,
+          27
+        ]
+      }
+    },
+    "q5-library": {
+      "split": "validation",
+      "title": "Library: most overdue book",
+      "answer_roles": {
+        "K_correct": "The atlas",
+        "T_competing_incorrect": "The cookbook",
+        "X": "The novel",
+        "Y": "The dictionary"
+      },
+      "mappings": {
+        "m1": {
+          "correct_letter": "A",
+          "competing_letter": "B",
+          "baseline_prompt_tokens": {
+            "qwen": 123,
+            "llama": 119
+          }
+        },
+        "m2": {
+          "correct_letter": "B",
+          "competing_letter": "A",
+          "baseline_prompt_tokens": {
+            "qwen": 123,
+            "llama": 119
+          }
+        }
+      },
+      "candidates": {
+        "NEUTRAL": {
+          "sha256": "56efb18b3ec4bae455a60f7c16e8de229fb5a9de4e1174bdf97414c10e2f69cc",
+          "bytes": 166,
+          "words": 30,
+          "fragment_tokens": {
+            "qwen": 38,
+            "llama": 38
+          },
+          "prompt_tokens": {
+            "m1": {
+              "qwen": 160,
+              "llama": 156
+            },
+            "m2": {
+              "qwen": 160,
+              "llama": 156
+            }
+          }
+        },
+        "RELEVANT": {
+          "sha256": "dbab1d1786750291593637906f5513518e3d3df983fdbef8ef9896dc0e8362a6",
+          "bytes": 166,
+          "words": 31,
+          "fragment_tokens": {
+            "qwen": 38,
+            "llama": 38
+          },
+          "prompt_tokens": {
+            "m1": {
+              "qwen": 160,
+              "llama": 156
+            },
+            "m2": {
+              "qwen": 160,
+              "llama": 156
+            }
+          }
+        },
+        "COMPETING": {
+          "sha256": "b83f6758a83c6fef2ff57d246edf057cbaec2c71ceb1f9a2331fcc7f1d9af5ae",
+          "bytes": 165,
+          "words": 29,
+          "fragment_tokens": {
+            "qwen": 39,
+            "llama": 38
+          },
+          "prompt_tokens": {
+            "m1": {
+              "qwen": 161,
+              "llama": 156
+            },
+            "m2": {
+              "qwen": 161,
+              "llama": 156
+            }
+          }
+        },
+        "NEGATED": {
+          "sha256": "5b938293c0f742b471b9a5314c55674b44f1eac8b676a23456756773c5033db6",
+          "bytes": 165,
+          "words": 29,
+          "fragment_tokens": {
+            "qwen": 39,
+            "llama": 38
+          },
+          "prompt_tokens": {
+            "m1": {
+              "qwen": 161,
+              "llama": 156
+            },
+            "m2": {
+              "qwen": 161,
+              "llama": 156
+            }
+          }
+        },
+        "REPEATED": {
+          "sha256": "650930bfc9c9e29e5523528d23ccb8aa04d8695f87dc728da1b4b44cb0b59029",
+          "bytes": 165,
+          "words": 28,
+          "fragment_tokens": {
+            "qwen": 40,
+            "llama": 38
+          },
+          "prompt_tokens": {
+            "m1": {
+              "qwen": 162,
+              "llama": 156
+            },
+            "m2": {
+              "qwen": 162,
+              "llama": 156
+            }
+          }
+        }
+      },
+      "token_match": {
+        "qwen_range": [
+          38,
+          40
+        ],
+        "llama_range": [
+          38,
+          38
+        ],
+        "byte_range": [
+          165,
+          166
+        ],
+        "word_range": [
+          28,
+          31
+        ]
+      }
+    },
+    "q6-loaf": {
+      "split": "validation",
+      "title": "Baking: fully baked loaf",
+      "answer_roles": {
+        "K_correct": "The rye loaf",
+        "T_competing_incorrect": "The sourdough loaf",
+        "X": "The brioche loaf",
+        "Y": "The spelt loaf"
+      },
+      "mappings": {
+        "m1": {
+          "correct_letter": "A",
+          "competing_letter": "B",
+          "baseline_prompt_tokens": {
+            "qwen": 141,
+            "llama": 135
+          }
+        },
+        "m2": {
+          "correct_letter": "B",
+          "competing_letter": "A",
+          "baseline_prompt_tokens": {
+            "qwen": 141,
+            "llama": 135
+          }
+        }
+      },
+      "candidates": {
+        "NEUTRAL": {
+          "sha256": "afab432ce1460d4b7c349cd17c04e32056be36ad79097003a811a8356e9f4d63",
+          "bytes": 193,
+          "words": 32,
+          "fragment_tokens": {
+            "qwen": 42,
+            "llama": 42
+          },
+          "prompt_tokens": {
+            "m1": {
+              "qwen": 182,
+              "llama": 176
+            },
+            "m2": {
+              "qwen": 182,
+              "llama": 176
+            }
+          }
+        },
+        "RELEVANT": {
+          "sha256": "181b4c95a669d3a59dfe4b669a5261fad9a348a25ff7acc7df796c6004f59401",
+          "bytes": 164,
+          "words": 30,
+          "fragment_tokens": {
+            "qwen": 42,
+            "llama": 42
+          },
+          "prompt_tokens": {
+            "m1": {
+              "qwen": 182,
+              "llama": 176
+            },
+            "m2": {
+              "qwen": 182,
+              "llama": 176
+            }
+          }
+        },
+        "COMPETING": {
+          "sha256": "c03fa726ebf17b09cc385c0d9a448144b70567d37490187462dc977eb0558e4e",
+          "bytes": 159,
+          "words": 29,
+          "fragment_tokens": {
+            "qwen": 43,
+            "llama": 42
+          },
+          "prompt_tokens": {
+            "m1": {
+              "qwen": 183,
+              "llama": 176
+            },
+            "m2": {
+              "qwen": 183,
+              "llama": 176
+            }
+          }
+        },
+        "NEGATED": {
+          "sha256": "1019a7a1b543942717dbed2f40569d8d8037f7330ee8166a785edee230c7aaa1",
+          "bytes": 158,
+          "words": 29,
+          "fragment_tokens": {
+            "qwen": 44,
+            "llama": 42
+          },
+          "prompt_tokens": {
+            "m1": {
+              "qwen": 184,
+              "llama": 176
+            },
+            "m2": {
+              "qwen": 184,
+              "llama": 176
+            }
+          }
+        },
+        "REPEATED": {
+          "sha256": "21c5d39489b0dc4f1d21b42d6246aa443f30b0d37cc332c47adfb30eeedd43b7",
+          "bytes": 156,
+          "words": 29,
+          "fragment_tokens": {
+            "qwen": 44,
+            "llama": 42
+          },
+          "prompt_tokens": {
+            "m1": {
+              "qwen": 184,
+              "llama": 176
+            },
+            "m2": {
+              "qwen": 184,
+              "llama": 176
+            }
+          }
+        }
+      },
+      "token_match": {
+        "qwen_range": [
+          42,
+          44
+        ],
+        "llama_range": [
+          42,
+          42
+        ],
+        "byte_range": [
+          156,
+          193
+        ],
+        "word_range": [
+          29,
+          32
+        ]
+      }
+    }
+  },
+  "design": [
+    "Six synthetic questions with objectively verifiable answers; q1-q4 are exploration, q5-q6 are untouched validation (not measured until the exploration patterns are recorded).",
+    "Each question is run under two answer-letter mappings: m1 A=correct(K) B=competing(T) C=X D=Y; m2 A=T B=K C=Y D=X. The same semantic answer changes letter.",
+    "Variations: NEUTRAL (unrelated prose), RELEVANT (on-topic text that mentions the competing subject, no evidence), COMPETING (explicit competing evidence for T), NEGATED (evidence against T), REPEATED (the competing claim stated twice).",
+    "Fragments never mention answer letters; the same candidate file is used under both mappings. Lengths are matched by neutral on-topic padding; residual token mismatches are recorded in token_match."
+  ]
+}

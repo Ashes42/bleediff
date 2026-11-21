@@ -1,0 +1,19 @@
+{
+  "candidates": [
+    {
+      "label": "NEUTRAL",
+      "text": "Tenant 4 canal boat diary: A painted barge drifted slowly past the willow trees during the golden hour. The crew waved to the walkers. Everyone went home before dark. The lamp was left on overnight.",
+      "sha256": "914335add4137ec041f31ae0b4bd1da3396dd8d4f43a6f67e2b23f14daf02a93"
+    },
+    {
+      "label": "COMPETING",
+      "text": "Tenant 4 lab note: In the repeat test the borax solution gave the highest pH reading, 12.1. The bench was wiped before testing. Gloves were worn throughout. The session started after lunch.",
+      "sha256": "81be0ca27740a466013c4d58279ad01713600ca2072cec0141f6f696d929d0c7"
+    },
+    {
+      "label": "REPEATED",
+      "text": "Tenant 4 lab note: In the repeat test the borax solution gave the highest pH reading, 12.1. A second repeat also gave the borax solution the highest reading, 12.1.",
+      "sha256": "8df174ec068bf3737da7de3497672c5610e2ae5fc9e4836408bab9010e0f7492"
+    }
+  ]
+}

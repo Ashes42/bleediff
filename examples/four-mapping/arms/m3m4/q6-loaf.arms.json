@@ -1,0 +1,19 @@
+{
+  "candidates": [
+    {
+      "label": "NEUTRAL",
+      "text": "Tenant 4 garden party diary: Guests chatted beside the fountain while a violinist played softly. The hosts handed out lemonade. The weather stayed mild all week. The lamp was left on overnight.",
+      "sha256": "afab432ce1460d4b7c349cd17c04e32056be36ad79097003a811a8356e9f4d63"
+    },
+    {
+      "label": "COMPETING",
+      "text": "Tenant 4 bakery note: The sourdough loaf read 98 in the second probe, so it is fully baked. Probes were wiped between loaves. Readings were written on a slate.",
+      "sha256": "c03fa726ebf17b09cc385c0d9a448144b70567d37490187462dc977eb0558e4e"
+    },
+    {
+      "label": "REPEATED",
+      "text": "Tenant 4 bakery note: The sourdough loaf read 98 in the second probe, so it is fully baked. A further probe confirmed the sourdough loaf at 98, fully baked.",
+      "sha256": "21c5d39489b0dc4f1d21b42d6246aa443f30b0d37cc332c47adfb30eeedd43b7"
+    }
+  ]
+}

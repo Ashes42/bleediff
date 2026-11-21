@@ -1,0 +1,29 @@
+{
+  "candidates": [
+    {
+      "label": "NEUTRAL",
+      "text": "Tenant 4 canal boat diary: A painted barge drifted slowly past the willow trees during the golden hour. The crew waved to the walkers. The lamp was left on overnight.",
+      "sha256": "56efb18b3ec4bae455a60f7c16e8de229fb5a9de4e1174bdf97414c10e2f69cc"
+    },
+    {
+      "label": "RELEVANT",
+      "text": "Tenant 4 circulation note: The note also refers to the cookbook and its renewal. Loans are renewed at the desk. The desk is open until six. Cards are stamped by hand.",
+      "sha256": "dbab1d1786750291593637906f5513518e3d3df983fdbef8ef9896dc0e8362a6"
+    },
+    {
+      "label": "COMPETING",
+      "text": "Tenant 4 circulation note: The cookbook is the most overdue, 41 days, after a renewal was cancelled. Loans are renewed at the desk. Lost cards are replaced for free.",
+      "sha256": "b83f6758a83c6fef2ff57d246edf057cbaec2c71ceb1f9a2331fcc7f1d9af5ae"
+    },
+    {
+      "label": "NEGATED",
+      "text": "Tenant 4 circulation note: A renewal makes the cookbook less overdue, due 25 June, not the most overdue. Cards are stamped by hand. Lost cards are replaced for free.",
+      "sha256": "5b938293c0f742b471b9a5314c55674b44f1eac8b676a23456756773c5033db6"
+    },
+    {
+      "label": "REPEATED",
+      "text": "Tenant 4 circulation note: The cookbook is the most overdue, 41 days, after a renewal was cancelled. A further check confirmed the cookbook as most overdue, 41 days.",
+      "sha256": "650930bfc9c9e29e5523528d23ccb8aa04d8695f87dc728da1b4b44cb0b59029"
+    }
+  ]
+}

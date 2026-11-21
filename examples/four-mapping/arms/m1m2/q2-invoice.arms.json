@@ -1,0 +1,29 @@
+{
+  "candidates": [
+    {
+      "label": "NEUTRAL",
+      "text": "Tenant 4 garden party diary: Guests chatted beside the fountain while a violinist played softly. The hosts handed out lemonade. A small band played near the gate. The lamp was left on overnight.",
+      "sha256": "374b793d0170897ac5efc00bd7237e86264bd0ea6a472f3e8c2c7d59d1dc7b3a"
+    },
+    {
+      "label": "RELEVANT",
+      "text": "Tenant 4 ledger note: This note also covers the Delta Cleaning invoice and its audit correction. Receipts are kept for seven years. The month end falls on a Friday. Copies go to the front desk.",
+      "sha256": "70b0416dde5329cb993a4f79eef3bbc603fabeee91dc22ba8283104ae4f9eee8"
+    },
+    {
+      "label": "COMPETING",
+      "text": "Tenant 4 ledger note: The Delta Cleaning invoice has the largest outstanding balance, 5,200, after the audit correction. The office printer was serviced last week. The month end falls on a Friday.",
+      "sha256": "9fc51c5fdea2d0133dc6a93c11ee6acb6000958741e534cfc689ee9bef2ed028"
+    },
+    {
+      "label": "NEGATED",
+      "text": "Tenant 4 ledger note: The Delta Cleaning invoice does not have the largest outstanding balance; the audit correction left 2,100. Entries are checked by a clerk. The month end falls on a Friday.",
+      "sha256": "301432e94b3e5f8094f346c921f7caa7dbc07a05f88e78cf5807a5ef50ca5de4"
+    },
+    {
+      "label": "REPEATED",
+      "text": "Tenant 4 ledger note: The Delta Cleaning invoice has the largest outstanding balance, 5,200, after the audit correction. The second audit again showed the Delta Cleaning invoice largest, 5,200.",
+      "sha256": "9959a7838d5a7b93be62132bd55a4861e548a276fd1e44b0307898a738dc3bed"
+    }
+  ]
+}

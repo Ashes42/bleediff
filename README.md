@@ -4,10 +4,15 @@
 
 **Bleediff is a local GGUF evaluation CLI that measures how added context changes a model's A/B/C/D choice probabilities.** It runs
 against a `llama-server` you start yourself, uses only the Python 3.11+ standard library, and keeps no prompts or fragment text
-unless you ask. Version **0.3.0** is an **exploratory research toolkit** with measurements on three local models. It is not a
+unless you ask. Version **0.4.0** is an **exploratory research toolkit** with measurements on three local models. It is not a
 security scanner and has not demonstrated a vulnerability.
 
-## What is in v0.3.0
+## What is in v0.4.0
+
+v0.4.0 adds **semantic answer-role scoring** (the correct and the competing answers can sit at any letters A to D, with answer-letter
+permutation support and clearer labels) and a sanitized, offline-reproducible **four-mapping evidence bundle**
+([`examples/four-mapping/`](examples/four-mapping/README.md)). v0.3.0 sessions and datasets load unchanged. Release notes:
+[`RELEASE_NOTES_v0.4.0.md`](RELEASE_NOTES_v0.4.0.md).
 
 | Command | What it does | Needs a model? |
 |---|---|---|
@@ -31,6 +36,10 @@ python -m unittest discover -s tests                 # mock llama-server; takes 
 python -m bleediff atlas --manifest examples/atlas/pilot/atlas-input.json --out runs/atlas-pilot
 python -m bleediff atlas --manifest examples/atlas/slot-swap/atlas-input.json --out runs/atlas-slot-swap
 python examples/atlas/mention_contrasts.py runs/atlas-slot-swap/atlas.json
+
+# the four-mapping experiment: rebuild the Atlas and check every documented number offline (examples/four-mapping/README.md)
+python -m bleediff atlas --manifest examples/four-mapping/atlas-input.json --out runs/four-mapping
+python examples/four-mapping/verify_summary.py runs/four-mapping/atlas.json
 ```
 
 `--out` directories must not exist; reports are never overwritten. Nothing here downloads or runs a model.
@@ -77,7 +86,7 @@ correct and the competing answers elsewhere, pass `--correct C --incorrect D` (a
 `ln(p_correct / p_competing)`, the correct-versus-strongest-incorrect margin, the movement toward the competing answer, overall
 preferred-answer flips and newly induced incorrect answers (only when the clean baseline was correct). The terminal, `leaderboard.csv`
 (last five columns) and the Atlas label which margin is which, and the fixed A/B margin stays available as `margin_AB`. A summary of the
-first four-mapping experiment is in [`docs/FOUR_MAPPING_SUMMARY.md`](docs/FOUR_MAPPING_SUMMARY.md).
+first four-mapping experiment is in [`docs/FOUR_MAPPING_SUMMARY.md`](docs/FOUR_MAPPING_SUMMARY.md) and summarized below.
 
 ### `bleediff atlas`: cross-task and cross-model report
 
@@ -116,6 +125,23 @@ complete data.
   surfaces before renormalization. Low coverage (flagged below 0.90) means the A-D probabilities rest on less of the model's actual
   output distribution. **Saturated baselines** (highest probability at least 0.995; Qwen2.5-7B here) leave little room for a visible
   flip and make shifts large logit changes of an extremely confident answer. Both are reported as separate findings, never as noise.
+
+## Exploratory findings in v0.4.0: four answer-letter mappings
+
+Six synthetic questions, each under four letter assignments (correct answer at A, B, C or D, with the competing answer at B, A, D or C),
+on Qwen2.5-1.5B and Llama 3.2 3B Instruct (Q4_K_M, CPU, raw prompts); 24 cells per model. Four of the 24 possible permutations; repeats
+were bit-identical and are not independent samples. Recompute everything with `examples/four-mapping/verify_summary.py`.
+
+* **Llama 3B (tested configuration): semantic-answer sensitivity.** Competing evidence moved the decision toward the competing answer in
+  24 of 24 cells, exceeded neutral text in 24 of 24, and repeating it added shift in 23 of 24. The sign did not depend on the letter; the
+  size did (mean +3.99, +2.64, +2.52, +3.14 nats for the correct answer at A, B, C, D). Newly induced incorrect answers occurred only with
+  the correct answer at A (5 of 18) or D (3 of 18).
+* **Qwen 1.5B (tested configuration): strong answer-letter sensitivity.** The shift reversed with the mapping (+1.18, -1.17, -0.70,
+  +0.92) and was positive under all four mappings for 0 of 6 questions. The baseline p(correct) was 0.51, 0.23, 0.09, 0.59 for A, B, C, D;
+  competing evidence raised letter B and lowered letter D under every mapping. Newly induced incorrect answers over the five m1/m2
+  treatments: 9 under m1, 1 under m2.
+* **Not established:** a model-family mechanism (one model per family, one quantization), a statistical effect size, position effects
+  separated from baseline confidence, or any real tenant-isolation vulnerability.
 
 ## Exploratory findings in v0.3.0
 
@@ -225,10 +251,12 @@ Both Qwen models share the Qwen2.5 tokenizer, so every frozen text and control k
   `atlas.py` (v0.3.0).
 * `research/` the supported research drivers (`run_arms.py`, `arms.py`, `measure_fragments.py`) and `research/data/`
   (frozen texts, the 12 preserved neutral controls, saved traces and the v0.2.0 results summary).
+* `bleediff/roles.py` (v0.4.0) the semantic answer-role scoring used by `track --arms` and the Atlas.
 * `examples/atlas/` small sanitized example datasets (saved batch sessions, candidate files, fixtures, atlas input manifests) that
   reproduce the v0.3.0 findings offline, and `mention_contrasts.py`.
+* `examples/four-mapping/` the sanitized four-mapping evidence bundle (48 sessions, SHA-256 list) and `verify_summary.py` (v0.4.0).
 * `fixtures/` scenario fixtures, preserved controls and the protocol and preregistration documents.
-* `docs/TECHNICAL.md` the detailed method and history; `CHANGELOG.md`; `RELEASE_NOTES_v0.2.0.md`, `RELEASE_NOTES_v0.3.0.md`.
+* `docs/TECHNICAL.md` the detailed method and history; `CHANGELOG.md`; `RELEASE_NOTES_v0.2.0.md`, `RELEASE_NOTES_v0.3.0.md`, `RELEASE_NOTES_v0.4.0.md`; `docs/FOUR_MAPPING_SUMMARY.md`.
 * `tests/` stdlib `unittest` suite (a mock llama-server stands in for the model).
 
 Local run directories (`runs/`), model files and per-run sidecars are git-ignored and are not part of the repository.
