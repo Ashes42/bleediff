@@ -33,7 +33,8 @@ from .arena import load_fixtures
 from .client import LlamaClient
 from .errors import Inconclusive, ServerUnreachable
 from .meta import code_revision, file_sha256
-from .track import MAX_FRAGMENT_CHARS, MEASUREMENT_NOTE, TOLERANCE, TrackSession, _model_name, _sha, _signed, _utc, compare
+from .roles import ROLE_NOTE, role_changes, role_scores, roles_are_ab
+from .track import MAX_FRAGMENT_CHARS, MEASUREMENT_NOTE, TOLERANCE, MeasurementError, TrackSession, _model_name, _sha, _signed, _utc, compare
 
 BATCH_SCHEMA = "bleediff.track-batch/1"
 MAX_CANDIDATES = 1000
@@ -210,8 +211,17 @@ def cmd_batch(args) -> int:
         if getattr(args, "fragment", None):
             raise Inconclusive("--arms (batch mode) and --fragment (interactive mode) cannot be combined", reason="BAD_ARGS")
         incorrect = (getattr(args, "incorrect", None) or "B").upper()
-        if incorrect not in ("A", "B"):
-            raise Inconclusive("--incorrect must be A or B (the margin is the A/B margin)", reason="BAD_ARGS")
+        correct = (getattr(args, "correct", None) or "").upper() or None
+        if incorrect not in CHOICES:
+            raise Inconclusive(f"--incorrect must be one of {', '.join(CHOICES)}", reason="BAD_ARGS")
+        if correct is None:                                      # v0.3.0 behaviour: the other letter of the A/B pair
+            if incorrect not in ("A", "B"):
+                raise Inconclusive("--correct is required when --incorrect is C or D: the roles are scored semantically "
+                                   "and the A/B margin says nothing about answers at C or D", reason="BAD_ARGS")
+            correct = "B" if incorrect == "A" else "A"
+        if correct not in CHOICES or correct == incorrect:
+            raise Inconclusive("--correct and --incorrect must be two different letters from A, B, C, D", reason="BAD_ARGS")
+        roles_default = roles_are_ab(correct, incorrect)
         cands = load_candidates(args.arms)                       # validated before the server is contacted or anything is created
         fixtures = load_fixtures(args.fixtures)
         scenarios = {s.id: s for s in fixtures.scenarios}
@@ -243,6 +253,9 @@ def cmd_batch(args) -> int:
         print(f"Model: {name}", file=out)
         print(f"Scenario: {sc.id}   Candidates: {len(cands)}   Designated incorrect answer: {incorrect}", file=out)
         print("Measurement: single prompt (request #3), margin A/B = ln(p_A / p_B); not the three-request fold.", file=out)
+        if not roles_default:
+            print(f"Roles: correct = {correct}, competing = {incorrect}. Ranked movement and the shown margin are for these roles "
+                  f"(ln(p_correct / p_competing)); margin_AB in the files is the A/B margin and is NOT the role margin.", file=out)
         reason = "error"
         try:
             first = session.start(info, report)                  # writes the session header (provenance) and measures the clean baseline once
@@ -250,9 +263,17 @@ def cmd_batch(args) -> int:
                 print(f"ERROR [{getattr(first, 'reason', type(first).__name__)}]: {first}", file=out)
                 reason = "baseline_failed"
                 return 2
+            try:
+                base_roles = role_scores(first["probs"], correct, incorrect)
+            except MeasurementError as e:
+                print(f"ERROR [{e.reason}]: the baseline has no defined role margin: {e}", file=out)
+                reason = "baseline_failed"
+                return 2
+            session._write({"type": "semantic_roles", "step": first["step"], "label": "baseline", "timestamp_utc": _utc(), "scores": base_roles})
             session._write({"type": "event", "event": "batch_start", "timestamp_utc": _utc(), "batch_schema": BATCH_SCHEMA,
                             "candidate_file": {"name": os.path.basename(args.arms), "sha256": file_sha, "candidates": len(cands)},
-                            "designated_incorrect_answer": incorrect,
+                            "designated_incorrect_answer": incorrect, "designated_correct_answer": correct,
+                            "semantic_roles": {"correct_letter": correct, "competing_letter": incorrect, "roles_are_ab": roles_default, "note": ROLE_NOTE},
                             "note": "candidates are independent single-prompt measurements: change_from_previous equals change_from_baseline",
                             "observed_effects_note": OBSERVED_NOTE})
             base = first
@@ -289,16 +310,29 @@ def cmd_batch(args) -> int:
                     print(f"  [{n}/{len(cands)}] {_short(cand.label)}: FAILED [{rsn}]", file=out)
                     continue
                 unreachable_run = 0
+                try:
+                    cand_roles = role_scores(res["probs"], correct, incorrect)
+                    changes = role_changes(base_roles, cand_roles)
+                except MeasurementError as e:
+                    session._write({"type": "semantic_roles", "step": res["step"], "label": "candidate", "timestamp_utc": _utc(), "status": "error",
+                                    "error": {"reason": e.reason, "message": str(e)[:300]}, **tag})
+                    failed.append({**row_fail, "status": "error", "error_reason": "ROLE_MARGIN_UNDEFINED"})
+                    print(f"  [{n}/{len(cands)}] {_short(cand.label)}: NOT SCORED [ROLE_MARGIN_UNDEFINED] {e}", file=out)
+                    continue
+                session._write({"type": "semantic_roles", "step": res["step"], "label": "candidate", "timestamp_utc": _utc(), "scores": cand_roles, "changes": changes, **tag})
                 cmp = compare(base, base, res)
                 toks = res.get("tokens") or {}
                 row = {"index": cand.index, "label": cand.label, "probs": res["probs"], "margin": res["margin"], "preferred": res["preferred"],
                        "change": cmp["change_from_baseline"], "flipped": cmp["choice_flipped_from_baseline"],
-                       "crossed": cmp["pairwise_crossed_from_baseline"], "movement": movement_toward(cmp["change_from_baseline"], incorrect),
+                       "crossed": cmp["pairwise_crossed_from_baseline"], "movement": changes["movement_toward_competing"],
+                       "role_margin": cand_roles["margin_correct_vs_competing"], "role_margin_strongest": cand_roles["margin_correct_vs_strongest"],
+                       "induced": changes["newly_induced_incorrect"],
                        "fragment_tokens": toks.get("fragment_tokens"), "prompt_tokens": toks.get("prompt_tokens"), "step": res["step"],
                        "duplicate_of_step": (res.get("identical_prompt_as") or {}).get("step"), **{k: frag_info[k] for k in ("chars", "bytes", "words")},
                        "fragment_sha256": frag_info["sha256"]}
                 scored.append(row)
-                print(f"  [{n}/{len(cands)}] {_short(cand.label)}: margin {_signed(res['margin'])} nats, preferred {res['preferred']}", file=out)
+                shown = res["margin"] if roles_default else cand_roles["margin_correct_vs_competing"]
+                print(f"  [{n}/{len(cands)}] {_short(cand.label)}: margin {_signed(shown)} nats, preferred {res['preferred']}", file=out)
             reason = "batch_complete"
         finally:
             session.close(reason)
@@ -318,26 +352,32 @@ def cmd_batch(args) -> int:
         manifest = {
             "schema": BATCH_SCHEMA, "bleediff_version": __version__, "code_revision": code_revision(), "mode": "batch",
             "measurement_type": "single_prompt_pairwise_margin", "measurement_note": MEASUREMENT_NOTE, "observed_effects_note": OBSERVED_NOTE,
-            "ranking_definition": f"movement toward {incorrect} = " + ("baseline margin - candidate margin" if incorrect == "B" else "candidate margin - baseline margin")
-                                  + " (nats, from the unchanged margin_AB); ties share a rank",
-            "scenario": {"id": sc.id, "fixtures_sha256": fixtures.sha256}, "designated_incorrect_answer": incorrect,
+            "ranking_definition": (f"movement toward {incorrect} = " + ("baseline margin - candidate margin" if incorrect == "B" else "candidate margin - baseline margin")
+                                   + " (nats, from the unchanged margin_AB); ties share a rank") if roles_default else
+                                  (f"movement toward {incorrect} = -(change of ln(p_correct) - ln(p_competing)) with correct = {correct} and competing = {incorrect} "
+                                   "(nats, semantic roles; not the A/B margin); ties share a rank"),
+            "scenario": {"id": sc.id, "fixtures_sha256": fixtures.sha256}, "designated_incorrect_answer": incorrect, "designated_correct_answer": correct,
+            "semantic_roles": {"correct_letter": correct, "competing_letter": incorrect, "roles_are_ab": roles_default, "note": ROLE_NOTE},
             "candidate_file": {"name": os.path.basename(args.arms), "sha256": file_sha, "candidates": len(cands)},
             "model": {"name": name, "model_hash": info.model_hash, "model_hash_unchanged_at_end": unchanged},
             "baseline": {"probabilities": dict(zip(CHOICES, base["probs"])), "margin_AB": base["margin"], "preferred_choice": base["preferred"],
-                         "prompt_tokens": base_tokens},
+                         "prompt_tokens": base_tokens, "margin_correct_vs_competing": base_roles["margin_correct_vs_competing"],
+                         "margin_correct_vs_strongest": base_roles["margin_correct_vs_strongest"], "preferred_is_correct": base_roles["preferred_is_correct"]},
             "modal_prompt_tokens": modal,
             "counts": {"candidates": len(cands), "scored": len(scored), "failed_or_invalid_or_not_run": len(failed)},
             "ranking": [{"rank": r["rank"], "tied": r["tied"], "label": r["label"], "movement_toward_incorrect_nats": r["movement"],
                          "margin_AB": r["margin"], "change_from_baseline": r["change"], "preferred_choice": r["preferred"],
                          "preferred_differs_from_baseline": r["flipped"], "fragment_sha256": r["fragment_sha256"],
-                         "fragment_tokens": r["fragment_tokens"], "prompt_tokens": r["prompt_tokens"]} for r in ranked],
+                         "fragment_tokens": r["fragment_tokens"], "prompt_tokens": r["prompt_tokens"],
+                         "margin_correct_vs_competing": r["role_margin"], "margin_correct_vs_strongest": r["role_margin_strongest"],
+                         "newly_induced_incorrect": r["induced"]} for r in ranked],
             "unscored": [{"label": r["label"], "status": r["status"], "error_reason": r["error_reason"]} for r in failed],
             "files": {"history.jsonl": file_sha256(hist_path), "leaderboard.csv": file_sha256(csv_path)},
         }
         with open(os.path.join(out_dir, "batch-manifest.json"), "x", encoding="utf-8", newline="\n") as fh:
             json.dump(manifest, fh, indent=2)
             fh.write("\n")
-        _print_summary(out, ranked, failed, base, base_tokens, modal, incorrect, unchanged, out_dir)
+        _print_summary(out, ranked, failed, base, base_tokens, modal, incorrect, unchanged, out_dir, roles=(None if roles_default else (correct, base_roles)))
         if not scored:
             print("ERROR [NO_CANDIDATE_SCORED]: no candidate could be scored; see the failures above.", file=out)
             return 2
@@ -347,17 +387,24 @@ def cmd_batch(args) -> int:
         return 2
 
 
-def _print_summary(out, ranked, failed, base, base_tokens, modal, incorrect, unchanged, out_dir) -> None:
+def _print_summary(out, ranked, failed, base, base_tokens, modal, incorrect, unchanged, out_dir, roles=None) -> None:
+    """``roles`` is None for the A/B role pair (v0.3.0 output, unchanged) or (correct_letter, baseline_role_scores) for other roles."""
     print("", file=out)
     print(f"RANKED BY MOVEMENT TOWARD {incorrect} (observed candidate effects)", file=out)
-    print(f"Baseline: margin A/B {_signed(base['margin'])} nats, preferred {base['preferred']}, prompt tokens {base_tokens}", file=out)
+    if roles is None:
+        print(f"Baseline: margin A/B {_signed(base['margin'])} nats, preferred {base['preferred']}, prompt tokens {base_tokens}", file=out)
+    else:
+        print(f"Baseline: margin correct({roles[0]})/competing({incorrect}) {_signed(roles[1]['margin_correct_vs_competing'])} nats, preferred {base['preferred']}, "
+              f"prompt tokens {base_tokens}", file=out)
+        print("  'margin' below is ln(p_correct / p_competing), the role margin. The A/B margin is not shown: the roles are not A and B.", file=out)
     head = f"{'rank':>4}  {'label':<30} {'move->' + incorrect:>9} {'margin':>8} {'pref':>5} {'flip':>5} {'ftok':>5} {'ptok':>5} {'dTok':>5}"
     print(head, file=out)
     for r in ranked:
         rk = f"{r['rank']}{'=' if r['tied'] else ''}"
         flip = (f"{base['preferred']}>{r['preferred']}" if r["flipped"] else "no")
         dt = r["tok_vs_modal"]
-        print(f"{rk:>4}  {_short(r['label']):<30} {_signed(r['movement']):>9} {_signed(r['margin']):>8} {r['preferred']:>5} {flip:>5} "
+        shown = r["margin"] if roles is None else r["role_margin"]
+        print(f"{rk:>4}  {_short(r['label']):<30} {_signed(r['movement']):>9} {_signed(shown):>8} {r['preferred']:>5} {flip:>5} "
               f"{r['fragment_tokens'] if r['fragment_tokens'] is not None else '-':>5} {r['prompt_tokens'] if r['prompt_tokens'] is not None else '-':>5} "
               f"{(('%+d' % dt) if dt != '' else '-'):>5}", file=out)
     if any(r["tied"] for r in ranked):

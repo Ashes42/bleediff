@@ -427,8 +427,11 @@ def build_parser() -> argparse.ArgumentParser:
     t.add_argument("--arms", default=None, metavar="CANDIDATES.json",
                    help="batch mode: a UTF-8 JSON file of labelled candidate fragments; each is scored against one clean baseline "
                         "and ranked by observed movement toward the incorrect answer (see bleediff/batch.py for the format)")
-    t.add_argument("--incorrect", choices=["A", "B"], default="B",
-                   help="batch mode: the designated incorrect answer the ranking is measured toward (default B)")
+    t.add_argument("--incorrect", choices=["A", "B", "C", "D"], default="B",
+                   help="batch mode: the letter of the designated incorrect (competing) answer the ranking is measured toward (default B)")
+    t.add_argument("--correct", choices=["A", "B", "C", "D"], default=None,
+                   help="batch mode: the letter holding the correct answer. Optional while --incorrect is A or B (then the other of A/B, as in v0.3.0); "
+                        "required when --incorrect is C or D, because the roles are then scored semantically (ln(p_correct / p_competing))")
     t.add_argument("--n-probs", type=int, default=DEFAULT_N_PROBS)
     t.add_argument("--timeout", type=float, default=120.0)
     t.set_defaults(fn=cmd_track)

@@ -43,10 +43,11 @@ import sys
 from collections import Counter
 
 from . import CHOICES, __version__
-from .batch import _csv_safe, movement_toward, rank_rows
+from .batch import _csv_safe, rank_rows
 from .errors import Inconclusive
 from .fold import argmax_choice
 from .meta import code_revision, file_sha256
+from .roles import ROLE_NOTE, role_changes, role_scores, roles_are_ab
 from .track import MeasurementError, margin_ab, pairwise_crossed
 
 ATLAS_SCHEMA = "bleediff.atlas/1"
@@ -85,7 +86,9 @@ CANDIDATE_COLUMNS = ["task_id", "task_name", "model_id", "presentation", "sessio
                      "correct_answer", "incorrect_answer", "p_A", "p_B", "p_C", "p_D", "coverage", "baseline_preferred", "candidate_preferred",
                      "baseline_correct", "candidate_correct", "outcome", "induced_to", "overall_flip", "ab_crossed", "baseline_margin_AB",
                      "margin_AB", "shift_toward_incorrect", "rank_in_cell", "fragment_tokens", "prompt_tokens", "prompt_tokens_minus_modal",
-                     "prompt_sha256", "fragment_sha256", "flags"]
+                     "prompt_sha256", "fragment_sha256", "flags", "correct_letter", "competing_letter", "p_correct", "p_competing", "strongest_incorrect_letter", "p_strongest_incorrect",
+                     "margin_correct_vs_competing", "margin_correct_vs_strongest", "change_margin_correct_vs_competing", "change_margin_correct_vs_strongest",
+                     "role_order_crossed", "newly_induced_incorrect"]
 
 
 class AtlasInputError(Inconclusive):
@@ -192,6 +195,8 @@ def _read_session(s: dict, base: str) -> dict:
     # identity cross-checks
     if hist[0].get("scenario", {}).get("id") != s.get("scenario_id", s["task"]["id"]):
         out["errors"].append(f"scenario id {hist[0].get('scenario', {}).get('id')!r} does not match the task/scenario id {s.get('scenario_id', s['task']['id'])!r}")
+    if man.get("designated_correct_answer") not in (None, s["correct_answer"]):
+        out["errors"].append(f"the session designated {man.get('designated_correct_answer')!r} as correct, the atlas manifest says {s['correct_answer']!r}")
     if man.get("designated_incorrect_answer") != s["incorrect_answer"]:
         out["errors"].append(f"the session designated {man.get('designated_incorrect_answer')!r} as incorrect, the atlas manifest says {s['incorrect_answer']!r}")
     exp_hash = s["model"].get("model_hash")
@@ -279,8 +284,18 @@ def build_cell(s: dict, src: dict) -> dict:
         cell["flags"].append("INVALID_BASELINE")
         return cell
     cell["problems"] += bprob
+    try:
+        base_roles = role_scores(bs["probs"], correct, incorrect)
+    except MeasurementError as e:
+        cell["problems"].append(f"the baseline has no defined role margin: {e}")
+        cell["flags"].append("INVALID_BASELINE")
+        return cell
+    cell["roles_are_ab"] = roles_are_ab(correct, incorrect)
+    if not cell["roles_are_ab"]:
+        cell["flags"].append("AB_MARGIN_NOT_ROLE_MARGIN")
     b_ok = bs["preferred"] == correct
     cell["baseline"] = {"probabilities": dict(zip(CHOICES, bs["probs"])), "preferred": bs["preferred"], "correct": b_ok, "margin_AB": bs["margin"], "coverage": bs["coverage"],
+                        "roles": base_roles, "margin_correct_vs_competing": base_roles["margin_correct_vs_competing"], "margin_correct_vs_strongest": base_roles["margin_correct_vs_strongest"],
                         "prompt_tokens": (base_rec.get("tokens") or {}).get("prompt_tokens"), "prompt_sha256": (base_rec.get("prompt") or {}).get("sha256")}
     if not b_ok:
         cell["flags"].append("BASELINE_INCORRECT")
@@ -310,12 +325,24 @@ def build_cell(s: dict, src: dict) -> dict:
             c["flags"].append("INVALID_SCORE")
             cell["candidates"].append(c)
             continue
+        try:
+            cand_roles = role_scores(sc["probs"], correct, incorrect)
+            changes = role_changes(base_roles, cand_roles)
+        except MeasurementError as e:
+            problems.append(f"no defined role margin: {e}")
+            c["status"], c["outcome"] = "invalid", "unscored"
+            c["flags"].append("INVALID_SCORE")
+            cell["candidates"].append(c)
+            continue
         outcome, to = classify(bs["preferred"], sc["preferred"], correct, incorrect)
         c.update({"probabilities": dict(zip(CHOICES, sc["probs"])), "coverage": sc["coverage"], "candidate_preferred": sc["preferred"], "candidate_correct": sc["preferred"] == correct,
-                  "margin_AB": sc["margin"], "shift_toward_incorrect": movement_toward(sc["margin"] - bs["margin"], incorrect),
+                  "semantic": {**cand_roles, **changes},
+                  "margin_AB": sc["margin"], "shift_toward_incorrect": changes["movement_toward_competing"],
                   "overall_flip": sc["preferred"] != bs["preferred"], "ab_crossed": pairwise_crossed(bs["margin"], sc["margin"]), "outcome": outcome, "induced_to": to})
         if sc["coverage"] is not None and sc["coverage"] < LOW_COVERAGE:
             c["flags"].append("LOW_COVERAGE")
+        if "AB_MARGIN_NOT_ROLE_MARGIN" in cell["flags"]:
+            c["flags"].append("AB_MARGIN_NOT_ROLE_MARGIN")
         if "BASELINE_INCORRECT" in cell["flags"]:
             c["flags"].append("BASELINE_INCORRECT")
         if "SATURATED_BASELINE" in cell["flags"]:
@@ -506,6 +533,17 @@ def _keep_cand(k: dict, f: dict) -> bool:
     return (not f.get("category") or k["category"] in f["category"]) and (not f.get("outcome") or k.get("outcome") in f["outcome"])
 
 
+def _semantic_columns(c: dict, k: dict) -> dict:
+    sm = k.get("semantic")
+    if not sm:
+        return {col: "" for col in CANDIDATE_COLUMNS[-12:]}
+    return {"correct_letter": sm["correct_letter"], "competing_letter": sm["competing_letter"], "p_correct": sm["p_correct"], "p_competing": sm["p_competing"],
+            "strongest_incorrect_letter": sm["strongest_incorrect_letter"], "p_strongest_incorrect": sm["p_strongest_incorrect"],
+            "margin_correct_vs_competing": sm["margin_correct_vs_competing"], "margin_correct_vs_strongest": sm["margin_correct_vs_strongest"],
+            "change_margin_correct_vs_competing": sm["change_margin_correct_vs_competing"], "change_margin_correct_vs_strongest": sm["change_margin_correct_vs_strongest"],
+            "role_order_crossed": sm["role_order_crossed"], "newly_induced_incorrect": sm["newly_induced_incorrect"]}
+
+
 def candidate_rows(atlas: dict, f: dict) -> list[dict]:
     rows = []
     for c in atlas["cells"]:
@@ -526,6 +564,7 @@ def candidate_rows(atlas: dict, f: dict) -> list[dict]:
                          "shift_toward_incorrect": k.get("shift_toward_incorrect", ""), "rank_in_cell": k.get("rank_in_cell", ""), "fragment_tokens": k.get("fragment_tokens", ""),
                          "prompt_tokens": k.get("prompt_tokens", ""), "prompt_tokens_minus_modal": k.get("prompt_tokens_minus_modal", "") if k.get("prompt_tokens_minus_modal") is not None else "",
                          "prompt_sha256": k.get("prompt_sha256") or "", "fragment_sha256": k.get("fragment_sha256") or "",
+                         **_semantic_columns(c, k),
                          "flags": ";".join(sorted(set(k["flags"])))})
     return rows
 
@@ -598,6 +637,12 @@ def _cell_shifts(c: dict) -> dict:
     return out
 
 
+def _shown_margin(c: dict):
+    """The baseline margin to display: the A/B margin when the roles are A and B (v0.3.0 output), otherwise the role margin."""
+    b = c.get("baseline") or {}
+    return b.get("margin_AB") if c.get("roles_are_ab", True) else b.get("margin_correct_vs_competing")
+
+
 def summary_lines(atlas: dict, f: dict, marker: float) -> list[str]:
     cells = [c for c in atlas["cells"] if _keep_cell(c, f)]
     lines = ["BLEEDIFF ATLAS (observed candidate effects; reads saved results, never queries a model)",
@@ -613,9 +658,14 @@ def summary_lines(atlas: dict, f: dict, marker: float) -> list[str]:
         sh = _cell_shifts(c)
         fl = ",".join(sorted(set(c["flags"]) - {"LOW_COVERAGE"} | ({"LOWCOV"} if "LOW_COVERAGE" in c["flags"] else set())))
         flips = sorted({k["candidate_id"] for k in c["candidates"] if k.get("outcome") == "induced_incorrect"})
-        lines.append(f"{c['task_id'][:19]:<20}{c['model_id'][:10]:<11}{(c['baseline'] or {}).get('preferred', '?'):>5}{_fmt((c['baseline'] or {}).get('margin_AB')):>7}"
+        lines.append(f"{c['task_id'][:19]:<20}{c['model_id'][:10]:<11}{(c['baseline'] or {}).get('preferred', '?'):>5}{_fmt(_shown_margin(c)):>7}"
                      f"{_fmt(sh['claim']):>7}{_fmt(sh['topic']):>7}{_fmt(sh['offtopic']):>7}{_fmt(sh['neutral']):>7}{_fmt(sh['id']):>7}  {fl}" + (f"  INDUCED-WRONG: {','.join(flips)}" if flips else ""))
     lines.append("  *topic = on-topic text that also mentions option B's subject.")
+    nonab = [c for c in cells if c.get("roles_are_ab") is False]
+    if nonab:
+        lines.append(f"  NOTE: in {len(nonab)} cell(s) the correct and competing answers are not at A and B. For those cells 'm' and every shift are "
+                     "role margins ln(p_correct / p_competing); the A/B margin (margin_AB in atlas.json) is a different quantity there, and the "
+                     "'topic' category is on-topic text that mentions the competing answer's subject.")
     lines.append("")
     lines.append(f"Paired differences, cell counts pooled over models (effect marker {marker:g} nats)")
     for comp in COMPARISONS:
@@ -662,11 +712,20 @@ def write_report(path: str, atlas: dict, f: dict, marker: float) -> None:
     for s in atlas["sources"]:
         if not s["ok"]:
             L.append(f"- EXCLUDED `{s['id']}`: " + "; ".join(s["errors"]))
+    L += ["", "## Semantic answer roles", "", ROLE_NOTE,
+          "Baseline margins in the Task/model cells table are the A/B margin when the roles are A and B, and the role margin otherwise. Shifts and paired "
+          "differences are always changes of the role margin ln(p_correct / p_competing). For these roles 'topic' means on-topic text that mentions the "
+          "competing answer's subject.", "",
+          "| Task | Model | Correct letter | Competing letter | Roles are A/B | Baseline p(correct) | Baseline p(competing) | Baseline role margin | Baseline preferred |", "|---|---|---|---|---|---|---|---|---|"]
+    for c in cells:
+        r = (c.get("baseline") or {}).get("roles")
+        if r:
+            L.append(f"| {c['task_id']} | {c['model_id']} | {r['correct_letter']} | {r['competing_letter']} | {r['roles_are_ab']} | {r['p_correct']:.3f} | {r['p_competing']:.3f} | {_fmt(r['margin_correct_vs_competing'])} | {c['baseline']['preferred']} |")
     L += ["", "## Task/model cells", "", "| Task | Model | Presentation | Baseline (margin) | Claim | On-topic* | Off-topic | Neutral | Identifier | Flags |", "|---|---|---|---|---|---|---|---|---|---|"]
     for c in cells:
         sh = _cell_shifts(c)
         b = c["baseline"] or {}
-        L.append(f"| {c['task_id']} | {c['model_id']} | {c['presentation']} | {b.get('preferred', '?')} ({_fmt(b.get('margin_AB'))}) | {_fmt(sh['claim'])} | {_fmt(sh['topic'])} | {_fmt(sh['offtopic'])} | {_fmt(sh['neutral'])} | {_fmt(sh['id'])} | {', '.join(c['flags']) or '-'} |")
+        L.append(f"| {c['task_id']} | {c['model_id']} | {c['presentation']} | {b.get('preferred', '?')} ({_fmt(_shown_margin(c))}) | {_fmt(sh['claim'])} | {_fmt(sh['topic'])} | {_fmt(sh['offtopic'])} | {_fmt(sh['neutral'])} | {_fmt(sh['id'])} | {', '.join(c['flags']) or '-'} |")
     L += ["", "\\*On-topic text that also mentions option B's subject.", "", "## Paired differences (cell counts pooled over models)", "", "| Comparison | Presentation | Positive | At least marker | Cells |", "|---|---|---|---|---|"]
     for comp in COMPARISONS:
         by: dict[str, list] = {}
