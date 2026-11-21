@@ -153,6 +153,30 @@ The ranking lists **observed candidate effects**. A large shift does not show th
 it, and candidates that differ in several ways at once cannot be attributed to any one of them. There is no automatic prompt
 generation. The mock-server tests are `tests/test_v031_batch.py`.
 
+### Influence Atlas (`bleediff atlas`, experimental)
+
+Aggregates, compares, filters and ranks **existing** batch sessions across tasks and models. It reads saved results only (it never
+contacts a model, needs no server, database or dependency):
+
+```
+python -m bleediff atlas --manifest runs/atlas-input.json --out runs/atlas-report [--model M] [--task T] [--category C] [--outcome O]
+```
+
+The input manifest (`bleediff.atlas-input/1`, see the docstring of `bleediff/atlas.py`) maps each batch-session directory to its
+task, model, prompt presentation, correct and designated incorrect answer, candidate categories (`claim`, `topic`, `offtopic`,
+`neutral`, `id`) and evidence files. Sources are validated first (schemas, recorded hashes, scenario and model identity, evidence
+file hashes; each saved margin and preferred answer is re-derived from the saved probabilities). Outputs: `atlas.json`,
+`candidates.csv`, `category-summary.csv`, `model-comparison.csv`, `report.md` and a terminal summary.
+
+* Every effect is a **shift from that model's own clean baseline** (nats toward the incorrect answer); raw margins are never
+  compared across models. Paired differences (`topic_minus_offtopic`, `topic_minus_neutral`, `claim_minus_topic`,
+  `id_minus_topic`) are computed inside each task/model cell, and only when both categories are present and scored.
+* An A/B crossing is reported separately from an overall answer flip; a model whose baseline is already wrong is never reported as
+  newly misled; saturated baselines, low answer-letter coverage, token mismatches and incompatible presentations are flagged.
+* Ranks order candidates **within one task/model cell** by observed movement. There is no global ranking, and a rank is not a mechanism.
+* The `topic` category is **on-topic text that also mentions option B's subject**. The existing experiments cannot separate topic
+  relevance from option-subject priming, and the atlas says so wherever that category appears.
+
 This is a different measurement from the research fold: it is one request, not `M = (p1 + p2 + p3) / 3`, so its values are
 not `delta_contrast` (a change in request #3's probabilities is three times its change in the composite). A large margin does not
 prove robustness against other edits. The research equations, schemas and results are unchanged.

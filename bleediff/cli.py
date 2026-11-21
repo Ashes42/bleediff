@@ -50,6 +50,7 @@ from .runner import Harness, load_baseline
 from .track import DEFAULT_FIXTURES as TRACK_FIXTURES
 from .track import DEFAULT_SCENARIO as TRACK_SCENARIO
 from .track import cmd_track
+from .atlas import cmd_atlas
 
 DEFAULT_SERVER = "http://127.0.0.1:8080"
 DEFAULT_FIXTURES = os.path.join("fixtures", "contexts.json")
@@ -431,6 +432,19 @@ def build_parser() -> argparse.ArgumentParser:
     t.add_argument("--n-probs", type=int, default=DEFAULT_N_PROBS)
     t.add_argument("--timeout", type=float, default=120.0)
     t.set_defaults(fn=cmd_track)
+
+    a = sub.add_parser("atlas", help="influence atlas: aggregate, compare and rank EXISTING batch sessions across tasks and models "
+                                     "(reads saved results; never queries a model)")
+    a.add_argument("--manifest", required=True, help="atlas input manifest (JSON, schema bleediff.atlas-input/1)")
+    a.add_argument("--out", required=True, help="NEW directory for atlas.json, candidates.csv, category-summary.csv, model-comparison.csv, report.md")
+    a.add_argument("--model", action="append", default=[], help="show only this model id (repeatable)")
+    a.add_argument("--task", action="append", default=[], help="show only this task id (repeatable)")
+    a.add_argument("--category", action="append", default=[], help="show only candidates of this category (repeatable)")
+    a.add_argument("--outcome", action="append", default=[], help="show only this correctness outcome: stayed_correct, induced_incorrect, "
+                   "recovered_to_correct, baseline_incorrect_remained_incorrect, unscored (repeatable)")
+    a.add_argument("--effect-marker", type=float, default=0.25, help="descriptive size in nats used for the 'at least' counts (default 0.25)")
+    a.add_argument("--keep-going", action="store_true", help="exclude sources that fail validation and report them instead of stopping")
+    a.set_defaults(fn=cmd_atlas)
     return p
 
 

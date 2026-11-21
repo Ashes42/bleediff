@@ -22,6 +22,15 @@ control algorithms have their own identifiers (see `docs/TECHNICAL.md`).
   `tests/test_v031_batch.py` and the synthetic fixture `tests/data/batch_candidates_synthetic.json`. Probability extraction, margin
   and change calculations are the unchanged ones; interactive mode is unchanged.
 
+- `bleediff atlas`: an influence atlas over existing batch sessions. Validates the saved sources (schemas, recorded hashes,
+  scenario/model identity, evidence files), re-derives each margin and preferred answer from the saved probabilities with the
+  unchanged functions, and writes `atlas.json`, `candidates.csv`, `category-summary.csv`, `model-comparison.csv` and `report.md`.
+  Effects are shifts from each model's own baseline; paired category differences are computed inside each task/model cell;
+  outcomes distinguish induced errors from already-wrong baselines; A/B crossings are kept apart from overall flips; saturated
+  baselines, low coverage, token mismatches and incompatible presentations are flagged; filters by model, task, category and
+  outcome; no global ranking. The `topic` category is labelled as on-topic text that also mentions option B's subject.
+  Module `bleediff/atlas.py`; tests `tests/test_v032_atlas.py`.
+
 ### Unchanged
 - The research fold, contrast equation, thresholds, trace schema, validity gates, fixtures, protocols and all v0.2.0 results.
 
