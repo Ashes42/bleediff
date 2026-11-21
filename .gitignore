@@ -26,3 +26,5 @@ secrets*
 # sanitised regression evidence shipped with the repo (see tests/data/*/README.md)
 !tests/data/
 !tests/data/**
+!research/data/
+!research/data/**

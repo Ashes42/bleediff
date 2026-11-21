@@ -598,7 +598,7 @@ class TestVersioningAndDependencies(unittest.TestCase):
 
         with open(os.path.join(ROOT, "pyproject.toml"), "rb") as fh:
             self.assertEqual(tomllib.load(fh)["project"]["version"], __version__)
-        self.assertRegex(__version__, r"^0\.1\.\d+$")          # 0.1.4 introduced the protocol; later 0.1.x keep it
+        self.assertRegex(__version__, r"^0\.\d+\.\d+$")          # 0.1.4 introduced the protocol; later 0.1.x keep it
         self.assertEqual(_json(SEM_PROTOCOL)["generator"]["software_version"], "0.1.4")   # historical writer stamp
 
     def test_no_third_party_imports(self):

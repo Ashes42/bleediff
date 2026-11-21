@@ -508,7 +508,7 @@ class TestProvenanceVersioningAndHistory(unittest.TestCase):
 
         with open(os.path.join(ROOT, "pyproject.toml"), "rb") as fh:
             self.assertEqual(tomllib.load(fh)["project"]["version"], __version__)
-        self.assertRegex(__version__, r"^0\.1\.\d+$")   # 0.1.3 introduced the protocol; later 0.1.x keep it
+        self.assertRegex(__version__, r"^0\.\d+\.\d+$")   # 0.1.3 introduced the protocol; later 0.1.x keep it
         # three DIFFERENT identities, each recorded explicitly (see the protocol's version_semantics):
         #   software version = which bleediff release wrote the file; control algorithm = how controls are built;
         #   protocol id = which experiment the controls belong to.

@@ -105,8 +105,8 @@ class TestProtocolIdentityAndFrozenSources(unittest.TestCase):
         self.assertEqual(p["revision"], "1.1")
         self.assertFalse(p["analysis"]["uses_five_scenario_gate"])
         self.assertTrue(p["analysis"]["no_pass_label"])
-        self.assertEqual(p["software_version"], __version__)
-        self.assertRegex(__version__, r"^0\.1\.\d+$")
+        self.assertEqual(p["software_version"], "0.1.6")          # the amendment writer's stamp; later releases do not rewrite it
+        self.assertRegex(__version__, r"^0\.\d+\.\d+$")
 
     def test_treatment_text_is_the_frozen_config_audit_fragment(self):
         treat = C.treatment_fragment(scen(), OFFSET)
@@ -626,7 +626,7 @@ class TestPrivacyAndDependencies(unittest.TestCase):
 
         with open(os.path.join(ROOT, "pyproject.toml"), "rb") as fh:
             self.assertEqual(tomllib.load(fh)["project"]["version"], __version__)
-        self.assertEqual(__version__, "0.1.6")
+        self.assertRegex(__version__, r"^0\.\d+\.\d+$")
         self.assertEqual(_json(ORIGINAL_PROTOCOL)["software_version"], "0.1.5")   # the original writer's stamp is preserved
 
 

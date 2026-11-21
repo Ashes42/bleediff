@@ -632,7 +632,7 @@ class TestChoiceSurfaceCoverage(unittest.TestCase):
 # --------------------------------------------------------------------------------------
 class TestNoThirdPartyDependencies(unittest.TestCase):
     def test_every_import_is_stdlib_or_local(self):
-        allowed = set(sys.stdlib_module_names) | {"bleediff", "tests", "test_bleediff", "_tok"}
+        allowed = set(sys.stdlib_module_names) | {"bleediff", "tests", "test_bleediff", "_tok", "research"}
         offenders = []
         for folder in ("bleediff", "tests"):
             for name in os.listdir(os.path.join(ROOT, folder)):

@@ -1,0 +1,1156 @@
+{
+  "schema": "bleediff.controls/3",
+  "algorithm": "neutral-prose-replicates/1",
+  "base_algorithm": "neutral-prose/1",
+  "bleediff_version": "0.1.6",
+  "selection": {
+    "scenario_id": "config-audit-v2",
+    "offset": 25,
+    "unit": "words",
+    "fixtures_sha256": "b733148e71510a0b30ed5366e470befe72353d05b4a34408eaf45f3cec0d3ceb",
+    "treatment_fragment_sha256": "0eb467aea96fa7f8fb79fef25a427f0dedd409e9775a1b1296b002e3a1e0f9e2",
+    "lexicon_sha256": "f91e691f054f431d7ea772e99f90238d354a4b7dd991a7dcd333b2fcafd03ba5",
+    "rubric_sha256": "ee30f0978bccad62ae0ac56eb1168d9423d2555ef7a1c3b0f510ad0e7719413d",
+    "tokenizer_fingerprint": "1f7ca876604c8dc2f366de8188467020085cdcafc4967fa247ff0be1aa0f5fd5",
+    "effective_draw_budget": 5000,
+    "c0": {
+      "role": "historical control, OUTSIDE the primary 12-control analysis; only its fixed TEXT takes part in distinctness checks, its observed result never enters selection",
+      "control_id": "627e6cf41b3d02a8007269f298e4b214",
+      "fragment_sha256": "1a70823ebdfb752b634ed50f85cfc257deb171d2cecd5dd309db9ef3e64cba41",
+      "source_manifest_sha256": "9688a738e46f912761d3b8fec86a42ce22e25980886e548285e9442901473fe1"
+    },
+    "allocation": {
+      "rule": "domain(k) = sorted(domain ids)[k mod 8]",
+      "domains": [
+        "bakery",
+        "festival",
+        "greenhouse",
+        "library",
+        "orchestra",
+        "seaside",
+        "trail",
+        "workshop"
+      ],
+      "n_replicates": 12
+    },
+    "seed_rule": "sha256(canonical JSON of replicate_seed_material)[:16] as the SplitMix64 seed",
+    "selection_rule": "first candidate of the replicate's own stream that passes every frozen structural check and rubric/1.1; rejected candidates are recorded; no model output is consulted; a failed replicate stays failed",
+    "replicates": [
+      {
+        "replicate": 0,
+        "domain": "bakery",
+        "seed_hex16": "e1af0c9ba1d3b165",
+        "control_id": "e1af0c9ba1d3b1656fab3c9359f2ebed",
+        "status": "ACCEPTED",
+        "effective_draw_budget": 5000,
+        "draws_used": 1,
+        "structural_rejections": {
+          "structure": 0,
+          "infeasible": 0,
+          "lexical": 0,
+          "grammar": 0,
+          "tokens": 0,
+          "prompt": 0
+        },
+        "rubric_rejections": [],
+        "control": {
+          "scenario_id": "config-audit-v2",
+          "algorithm": "neutral-prose-replicates/1",
+          "control_id": "e1af0c9ba1d3b1656fab3c9359f2ebed",
+          "enumeration_index": 0,
+          "cluster": "bakery",
+          "offset": 25,
+          "unit": "words",
+          "fragment_text": "Tenant 4 village bakery diary: Several cheerful apprentices carefully inspected some buns beside the old brick oven after school. Some neighbors carried 120 golden trays.",
+          "fragment_sha256": "c109beba105d8f9f999a6c597198cc07d1ccbc22bee315de27983b530060b188",
+          "treatment_fragment_sha256": "0eb467aea96fa7f8fb79fef25a427f0dedd409e9775a1b1296b002e3a1e0f9e2",
+          "skeleton": {
+            "prefix": [
+              "Tenant",
+              "4"
+            ],
+            "header_len": 3,
+            "clauses": [
+              [
+                14,
+                "."
+              ],
+              [
+                6,
+                "."
+              ]
+            ],
+            "partial": 0,
+            "partial_kind": "main",
+            "words": 25,
+            "bytes": 170
+          },
+          "counts": {
+            "bytes": [
+              170,
+              170
+            ],
+            "words": [
+              25,
+              25
+            ],
+            "fragment_tokens": [
+              34,
+              34
+            ],
+            "prompt_tokens": [
+              245,
+              245
+            ]
+          },
+          "tokenizer_fingerprint": "1f7ca876604c8dc2f366de8188467020085cdcafc4967fa247ff0be1aa0f5fd5",
+          "lexicon_sha256": "f91e691f054f431d7ea772e99f90238d354a4b7dd991a7dcd333b2fcafd03ba5",
+          "token_parity": "VERIFIED",
+          "checks": [
+            "bytes",
+            "words",
+            "skeleton",
+            "lexical",
+            "grammar",
+            "fragment_tokens",
+            "prompt_tokens",
+            "geometry",
+            "surrounding_prompt",
+            "rubric/1.1"
+          ]
+        }
+      },
+      {
+        "replicate": 1,
+        "domain": "festival",
+        "seed_hex16": "21c188d89e9cf1ae",
+        "control_id": "21c188d89e9cf1aeae22ca4d60d1896a",
+        "status": "ACCEPTED",
+        "effective_draw_budget": 5000,
+        "draws_used": 6,
+        "structural_rejections": {
+          "structure": 0,
+          "infeasible": 1,
+          "lexical": 3,
+          "grammar": 0,
+          "tokens": 0,
+          "prompt": 0
+        },
+        "rubric_rejections": [
+          {
+            "draw": 3,
+            "text": "Tenant 4 lantern festival diary: Several cheerful friendly musicians gathered several bright balloons beside the old fountain at 5:45. Some neighbors hung the paper flag.",
+            "reasons": [
+              [
+                "R3_FIELD_WORD",
+                "flag"
+              ]
+            ]
+          }
+        ],
+        "control": {
+          "scenario_id": "config-audit-v2",
+          "algorithm": "neutral-prose-replicates/1",
+          "control_id": "21c188d89e9cf1aeae22ca4d60d1896a",
+          "enumeration_index": 5,
+          "cluster": "festival",
+          "offset": 25,
+          "unit": "words",
+          "fragment_text": "Tenant 4 lantern festival diary: Several painters counted several golden colorful balloons above the square during the summer fair. The neighbors admired 120 paper kites.",
+          "fragment_sha256": "b8494efe5fe4b96008328ac9de481ccc0b4aeadec1b0abcccd7bbab278959244",
+          "treatment_fragment_sha256": "0eb467aea96fa7f8fb79fef25a427f0dedd409e9775a1b1296b002e3a1e0f9e2",
+          "skeleton": {
+            "prefix": [
+              "Tenant",
+              "4"
+            ],
+            "header_len": 3,
+            "clauses": [
+              [
+                14,
+                "."
+              ],
+              [
+                6,
+                "."
+              ]
+            ],
+            "partial": 0,
+            "partial_kind": "main",
+            "words": 25,
+            "bytes": 170
+          },
+          "counts": {
+            "bytes": [
+              170,
+              170
+            ],
+            "words": [
+              25,
+              25
+            ],
+            "fragment_tokens": [
+              34,
+              34
+            ],
+            "prompt_tokens": [
+              245,
+              245
+            ]
+          },
+          "tokenizer_fingerprint": "1f7ca876604c8dc2f366de8188467020085cdcafc4967fa247ff0be1aa0f5fd5",
+          "lexicon_sha256": "f91e691f054f431d7ea772e99f90238d354a4b7dd991a7dcd333b2fcafd03ba5",
+          "token_parity": "VERIFIED",
+          "checks": [
+            "bytes",
+            "words",
+            "skeleton",
+            "lexical",
+            "grammar",
+            "fragment_tokens",
+            "prompt_tokens",
+            "geometry",
+            "surrounding_prompt",
+            "rubric/1.1"
+          ]
+        }
+      },
+      {
+        "replicate": 2,
+        "domain": "greenhouse",
+        "seed_hex16": "91693a436be4ab73",
+        "control_id": "91693a436be4ab73011240ff51ba12df",
+        "status": "ACCEPTED",
+        "effective_draw_budget": 5000,
+        "draws_used": 6,
+        "structural_rejections": {
+          "structure": 0,
+          "infeasible": 0,
+          "lexical": 5,
+          "grammar": 0,
+          "tokens": 0,
+          "prompt": 0
+        },
+        "rubric_rejections": [],
+        "control": {
+          "scenario_id": "config-audit-v2",
+          "algorithm": "neutral-prose-replicates/1",
+          "control_id": "91693a436be4ab73011240ff51ba12df",
+          "enumeration_index": 5,
+          "cluster": "greenhouse",
+          "offset": 25,
+          "unit": "words",
+          "fragment_text": "Tenant 4 herb garden diary: The patient students carefully inspected several herbs inside the warm glass greenhouse at noon. Many volunteers admired 120 bright seedlings.",
+          "fragment_sha256": "20d770c42f73f2ad55cd9fe8d17a5a3a360f8642052f08519351f7075cc103bc",
+          "treatment_fragment_sha256": "0eb467aea96fa7f8fb79fef25a427f0dedd409e9775a1b1296b002e3a1e0f9e2",
+          "skeleton": {
+            "prefix": [
+              "Tenant",
+              "4"
+            ],
+            "header_len": 3,
+            "clauses": [
+              [
+                14,
+                "."
+              ],
+              [
+                6,
+                "."
+              ]
+            ],
+            "partial": 0,
+            "partial_kind": "main",
+            "words": 25,
+            "bytes": 170
+          },
+          "counts": {
+            "bytes": [
+              170,
+              170
+            ],
+            "words": [
+              25,
+              25
+            ],
+            "fragment_tokens": [
+              34,
+              34
+            ],
+            "prompt_tokens": [
+              245,
+              245
+            ]
+          },
+          "tokenizer_fingerprint": "1f7ca876604c8dc2f366de8188467020085cdcafc4967fa247ff0be1aa0f5fd5",
+          "lexicon_sha256": "f91e691f054f431d7ea772e99f90238d354a4b7dd991a7dcd333b2fcafd03ba5",
+          "token_parity": "VERIFIED",
+          "checks": [
+            "bytes",
+            "words",
+            "skeleton",
+            "lexical",
+            "grammar",
+            "fragment_tokens",
+            "prompt_tokens",
+            "geometry",
+            "surrounding_prompt",
+            "rubric/1.1"
+          ]
+        }
+      },
+      {
+        "replicate": 3,
+        "domain": "library",
+        "seed_hex16": "852aa84e6523b953",
+        "control_id": "852aa84e6523b95319be8739b832807c",
+        "status": "ACCEPTED",
+        "effective_draw_budget": 5000,
+        "draws_used": 6,
+        "structural_rejections": {
+          "structure": 0,
+          "infeasible": 4,
+          "lexical": 1,
+          "grammar": 0,
+          "tokens": 0,
+          "prompt": 0
+        },
+        "rubric_rejections": [],
+        "control": {
+          "scenario_id": "config-audit-v2",
+          "algorithm": "neutral-prose-replicates/1",
+          "control_id": "852aa84e6523b95319be8739b832807c",
+          "enumeration_index": 5,
+          "cluster": "library",
+          "offset": 25,
+          "unit": "words",
+          "fragment_text": "Tenant 4 reading room notes: Several authors remembered many leather dusty magazines under the green lamp on rainy afternoons. Many students quietly admired 96 bookmarks.",
+          "fragment_sha256": "43758c333558d4ca822ce3232c53a779e12c2ea3d590fa4ed881a6c88854ef66",
+          "treatment_fragment_sha256": "0eb467aea96fa7f8fb79fef25a427f0dedd409e9775a1b1296b002e3a1e0f9e2",
+          "skeleton": {
+            "prefix": [
+              "Tenant",
+              "4"
+            ],
+            "header_len": 3,
+            "clauses": [
+              [
+                14,
+                "."
+              ],
+              [
+                6,
+                "."
+              ]
+            ],
+            "partial": 0,
+            "partial_kind": "main",
+            "words": 25,
+            "bytes": 170
+          },
+          "counts": {
+            "bytes": [
+              170,
+              170
+            ],
+            "words": [
+              25,
+              25
+            ],
+            "fragment_tokens": [
+              34,
+              34
+            ],
+            "prompt_tokens": [
+              245,
+              245
+            ]
+          },
+          "tokenizer_fingerprint": "1f7ca876604c8dc2f366de8188467020085cdcafc4967fa247ff0be1aa0f5fd5",
+          "lexicon_sha256": "f91e691f054f431d7ea772e99f90238d354a4b7dd991a7dcd333b2fcafd03ba5",
+          "token_parity": "VERIFIED",
+          "checks": [
+            "bytes",
+            "words",
+            "skeleton",
+            "lexical",
+            "grammar",
+            "fragment_tokens",
+            "prompt_tokens",
+            "geometry",
+            "surrounding_prompt",
+            "rubric/1.1"
+          ]
+        }
+      },
+      {
+        "replicate": 4,
+        "domain": "orchestra",
+        "seed_hex16": "de8c707ae9f377f5",
+        "control_id": "de8c707ae9f377f5118b5cc43b3f96d0",
+        "status": "ACCEPTED",
+        "effective_draw_budget": 5000,
+        "draws_used": 9,
+        "structural_rejections": {
+          "structure": 0,
+          "infeasible": 2,
+          "lexical": 6,
+          "grammar": 0,
+          "tokens": 0,
+          "prompt": 0
+        },
+        "rubric_rejections": [],
+        "control": {
+          "scenario_id": "config-audit-v2",
+          "algorithm": "neutral-prose-replicates/1",
+          "control_id": "de8c707ae9f377f5118b5cc43b3f96d0",
+          "enumeration_index": 8,
+          "cluster": "orchestra",
+          "offset": 25,
+          "unit": "words",
+          "fragment_text": "Tenant 4 choir practice notes: Several nervous singers carefully admired many lively gentle passages near the piano around 7:10. The patient musicians studied the melody.",
+          "fragment_sha256": "d0c1aa9d798a67db73c43c18f457c1e21d953135999f3be806a186ba3494bce4",
+          "treatment_fragment_sha256": "0eb467aea96fa7f8fb79fef25a427f0dedd409e9775a1b1296b002e3a1e0f9e2",
+          "skeleton": {
+            "prefix": [
+              "Tenant",
+              "4"
+            ],
+            "header_len": 3,
+            "clauses": [
+              [
+                14,
+                "."
+              ],
+              [
+                6,
+                "."
+              ]
+            ],
+            "partial": 0,
+            "partial_kind": "main",
+            "words": 25,
+            "bytes": 170
+          },
+          "counts": {
+            "bytes": [
+              170,
+              170
+            ],
+            "words": [
+              25,
+              25
+            ],
+            "fragment_tokens": [
+              34,
+              34
+            ],
+            "prompt_tokens": [
+              245,
+              245
+            ]
+          },
+          "tokenizer_fingerprint": "1f7ca876604c8dc2f366de8188467020085cdcafc4967fa247ff0be1aa0f5fd5",
+          "lexicon_sha256": "f91e691f054f431d7ea772e99f90238d354a4b7dd991a7dcd333b2fcafd03ba5",
+          "token_parity": "VERIFIED",
+          "checks": [
+            "bytes",
+            "words",
+            "skeleton",
+            "lexical",
+            "grammar",
+            "fragment_tokens",
+            "prompt_tokens",
+            "geometry",
+            "surrounding_prompt",
+            "rubric/1.1"
+          ]
+        }
+      },
+      {
+        "replicate": 5,
+        "domain": "seaside",
+        "seed_hex16": "4d118b528ea19e04",
+        "control_id": "4d118b528ea19e046ed8a88ca871764f",
+        "status": "ACCEPTED",
+        "effective_draw_budget": 5000,
+        "draws_used": 1,
+        "structural_rejections": {
+          "structure": 0,
+          "infeasible": 0,
+          "lexical": 0,
+          "grammar": 0,
+          "tokens": 0,
+          "prompt": 0
+        },
+        "rubric_rejections": [],
+        "control": {
+          "scenario_id": "config-audit-v2",
+          "algorithm": "neutral-prose-replicates/1",
+          "control_id": "4d118b528ea19e046ed8a88ca871764f",
+          "enumeration_index": 0,
+          "cluster": "seaside",
+          "offset": 25,
+          "unit": "words",
+          "fragment_text": "Tenant 4 seaside village notes: Several cheerful fishermen inspected several salty buckets beside the old wooden pier at sunset. The weathered painter carried 725 shells.",
+          "fragment_sha256": "8b2f450b54eec5c27591c9d90871c11cbeede6ca027e8f76c90c67ce4036bb7a",
+          "treatment_fragment_sha256": "0eb467aea96fa7f8fb79fef25a427f0dedd409e9775a1b1296b002e3a1e0f9e2",
+          "skeleton": {
+            "prefix": [
+              "Tenant",
+              "4"
+            ],
+            "header_len": 3,
+            "clauses": [
+              [
+                14,
+                "."
+              ],
+              [
+                6,
+                "."
+              ]
+            ],
+            "partial": 0,
+            "partial_kind": "main",
+            "words": 25,
+            "bytes": 170
+          },
+          "counts": {
+            "bytes": [
+              170,
+              170
+            ],
+            "words": [
+              25,
+              25
+            ],
+            "fragment_tokens": [
+              34,
+              34
+            ],
+            "prompt_tokens": [
+              245,
+              245
+            ]
+          },
+          "tokenizer_fingerprint": "1f7ca876604c8dc2f366de8188467020085cdcafc4967fa247ff0be1aa0f5fd5",
+          "lexicon_sha256": "f91e691f054f431d7ea772e99f90238d354a4b7dd991a7dcd333b2fcafd03ba5",
+          "token_parity": "VERIFIED",
+          "checks": [
+            "bytes",
+            "words",
+            "skeleton",
+            "lexical",
+            "grammar",
+            "fragment_tokens",
+            "prompt_tokens",
+            "geometry",
+            "surrounding_prompt",
+            "rubric/1.1"
+          ]
+        }
+      },
+      {
+        "replicate": 6,
+        "domain": "trail",
+        "seed_hex16": "4bc3e8cc89a566fe",
+        "control_id": "4bc3e8cc89a566fea44fb82538666aff",
+        "status": "ACCEPTED",
+        "effective_draw_budget": 5000,
+        "draws_used": 2,
+        "structural_rejections": {
+          "structure": 0,
+          "infeasible": 0,
+          "lexical": 1,
+          "grammar": 0,
+          "tokens": 0,
+          "prompt": 0
+        },
+        "rubric_rejections": [],
+        "control": {
+          "scenario_id": "config-audit-v2",
+          "algorithm": "neutral-prose-replicates/1",
+          "control_id": "4bc3e8cc89a566fea44fb82538666aff",
+          "enumeration_index": 1,
+          "cluster": "trail",
+          "offset": 25,
+          "unit": "words",
+          "fragment_text": "Tenant 4 summit path diary: Several travelers cautiously photographed the signposts beside the pine forest before the afternoon rain. Some scouts studied 340 steep paths.",
+          "fragment_sha256": "b7830abc52608b957191ba937a032f7b24acd06dc024484723d00cef83ca763f",
+          "treatment_fragment_sha256": "0eb467aea96fa7f8fb79fef25a427f0dedd409e9775a1b1296b002e3a1e0f9e2",
+          "skeleton": {
+            "prefix": [
+              "Tenant",
+              "4"
+            ],
+            "header_len": 3,
+            "clauses": [
+              [
+                14,
+                "."
+              ],
+              [
+                6,
+                "."
+              ]
+            ],
+            "partial": 0,
+            "partial_kind": "main",
+            "words": 25,
+            "bytes": 170
+          },
+          "counts": {
+            "bytes": [
+              170,
+              170
+            ],
+            "words": [
+              25,
+              25
+            ],
+            "fragment_tokens": [
+              34,
+              34
+            ],
+            "prompt_tokens": [
+              245,
+              245
+            ]
+          },
+          "tokenizer_fingerprint": "1f7ca876604c8dc2f366de8188467020085cdcafc4967fa247ff0be1aa0f5fd5",
+          "lexicon_sha256": "f91e691f054f431d7ea772e99f90238d354a4b7dd991a7dcd333b2fcafd03ba5",
+          "token_parity": "VERIFIED",
+          "checks": [
+            "bytes",
+            "words",
+            "skeleton",
+            "lexical",
+            "grammar",
+            "fragment_tokens",
+            "prompt_tokens",
+            "geometry",
+            "surrounding_prompt",
+            "rubric/1.1"
+          ]
+        }
+      },
+      {
+        "replicate": 7,
+        "domain": "workshop",
+        "seed_hex16": "96fefaaef3791c8b",
+        "control_id": "96fefaaef3791c8bf4fc198b23f5fa15",
+        "status": "ACCEPTED",
+        "effective_draw_budget": 5000,
+        "draws_used": 2,
+        "structural_rejections": {
+          "structure": 0,
+          "infeasible": 0,
+          "lexical": 1,
+          "grammar": 0,
+          "tokens": 0,
+          "prompt": 0
+        },
+        "rubric_rejections": [],
+        "control": {
+          "scenario_id": "config-audit-v2",
+          "algorithm": "neutral-prose-replicates/1",
+          "control_id": "96fefaaef3791c8bf4fc198b23f5fa15",
+          "enumeration_index": 1,
+          "cluster": "workshop",
+          "offset": 25,
+          "unit": "words",
+          "fragment_text": "Tenant 4 pottery studio diary: Several quiet apprentices patiently shaped several bowls near the window before the evening bell. The careful weavers measured 860 baskets.",
+          "fragment_sha256": "9a0f21b0730d727bb31de77b524688e24648fa5f47ee5b7adecc41962497483b",
+          "treatment_fragment_sha256": "0eb467aea96fa7f8fb79fef25a427f0dedd409e9775a1b1296b002e3a1e0f9e2",
+          "skeleton": {
+            "prefix": [
+              "Tenant",
+              "4"
+            ],
+            "header_len": 3,
+            "clauses": [
+              [
+                14,
+                "."
+              ],
+              [
+                6,
+                "."
+              ]
+            ],
+            "partial": 0,
+            "partial_kind": "main",
+            "words": 25,
+            "bytes": 170
+          },
+          "counts": {
+            "bytes": [
+              170,
+              170
+            ],
+            "words": [
+              25,
+              25
+            ],
+            "fragment_tokens": [
+              34,
+              34
+            ],
+            "prompt_tokens": [
+              245,
+              245
+            ]
+          },
+          "tokenizer_fingerprint": "1f7ca876604c8dc2f366de8188467020085cdcafc4967fa247ff0be1aa0f5fd5",
+          "lexicon_sha256": "f91e691f054f431d7ea772e99f90238d354a4b7dd991a7dcd333b2fcafd03ba5",
+          "token_parity": "VERIFIED",
+          "checks": [
+            "bytes",
+            "words",
+            "skeleton",
+            "lexical",
+            "grammar",
+            "fragment_tokens",
+            "prompt_tokens",
+            "geometry",
+            "surrounding_prompt",
+            "rubric/1.1"
+          ]
+        }
+      },
+      {
+        "replicate": 8,
+        "domain": "bakery",
+        "seed_hex16": "f765e15d89eddf20",
+        "control_id": "f765e15d89eddf205bfbfbc41c775280",
+        "status": "ACCEPTED",
+        "effective_draw_budget": 5000,
+        "draws_used": 13,
+        "structural_rejections": {
+          "structure": 0,
+          "infeasible": 0,
+          "lexical": 12,
+          "grammar": 0,
+          "tokens": 0,
+          "prompt": 0
+        },
+        "rubric_rejections": [],
+        "control": {
+          "scenario_id": "config-audit-v2",
+          "algorithm": "neutral-prose-replicates/1",
+          "control_id": "f765e15d89eddf205bfbfbc41c775280",
+          "enumeration_index": 12,
+          "cluster": "bakery",
+          "offset": 25,
+          "unit": "words",
+          "fragment_text": "Tenant 4 rye bread roster: Several apprentices patiently inspected several pastries beside the old brick oven on quiet mornings. Several neighbors admired 96 sweet trays.",
+          "fragment_sha256": "c2ecd39068890e8e4c765e91966b244fa3d05f346030ff016991afd6c2017f7d",
+          "treatment_fragment_sha256": "0eb467aea96fa7f8fb79fef25a427f0dedd409e9775a1b1296b002e3a1e0f9e2",
+          "skeleton": {
+            "prefix": [
+              "Tenant",
+              "4"
+            ],
+            "header_len": 3,
+            "clauses": [
+              [
+                14,
+                "."
+              ],
+              [
+                6,
+                "."
+              ]
+            ],
+            "partial": 0,
+            "partial_kind": "main",
+            "words": 25,
+            "bytes": 170
+          },
+          "counts": {
+            "bytes": [
+              170,
+              170
+            ],
+            "words": [
+              25,
+              25
+            ],
+            "fragment_tokens": [
+              34,
+              34
+            ],
+            "prompt_tokens": [
+              245,
+              245
+            ]
+          },
+          "tokenizer_fingerprint": "1f7ca876604c8dc2f366de8188467020085cdcafc4967fa247ff0be1aa0f5fd5",
+          "lexicon_sha256": "f91e691f054f431d7ea772e99f90238d354a4b7dd991a7dcd333b2fcafd03ba5",
+          "token_parity": "VERIFIED",
+          "checks": [
+            "bytes",
+            "words",
+            "skeleton",
+            "lexical",
+            "grammar",
+            "fragment_tokens",
+            "prompt_tokens",
+            "geometry",
+            "surrounding_prompt",
+            "rubric/1.1"
+          ]
+        }
+      },
+      {
+        "replicate": 9,
+        "domain": "festival",
+        "seed_hex16": "d2d6b34f25c7fb12",
+        "control_id": "d2d6b34f25c7fb12199fe847f2370ff2",
+        "status": "ACCEPTED",
+        "effective_draw_budget": 5000,
+        "draws_used": 4,
+        "structural_rejections": {
+          "structure": 0,
+          "infeasible": 1,
+          "lexical": 2,
+          "grammar": 0,
+          "tokens": 0,
+          "prompt": 0
+        },
+        "rubric_rejections": [],
+        "control": {
+          "scenario_id": "config-audit-v2",
+          "algorithm": "neutral-prose-replicates/1",
+          "control_id": "d2d6b34f25c7fb12199fe847f2370ff2",
+          "enumeration_index": 3,
+          "cluster": "festival",
+          "offset": 25,
+          "unit": "words",
+          "fragment_text": "Tenant 4 summer fair notes: Each friendly patient neighbor gathered 465 silky ribbons beside the fountain on festival evenings. The musician happily decorated the banner.",
+          "fragment_sha256": "4ea729990d80abf58b599b292337bc7fa62d0d22a81a94f71d6d04f73cca0134",
+          "treatment_fragment_sha256": "0eb467aea96fa7f8fb79fef25a427f0dedd409e9775a1b1296b002e3a1e0f9e2",
+          "skeleton": {
+            "prefix": [
+              "Tenant",
+              "4"
+            ],
+            "header_len": 3,
+            "clauses": [
+              [
+                14,
+                "."
+              ],
+              [
+                6,
+                "."
+              ]
+            ],
+            "partial": 0,
+            "partial_kind": "main",
+            "words": 25,
+            "bytes": 170
+          },
+          "counts": {
+            "bytes": [
+              170,
+              170
+            ],
+            "words": [
+              25,
+              25
+            ],
+            "fragment_tokens": [
+              34,
+              34
+            ],
+            "prompt_tokens": [
+              245,
+              245
+            ]
+          },
+          "tokenizer_fingerprint": "1f7ca876604c8dc2f366de8188467020085cdcafc4967fa247ff0be1aa0f5fd5",
+          "lexicon_sha256": "f91e691f054f431d7ea772e99f90238d354a4b7dd991a7dcd333b2fcafd03ba5",
+          "token_parity": "VERIFIED",
+          "checks": [
+            "bytes",
+            "words",
+            "skeleton",
+            "lexical",
+            "grammar",
+            "fragment_tokens",
+            "prompt_tokens",
+            "geometry",
+            "surrounding_prompt",
+            "rubric/1.1"
+          ]
+        }
+      },
+      {
+        "replicate": 10,
+        "domain": "greenhouse",
+        "seed_hex16": "2d8319274325f736",
+        "control_id": "2d8319274325f73635a227c84ddb0e55",
+        "status": "ACCEPTED",
+        "effective_draw_budget": 5000,
+        "draws_used": 8,
+        "structural_rejections": {
+          "structure": 0,
+          "infeasible": 0,
+          "lexical": 7,
+          "grammar": 0,
+          "tokens": 0,
+          "prompt": 0
+        },
+        "rubric_rejections": [],
+        "control": {
+          "scenario_id": "config-audit-v2",
+          "algorithm": "neutral-prose-replicates/1",
+          "control_id": "2d8319274325f73635a227c84ddb0e55",
+          "enumeration_index": 7,
+          "cluster": "greenhouse",
+          "offset": 25,
+          "unit": "words",
+          "fragment_text": "Tenant 4 herb garden diary: Several cheerful farmers gently planted each fragrant cabbage under the curved roof at noon. Some friendly botanists sorted several seedlings.",
+          "fragment_sha256": "38340f4f420a81bf1a2be5c6f68cd5ad47efbd4406296657fbe2695eb8ef7fa7",
+          "treatment_fragment_sha256": "0eb467aea96fa7f8fb79fef25a427f0dedd409e9775a1b1296b002e3a1e0f9e2",
+          "skeleton": {
+            "prefix": [
+              "Tenant",
+              "4"
+            ],
+            "header_len": 3,
+            "clauses": [
+              [
+                14,
+                "."
+              ],
+              [
+                6,
+                "."
+              ]
+            ],
+            "partial": 0,
+            "partial_kind": "main",
+            "words": 25,
+            "bytes": 170
+          },
+          "counts": {
+            "bytes": [
+              170,
+              170
+            ],
+            "words": [
+              25,
+              25
+            ],
+            "fragment_tokens": [
+              34,
+              34
+            ],
+            "prompt_tokens": [
+              245,
+              245
+            ]
+          },
+          "tokenizer_fingerprint": "1f7ca876604c8dc2f366de8188467020085cdcafc4967fa247ff0be1aa0f5fd5",
+          "lexicon_sha256": "f91e691f054f431d7ea772e99f90238d354a4b7dd991a7dcd333b2fcafd03ba5",
+          "token_parity": "VERIFIED",
+          "checks": [
+            "bytes",
+            "words",
+            "skeleton",
+            "lexical",
+            "grammar",
+            "fragment_tokens",
+            "prompt_tokens",
+            "geometry",
+            "surrounding_prompt",
+            "rubric/1.1"
+          ]
+        }
+      },
+      {
+        "replicate": 11,
+        "domain": "library",
+        "seed_hex16": "d0334279bfc9cf9f",
+        "control_id": "d0334279bfc9cf9f80291c0b8141245e",
+        "status": "ACCEPTED",
+        "effective_draw_budget": 5000,
+        "draws_used": 6,
+        "structural_rejections": {
+          "structure": 0,
+          "infeasible": 1,
+          "lexical": 4,
+          "grammar": 0,
+          "tokens": 0,
+          "prompt": 0
+        },
+        "rubric_rejections": [],
+        "control": {
+          "scenario_id": "config-audit-v2",
+          "algorithm": "neutral-prose-replicates/1",
+          "control_id": "d0334279bfc9cf9f80291c0b8141245e",
+          "enumeration_index": 5,
+          "cluster": "library",
+          "offset": 25,
+          "unit": "words",
+          "fragment_text": "Tenant 4 reading room notes: Several cheerful readers carefully remembered some dusty magazines near the desk on rainy afternoons. Each tired librarian admired 63 novels.",
+          "fragment_sha256": "10e453f19b4f84c9dc2bf9f75bb013a0e677c50f04ce2a2b69fc66430b703a9a",
+          "treatment_fragment_sha256": "0eb467aea96fa7f8fb79fef25a427f0dedd409e9775a1b1296b002e3a1e0f9e2",
+          "skeleton": {
+            "prefix": [
+              "Tenant",
+              "4"
+            ],
+            "header_len": 3,
+            "clauses": [
+              [
+                14,
+                "."
+              ],
+              [
+                6,
+                "."
+              ]
+            ],
+            "partial": 0,
+            "partial_kind": "main",
+            "words": 25,
+            "bytes": 170
+          },
+          "counts": {
+            "bytes": [
+              170,
+              170
+            ],
+            "words": [
+              25,
+              25
+            ],
+            "fragment_tokens": [
+              34,
+              34
+            ],
+            "prompt_tokens": [
+              245,
+              245
+            ]
+          },
+          "tokenizer_fingerprint": "1f7ca876604c8dc2f366de8188467020085cdcafc4967fa247ff0be1aa0f5fd5",
+          "lexicon_sha256": "f91e691f054f431d7ea772e99f90238d354a4b7dd991a7dcd333b2fcafd03ba5",
+          "token_parity": "VERIFIED",
+          "checks": [
+            "bytes",
+            "words",
+            "skeleton",
+            "lexical",
+            "grammar",
+            "fragment_tokens",
+            "prompt_tokens",
+            "geometry",
+            "surrounding_prompt",
+            "rubric/1.1"
+          ]
+        }
+      }
+    ],
+    "summary": {
+      "n_requested": 12,
+      "n_accepted": 12,
+      "n_failed": 0,
+      "min_qualifying": 10,
+      "qualifies_for_analysis": true,
+      "if_not_qualifying": "the later study must report INSUFFICIENT"
+    }
+  },
+  "provenance": {
+    "generator": {
+      "software_version": "0.1.6",
+      "control_algorithm": "neutral-prose/1",
+      "replicate_algorithm": "neutral-prose-replicates/1",
+      "protocol_id": "config-audit-robustness/1",
+      "protocol_revision": "1.1"
+    },
+    "controlling_documents": {
+      "protocol_id": "config-audit-robustness/1",
+      "protocol_revision": "1.1",
+      "original_commit": "58a00b1d149994eb3775570e85174fe4a3e2df21",
+      "original_preregistration_sha256": "74c118cc9c14c892ee5915fe20e83229e558783031e64d872db62e82e2ba437b",
+      "original_protocol_sha256": "d9cc96c6cd3ebcabd2bc9e2cc16eb43dbce9de368d4ebf0ff1883b74c81aac4c",
+      "amendment_sha256": "f718521cc0624bbdefa5d0c5822d8833e6ea8df7890093d5f9f0393848ca7c67",
+      "effective_protocol_sha256": "09b4bf835f715fec43baaac834226e3a39f61b0cff71a84b6a98736ce271b1ee",
+      "rubric_sha256": "ee30f0978bccad62ae0ac56eb1168d9423d2555ef7a1c3b0f510ad0e7719413d",
+      "review_policy_sha256": "fc540c313d670d860856873913a0795c36387238cabd0cb553a493ad129514b0",
+      "frozen_generator": {
+        "algorithm": "neutral-prose/1",
+        "lexicon_sha256": "f91e691f054f431d7ea772e99f90238d354a4b7dd991a7dcd333b2fcafd03ba5",
+        "control_py_sha256_newline_normalised": "b107569585da98d52af8faa2af8035be2c5fa83a43f8cba239eb160ad5697d23"
+      },
+      "draw_budget": 5000,
+      "tokenizer_fingerprint_expected": "1f7ca876604c8dc2f366de8188467020085cdcafc4967fa247ff0be1aa0f5fd5",
+      "c0": {
+        "control_id": "627e6cf41b3d02a8007269f298e4b214",
+        "fragment_sha256": "1a70823ebdfb752b634ed50f85cfc257deb171d2cecd5dd309db9ef3e64cba41"
+      },
+      "scenario_id": "config-audit-v2",
+      "offset": 25,
+      "unit": "words",
+      "fixtures_sha256": "b733148e71510a0b30ed5366e470befe72353d05b4a34408eaf45f3cec0d3ceb"
+    },
+    "anchor": {
+      "evidence": {
+        "c0": {
+          "cluster": "festival",
+          "control_id": "627e6cf41b3d02a8007269f298e4b214",
+          "enumeration_index": 8,
+          "fragment_sha256": "1a70823ebdfb752b634ed50f85cfc257deb171d2cecd5dd309db9ef3e64cba41",
+          "recorded_tokenizer_fingerprint": "1f7ca876604c8dc2f366de8188467020085cdcafc4967fa247ff0be1aa0f5fd5"
+        },
+        "draw_budget": 5000,
+        "frozen_generator": {
+          "algorithm": "neutral-prose/1",
+          "lexicon_sha256": "f91e691f054f431d7ea772e99f90238d354a4b7dd991a7dcd333b2fcafd03ba5"
+        },
+        "offset": 25,
+        "recomputed": {
+          "cluster": "festival",
+          "control_id": "627e6cf41b3d02a8007269f298e4b214",
+          "draw": 8,
+          "fragment_sha256": "1a70823ebdfb752b634ed50f85cfc257deb171d2cecd5dd309db9ef3e64cba41",
+          "status": "ACCEPTED"
+        },
+        "reproduces_c0": true,
+        "scenario_id": "config-audit-v2",
+        "schema": "bleediff.replicate-anchor/1",
+        "tokenizer_fingerprint": "1f7ca876604c8dc2f366de8188467020085cdcafc4967fa247ff0be1aa0f5fd5",
+        "unit": "words"
+      },
+      "evidence_sha256": "367888d075ae72d94ebf5a7052bedc850bf195194cde35d29d9829c324f7cb72"
+    },
+    "generation": {
+      "invocation": {
+        "command": "python -m bleediff.replicates generate",
+        "parameters": {
+          "scenario_id": "config-audit-v2",
+          "offset": 25,
+          "unit": "words",
+          "draw_budget_per_replicate": 5000,
+          "fixtures_sha256": "b733148e71510a0b30ed5366e470befe72353d05b4a34408eaf45f3cec0d3ceb",
+          "c0_manifest_sha256": "9688a738e46f912761d3b8fec86a42ce22e25980886e548285e9442901473fe1",
+          "anchor_evidence_sha256": "367888d075ae72d94ebf5a7052bedc850bf195194cde35d29d9829c324f7cb72",
+          "protocol_id": "config-audit-robustness/1",
+          "protocol_revision": "1.1",
+          "effective_protocol_sha256": "09b4bf835f715fec43baaac834226e3a39f61b0cff71a84b6a98736ce271b1ee"
+        },
+        "note": "canonical parameters. The CLI has no free parameter besides the output path, the anchor-evidence path and the tokenizer server; the server address, local paths and timestamps are deliberately not recorded"
+      },
+      "code_revision": {
+        "git_commit": "d2bb46570ff65504cd1c2394ed8d284f76b9aba8",
+        "dirty": false
+      }
+    },
+    "independence_statement": "These are deterministically diversified samples from a constrained text generator. Distinct seeds and domains do not make them statistically independent or exchangeable observations."
+  }
+}

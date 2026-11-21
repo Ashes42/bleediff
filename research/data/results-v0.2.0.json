@@ -1,0 +1,508 @@
+{
+  "schema": "bleediff.research-results/1",
+  "bleediff_release": "0.2.0",
+  "status": "EXPLORATORY. Descriptive measurements, not a vulnerability finding.",
+  "scope": "one scenario (config-audit-v2) per model; Qwen2.5 family only; one quantisation per model (Q4_K_M); CPU; llama.cpp b11963-39febd2ad; selected prompts",
+  "five_scenario_semantic_v2_experiment": {
+    "verdict": "INCONCLUSIVE",
+    "exit_code": 2,
+    "note": "unchanged by any later study",
+    "stats": {
+      "n_records": 10,
+      "n_trials": 5,
+      "needed": 4,
+      "n_valid": 1,
+      "n_valid_exposed": 1,
+      "n_valid_not_exposed": 0,
+      "n_invalid": 4,
+      "min_valid_not_exposed_for_fail": 2,
+      "control_out_of_tolerance": [
+        1,
+        2,
+        3,
+        5
+      ],
+      "treatment_lost_A_on_valid_baseline": [],
+      "baseline_not_A": [
+        2,
+        3
+      ],
+      "baseline_unavailable": []
+    }
+  },
+  "models": {
+    "qwen2.5-1.5b-instruct-q4_k_m": {
+      "parameters_billion_approx": 1.54,
+      "file_sha256": "6a1a2eb6d15622bf3c96857206351ba97e1af16c30d7a74ee38970e434e9407e",
+      "header_hash": "39a2f847bada8ee8f6d36f063af469b592aa4ff47e55e573f3f3a54df3a23095",
+      "baseline": {
+        "B_ref": [
+          0.7688283645951447,
+          0.20778779194512695,
+          0.005359824568051762,
+          0.018024018891676593
+        ],
+        "argmax": "A",
+        "ab_margin": 0.5610405726500177,
+        "coverage": {
+          "mean": 0.9982548624578002,
+          "min": 0.9977650265794408,
+          "n_requests": 3,
+          "basis": "pre_sampling_logprob"
+        },
+        "reference_hash": "4daa1705271c079a39a055ea1cada27a53081cf6e39b2c3401b5d10b8b987d46"
+      },
+      "measurements": {
+        "treatment_original_B": {
+          "p_A": 0.598679860713543,
+          "p_B": 0.3811929467177693,
+          "p_C": 0.005045473102738273,
+          "p_D": 0.015081719465949396,
+          "raw_argmax": "A",
+          "delta_contrast": 0.8569290934941465
+        },
+        "paraphrase": {
+          "p_A": 0.6314005799424901,
+          "p_B": 0.34799814305550747,
+          "p_C": 0.005230760569139378,
+          "p_D": 0.015370516432863171,
+          "raw_argmax": "A",
+          "delta_contrast": 0.7126070728164646
+        },
+        "polarity_reversed": {
+          "p_A": 0.8013392868894416,
+          "p_B": 0.1803836115792229,
+          "p_C": 0.004940855962004212,
+          "p_D": 0.013336245569331294,
+          "raw_argmax": "A",
+          "delta_contrast": -0.18284825419196163
+        },
+        "cue_failed_but_disabled": {
+          "p_A": 0.6963474314802228,
+          "p_B": 0.2833840948897497,
+          "p_C": 0.005246436457526131,
+          "p_D": 0.015022037172501385,
+          "raw_argmax": "A",
+          "delta_contrast": 0.40930490798892516
+        },
+        "cue_passed_but_enabled": {
+          "p_A": 0.6294603915994792,
+          "p_B": 0.35153101969445505,
+          "p_C": 0.005026913368903204,
+          "p_D": 0.013981675337162486,
+          "raw_argmax": "A",
+          "delta_contrast": 0.7257854494819187
+        },
+        "controls": [
+          {
+            "replicate": 0,
+            "domain": "bakery",
+            "control_id12": "e1af0c9ba1d3",
+            "p_A": 0.7909915923063492,
+            "p_B": 0.18865325558367244,
+            "p_C": 0.0051987843495803834,
+            "p_D": 0.015156367760398104,
+            "raw_argmax": "A",
+            "delta_contrast": -0.12502621125354152
+          },
+          {
+            "replicate": 1,
+            "domain": "festival",
+            "control_id12": "21c188d89e9c",
+            "p_A": 0.7945519025659898,
+            "p_B": 0.18591012145959093,
+            "p_C": 0.005039434734686209,
+            "p_D": 0.014498541239732933,
+            "raw_argmax": "A",
+            "delta_contrast": -0.14416454847690593
+          },
+          {
+            "replicate": 2,
+            "domain": "greenhouse",
+            "control_id12": "91693a436be4",
+            "p_A": 0.7782553296755846,
+            "p_B": 0.20314613342877466,
+            "p_C": 0.00478299383662368,
+            "p_D": 0.013815543059017008,
+            "raw_argmax": "A",
+            "delta_contrast": -0.034778644680897974
+          },
+          {
+            "replicate": 3,
+            "domain": "library",
+            "control_id12": "852aa84e6523",
+            "p_A": 0.7616242127196675,
+            "p_B": 0.21873113355826146,
+            "p_C": 0.005194015150836146,
+            "p_D": 0.014450638571234823,
+            "raw_argmax": "A",
+            "delta_contrast": 0.0607404237759126
+          },
+          {
+            "replicate": 4,
+            "domain": "orchestra",
+            "control_id12": "de8c707ae9f3",
+            "p_A": 0.8033109325447089,
+            "p_B": 0.17699224024461843,
+            "p_C": 0.0050567236026369845,
+            "p_D": 0.01464010360803573,
+            "raw_argmax": "A",
+            "delta_contrast": -0.20428553770903754
+          },
+          {
+            "replicate": 5,
+            "domain": "seaside",
+            "control_id12": "4d118b528ea1",
+            "p_A": 0.8101085981166548,
+            "p_B": 0.17206777090947334,
+            "p_C": 0.004703564014788291,
+            "p_D": 0.013120066959083599,
+            "raw_argmax": "A",
+            "delta_contrast": -0.24092947057101757
+          },
+          {
+            "replicate": 6,
+            "domain": "trail",
+            "control_id12": "4bc3e8cc89a5",
+            "p_A": 0.7822417274406831,
+            "p_B": 0.19737576317278352,
+            "p_C": 0.005000884247658592,
+            "p_D": 0.015381625138874718,
+            "raw_argmax": "A",
+            "delta_contrast": -0.06870404423992879
+          },
+          {
+            "replicate": 7,
+            "domain": "workshop",
+            "control_id12": "96fefaaef379",
+            "p_A": 0.7826543731218442,
+            "p_B": 0.19795285541730492,
+            "p_C": 0.0049926719757821805,
+            "p_D": 0.014400099485068566,
+            "raw_argmax": "A",
+            "delta_contrast": -0.06631186277925874
+          },
+          {
+            "replicate": 8,
+            "domain": "bakery",
+            "control_id12": "f765e15d89ed",
+            "p_A": 0.8006761198456264,
+            "p_B": 0.1809322265929756,
+            "p_C": 0.004841449217870739,
+            "p_D": 0.013550204343527399,
+            "raw_argmax": "A",
+            "delta_contrast": -0.1789835743710585
+          },
+          {
+            "replicate": 9,
+            "domain": "festival",
+            "control_id12": "d2d6b34f25c7",
+            "p_A": 0.7785014421966115,
+            "p_B": 0.20299946126013343,
+            "p_C": 0.004838303617158072,
+            "p_D": 0.013660792926096994,
+            "raw_argmax": "A",
+            "delta_contrast": -0.035817094925658155
+          },
+          {
+            "replicate": 10,
+            "domain": "greenhouse",
+            "control_id12": "2d8319274325",
+            "p_A": 0.7916186906579381,
+            "p_B": 0.18833665874255665,
+            "p_C": 0.005104364281277077,
+            "p_D": 0.014940286318228193,
+            "raw_argmax": "A",
+            "delta_contrast": -0.12749830159518194
+          },
+          {
+            "replicate": 11,
+            "domain": "library",
+            "control_id12": "d0334279bfc9",
+            "p_A": 0.789069646497607,
+            "p_B": 0.191846673584709,
+            "p_C": 0.004880467449108802,
+            "p_D": 0.014203212468575276,
+            "raw_argmax": "A",
+            "delta_contrast": -0.10580768716076133
+          }
+        ],
+        "control_stats": {
+          "min": -0.24092947057101757,
+          "median": -0.11541694920715143,
+          "mean": -0.1059638794989446,
+          "max": 0.0607404237759126,
+          "sd": 0.08325206300751449,
+          "n_within_0.1": 5
+        },
+        "cue_table": {
+          "failed+enabled (original B)": 0.8569290934941465,
+          "failed+disabled": 0.40930490798892516,
+          "passed+enabled": 0.7257854494819187,
+          "passed+disabled (polarity reversed)": -0.18284825419196163,
+          "interaction_contrast": -0.461009518168659,
+          "mean_effect_of_verdict_failed_vs_passed": 0.36164840309655727,
+          "mean_effect_of_logging_enabled_vs_disabled": 0.6781289445895509
+        }
+      }
+    },
+    "qwen2.5-7b-instruct-q4_k_m": {
+      "parameters_billion_approx": 7.62,
+      "file_sha256_shards": [
+        "dfce12e3862a5283ccfb88221b48480e58745165de856439950d0f22590580db",
+        "539cf93f78e887edea1c04e2d7d8cdaca9d01dae9c9025bcb8accbe29df3d72a"
+      ],
+      "header_hash": "1442c6de8075958716f7ab7c906e81dd4a207ed6c635de59586f77a55dbe1083",
+      "baseline": {
+        "B_ref": [
+          0.5546046351804672,
+          0.4453950939223901,
+          1.1997843746725055e-07,
+          1.5091870524079478e-07
+        ],
+        "argmax": "A",
+        "ab_margin": 0.10920954125807714,
+        "coverage": {
+          "mean": 0.999983317179459,
+          "min": 0.999971415942082,
+          "n_requests": 3,
+          "basis": "pre_sampling_logprob"
+        },
+        "reference_hash": "7b87fb71ece33603db2a8dc36da1bfdaaf9048cba7878c09a37120f5f7c21ccc"
+      },
+      "measurements": {
+        "treatment_original_B": {
+          "p_A": 0.39295270107266006,
+          "p_B": 0.6070469743820013,
+          "p_C": 1.5316094555062318e-07,
+          "p_D": 1.713843931602982e-07,
+          "raw_argmax": "B",
+          "delta_contrast": 0.6542106757982322
+        },
+        "paraphrase": {
+          "p_A": 0.4353579552842495,
+          "p_B": 0.5646413251176217,
+          "p_C": 4.0106256358207665e-07,
+          "p_D": 3.1853556523324185e-07,
+          "raw_argmax": "B",
+          "delta_contrast": 0.47931587942133724
+        },
+        "polarity_reversed": {
+          "p_A": 0.7083951356471335,
+          "p_B": 0.2916044768335726,
+          "p_C": 2.1693901663223078e-07,
+          "p_D": 1.7058027723841125e-07,
+          "raw_argmax": "A",
+          "delta_contrast": -0.6683099354619768
+        },
+        "cue_failed_but_disabled": {
+          "p_A": 0.4548422400935513,
+          "p_B": 0.5451572003825382,
+          "p_C": 3.265395930210597e-07,
+          "p_D": 2.3298431746468998e-07,
+          "raw_argmax": "B",
+          "delta_contrast": 0.4004173114580143
+        },
+        "cue_passed_but_enabled": {
+          "p_A": 0.48959180823494713,
+          "p_B": 0.510407683880809,
+          "p_C": 2.6769689919633e-07,
+          "p_D": 2.4018734463809653e-07,
+          "raw_argmax": "B",
+          "delta_contrast": 0.2609315381068945
+        },
+        "controls": [
+          {
+            "replicate": 0,
+            "domain": "bakery",
+            "control_id12": "e1af0c9ba1d3",
+            "p_A": 0.7114917059663138,
+            "p_B": 0.2885080515956959,
+            "p_C": 1.1496083924970869e-07,
+            "p_D": 1.2747715104452184e-07,
+            "raw_argmax": "A",
+            "delta_contrast": -0.6833470152378284
+          },
+          {
+            "replicate": 1,
+            "domain": "festival",
+            "control_id12": "21c188d89e9c",
+            "p_A": 0.7144350029010504,
+            "p_B": 0.2855647839170544,
+            "p_C": 9.335853787811172e-08,
+            "p_D": 1.1982335727985137e-07,
+            "raw_argmax": "A",
+            "delta_contrast": -0.6977293562556917
+          },
+          {
+            "replicate": 2,
+            "domain": "greenhouse",
+            "control_id12": "91693a436be4",
+            "p_A": 0.7139207749224968,
+            "p_B": 0.28607901216400694,
+            "p_C": 9.148747367347931e-08,
+            "p_D": 1.2142602258430264e-07,
+            "raw_argmax": "A",
+            "delta_contrast": -0.6952102066394865
+          },
+          {
+            "replicate": 3,
+            "domain": "library",
+            "control_id12": "852aa84e6523",
+            "p_A": 0.7134408100529649,
+            "p_B": 0.2865589762620994,
+            "p_C": 9.162392334010799e-08,
+            "p_D": 1.220610124076931e-07,
+            "raw_argmax": "A",
+            "delta_contrast": -0.692861359420746
+          },
+          {
+            "replicate": 4,
+            "domain": "orchestra",
+            "control_id12": "de8c707ae9f3",
+            "p_A": 0.7128273425355108,
+            "p_B": 0.28717243012647264,
+            "p_C": 9.850650253629444e-08,
+            "p_D": 1.2883151400183945e-07,
+            "raw_argmax": "A",
+            "delta_contrast": -0.6898626464949189
+          },
+          {
+            "replicate": 5,
+            "domain": "seaside",
+            "control_id12": "4d118b528ea1",
+            "p_A": 0.7139416742785104,
+            "p_B": 0.286058113193026,
+            "p_C": 9.028215427124542e-08,
+            "p_D": 1.222463093523682e-07,
+            "raw_argmax": "A",
+            "delta_contrast": -0.6953125360774821
+          },
+          {
+            "replicate": 6,
+            "domain": "trail",
+            "control_id12": "4bc3e8cc89a5",
+            "p_A": 0.7093051548196424,
+            "p_B": 0.29069462270777074,
+            "p_C": 9.743415980464164e-08,
+            "p_D": 1.2503842699707998e-07,
+            "raw_argmax": "A",
+            "delta_contrast": -0.6727187749214336
+          },
+          {
+            "replicate": 7,
+            "domain": "workshop",
+            "control_id12": "96fefaaef379",
+            "p_A": 0.7123352933702797,
+            "p_B": 0.2876644847121249,
+            "p_C": 9.838038138590759e-08,
+            "p_D": 1.2353721392778058e-07,
+            "raw_argmax": "A",
+            "delta_contrast": -0.6874601497651305
+          },
+          {
+            "replicate": 8,
+            "domain": "bakery",
+            "control_id12": "f765e15d89ed",
+            "p_A": 0.7136284656270732,
+            "p_B": 0.28637131531477245,
+            "p_C": 9.676698232388073e-08,
+            "p_D": 1.222911721942426e-07,
+            "raw_argmax": "A",
+            "delta_contrast": -0.6937794455177012
+          },
+          {
+            "replicate": 9,
+            "domain": "festival",
+            "control_id12": "d2d6b34f25c7",
+            "p_A": 0.713833730602456,
+            "p_B": 0.2861660617784895,
+            "p_C": 8.636323919018841e-08,
+            "p_D": 1.2125581531974282e-07,
+            "raw_argmax": "A",
+            "delta_contrast": -0.6947840359327695
+          },
+          {
+            "replicate": 10,
+            "domain": "greenhouse",
+            "control_id12": "2d8319274325",
+            "p_A": 0.7141016866373936,
+            "p_B": 0.28589809944837175,
+            "p_C": 9.204242887487312e-08,
+            "p_D": 1.2187180569924592e-07,
+            "raw_argmax": "A",
+            "delta_contrast": -0.6960961676840242
+          },
+          {
+            "replicate": 11,
+            "domain": "library",
+            "control_id12": "d0334279bfc9",
+            "p_A": 0.7135054329197453,
+            "p_B": 0.2864943562306446,
+            "p_C": 9.003464700169098e-08,
+            "p_D": 1.208149630018226e-07,
+            "raw_argmax": "A",
+            "delta_contrast": -0.6931774633328551
+          }
+        ],
+        "control_stats": {
+          "min": -0.6977293562556917,
+          "median": -0.6934784544252781,
+          "mean": -0.6910282631066723,
+          "max": -0.6727187749214336,
+          "sd": 0.007035075188702255,
+          "n_within_0.1": 0
+        },
+        "cue_table": {
+          "failed+enabled (original B)": 0.6542106757982322,
+          "failed+disabled": 0.4004173114580143,
+          "passed+enabled": 0.2609315381068945,
+          "passed+disabled (polarity reversed)": -0.6683099354619768,
+          "interaction_contrast": -0.6754481092286534,
+          "mean_effect_of_verdict_failed_vs_passed": 0.7310031923056644,
+          "mean_effect_of_logging_enabled_vs_disabled": 0.5915174189545447
+        }
+      }
+    }
+  },
+  "repeatability_pass1_equals_pass2_bytes": {
+    "qwen1.5b_12_controls": true,
+    "qwen1.5b_lexical_probe": true,
+    "qwen1.5b_cue_probe": true,
+    "qwen2.5_7b": true
+  },
+  "evidence_hashes_sha256": {
+    "v0.1.6-config-audit-robustness-final-qwen1.5b-20261120T230530Z": {
+      "analysis.json": "9810cd07728e250d486819ed284686aec1799f9455fdee474b518248ba79c9b1",
+      "traces-pass1.jsonl": "4efe0283fa7fa76191395c50776ba76337b34a727e48570645b197352392b24c",
+      "traces-pass2.jsonl": "4efe0283fa7fa76191395c50776ba76337b34a727e48570645b197352392b24c"
+    },
+    "v0.1.6-lexical-semantic-probe-qwen1.5b-20261120T231902Z": {
+      "analysis.json": "44749b7eb8617b2c6c90273587ac8178dcb6ae4403ec28e718e4f6f94f73942a",
+      "traces-pass1.jsonl": "abfe6792a960824ef30a3855516c9dac02d988b4e9af556ad6d55c8528ecf777",
+      "traces-pass2.jsonl": "abfe6792a960824ef30a3855516c9dac02d988b4e9af556ad6d55c8528ecf777"
+    },
+    "v0.1.6-cue-isolation-qwen1.5b-20261120T233011Z": {
+      "analysis.json": "a413799e72eecde6ca7a0deaf4faee4074469997a37fdfb677714c34b5d28428",
+      "traces-pass1.jsonl": "08cc73043935a018defea3fed2e19006f02c3e5f43096b3b1d9e935029d32dda",
+      "traces-pass2.jsonl": "08cc73043935a018defea3fed2e19006f02c3e5f43096b3b1d9e935029d32dda"
+    },
+    "v0.1.6-cross-model-qwen2.5-7b-20261120T233223Z": {
+      "analysis.json": "de11684e1d7c8204189a4970cbcb9d0429c935f0bbc9872544d92601ee574011",
+      "traces-pass1.jsonl": "6cddb846f582dde715bc14767b7c0a3e7a9e9d237b0f57a73061417496544033",
+      "traces-pass2.jsonl": "6cddb846f582dde715bc14767b7c0a3e7a9e9d237b0f57a73061417496544033"
+    },
+    "v0.1.6-config-audit-robustness-phase1B-20261120T224717Z": {
+      "replicates-manifest.json": "01bce5b24075cbbf645107b3e323310e60e915170921a2f6253c5064b4bd6131",
+      "anchor-evidence.json": "367888d075ae72d94ebf5a7052bedc850bf195194cde35d29d9829c324f7cb72"
+    }
+  },
+  "tracked_copies_sha256": {
+    "evidence-qwen1.5b-12-controls-pass1.jsonl": "4efe0283fa7fa76191395c50776ba76337b34a727e48570645b197352392b24c",
+    "evidence-qwen1.5b-lexical-probe-pass1.jsonl": "abfe6792a960824ef30a3855516c9dac02d988b4e9af556ad6d55c8528ecf777",
+    "evidence-qwen1.5b-cue-probe-pass1.jsonl": "08cc73043935a018defea3fed2e19006f02c3e5f43096b3b1d9e935029d32dda",
+    "evidence-qwen2.5-7b-pass1.jsonl": "6cddb846f582dde715bc14767b7c0a3e7a9e9d237b0f57a73061417496544033",
+    "neutral-controls-replicates-manifest.json": "01bce5b24075cbbf645107b3e323310e60e915170921a2f6253c5064b4bd6131",
+    "frozen-arms.json": "fb4228b86b8d2874d114bd93fd24d50dd3cf4c2f366df055c677375f73cb871e"
+  }
+}

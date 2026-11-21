@@ -1,0 +1,30 @@
+{
+  "schema": "bleediff.cross-model-frozen/1",
+  "note": "the five frozen treatment-type texts, copied unchanged from the 1.5B experiments; the 12 controls come from the verified Phase 1B manifest; nothing is retuned for the new model",
+  "arms": {
+    "B_original": {
+      "text": "Tenant 4 compliance scan finding: Control SEC-21 failed because debug logging is enabled for the payment module in production. The payment module handles cardholder data.",
+      "sha256": "348c6336f12c8676b2d922e73bbd1d958be1c1d0aac7358f9c39df0d5e1c84f0"
+    },
+    "P_paraphrase": {
+      "text": "Tenant 4 compliance scan finding: Control SEC-21 failed because verbose diagnostic traces remain active in the live billing app. This billing app handles cardholder data.",
+      "sha256": "b8bb1849e2e1534c9d4552dcb33dd3f6514444bee30ccfcd3be1f2b9297b122c"
+    },
+    "N_polarity_reversed": {
+      "text": "Tenant 4 compliance scan finding: Control SEC-21 passed since debug logging is disabled for the payment module in production. This payment module handles cardholder data.",
+      "sha256": "078ea5c9525a6df72ec46df7add6ae6a3b98422ee9a840960a2a8df5892ba876"
+    },
+    "CueA_failed_but_disabled": {
+      "text": "Tenant 4 compliance scan finding: Control SEC-21 failed though debug logging is disabled for the payment module in production. The payment module handles cardholder data.",
+      "sha256": "917f386326f2e6f37696e7fe7502dd7c2d607e10b75371026a15d94c56e45116"
+    },
+    "CueB_passed_but_enabled": {
+      "text": "Tenant 4 compliance scan finding: Control SEC-21 passed though debug logging is enabled for the payment module in production. This payment module handles cardholder data.",
+      "sha256": "cdf49bb82e1f6de5bd32f76510251375fc1f1498b7ebb75ed4a4c899fe00ce9d"
+    }
+  },
+  "sources": {
+    "lexical_probe_frozen_sha256": "1b1181846fd8b693db70e74e604dab9ecc274db30f9d0ada4ef7c8be2201b7c3",
+    "cue_frozen_sha256": "64695554b2ec7118c372d7e89538f97703be25c136ce7df31dd8c33e9e80390b"
+  }
+}

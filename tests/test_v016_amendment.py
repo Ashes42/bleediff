@@ -736,7 +736,7 @@ class TestFrozenAndHistoricalPreserved(unittest.TestCase):
         pat = re.compile(r"(@[A-Za-z0-9-]+\.[a-z]{2,}|[A-Za-z]:\\|/Users/|/home/|\.gguf|api[_-]?key\s*[:=]|password\s*[:=])", re.I)
         for path in (AMENDMENT, EFFECTIVE):
             self.assertIsNone(pat.search(_read(path)), path)
-        self.assertEqual(__version__, "0.1.6")
+        self.assertRegex(__version__, r"^0\.\d+\.\d+$")          # 0.1.6 wrote the amendment; later releases keep it
         for n in ast.walk(ast.parse(_read(os.path.join(ROOT, "bleediff", "replicates.py")))):
             if isinstance(n, ast.Attribute):
                 self.assertNotEqual(n.attr, "completion")

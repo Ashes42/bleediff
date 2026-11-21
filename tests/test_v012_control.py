@@ -654,7 +654,7 @@ class TestFrozenMeasurementIsUntouched(unittest.TestCase):
 
         with open(os.path.join(ROOT, "pyproject.toml"), "rb") as fh:
             self.assertEqual(tomllib.load(fh)["project"]["version"], __version__)
-        self.assertRegex(__version__, r"^0\.1\.\d+$")   # 0.1.2 introduced the control; later 0.1.x releases keep it
+        self.assertRegex(__version__, r"^0\.\d+\.\d+$")   # 0.1.2 introduced the control; later 0.1.x releases keep it
 
     def test_no_third_party_imports_in_the_new_module_or_tests(self):
         allowed = set(sys.stdlib_module_names) | {"bleediff", "tests", "test_bleediff", "_tok"}
