@@ -503,6 +503,10 @@
     "evidence-qwen1.5b-cue-probe-pass1.jsonl": "08cc73043935a018defea3fed2e19006f02c3e5f43096b3b1d9e935029d32dda",
     "evidence-qwen2.5-7b-pass1.jsonl": "6cddb846f582dde715bc14767b7c0a3e7a9e9d237b0f57a73061417496544033",
     "neutral-controls-replicates-manifest.json": "01bce5b24075cbbf645107b3e323310e60e915170921a2f6253c5064b4bd6131",
-    "frozen-arms.json": "fb4228b86b8d2874d114bd93fd24d50dd3cf4c2f366df055c677375f73cb871e"
+    "frozen-arms.json": "b9fcfef95e32714192e8a76cf4141c28756e5c190f7f8195c635b07984378d9a"
+  },
+  "tracked_copy_notes": {
+    "frozen-arms.json": "line endings normalised to LF for the tracked copy; the text of every arm is unchanged (each arm carries its own sha256)",
+    "all_other_tracked_copies": "byte-identical to the preserved evidence files"
   }
 }
