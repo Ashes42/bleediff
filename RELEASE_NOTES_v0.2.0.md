@@ -42,5 +42,5 @@ composite with a clean baseline. v0.2.0 packages the measurement toolkit togethe
 See the README. You supply the GGUF files and `llama-server`; models, run directories and per-run sidecars are not part
 of the repository.
 
-## Publication
-This release has been prepared and tagged locally. It has **not** been pushed or published.
+## Distribution
+The release is the git tag `v0.2.0`. Model files, run directories and per-run sidecars are not distributed with the repository.
