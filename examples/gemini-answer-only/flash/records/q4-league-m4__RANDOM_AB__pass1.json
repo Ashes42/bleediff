@@ -1,0 +1,83 @@
+{
+ "schema": "bleediff.hosted-answer/1",
+ "measurement_type": "ANSWER_ONLY",
+ "provider": "gemini",
+ "name": "q4-league-m4__RANDOM_AB__pass1",
+ "cell": "q4-league-m4",
+ "question": "q4-league",
+ "mapping": "m4",
+ "condition": "RANDOM_AB",
+ "pass": 1,
+ "prompt_sha256": "5179b7fc004f8c3018d1dc8206bb46b3b27ced36635a204ec7fed37ced49dbbf",
+ "fragment_sha256": "ade09befa6f7d7de8e70ae73fb2f6c86f94dce4a30eea8d6fa8be9c43f5c434d",
+ "correct_letter": "D",
+ "competing_letter": "C",
+ "model": "gemini-3.8-flash",
+ "request": {
+  "endpoint": "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent",
+  "generationConfig": {
+   "temperature": 1,
+   "topP": 1,
+   "maxOutputTokens": 512,
+   "candidateCount": 1,
+   "seed": 0,
+   "thinkingConfig": {
+    "thinkingLevel": "low"
+   }
+  },
+  "contents_sha256": "b40b3ff7beb350837c921b56ce5f20a53536a4db8419a98ab8fa507d4cd00284",
+  "credentials_recorded": false
+ },
+ "status": "ok",
+ "answer": "D",
+ "text": "D",
+ "finish_reason": "STOP",
+ "block_reason": null,
+ "model_version": "gemini-3.8-flash",
+ "http_status": 200,
+ "attempts": 1,
+ "elapsed_s": 4.244,
+ "usage": {
+  "promptTokenCount": 154,
+  "candidatesTokenCount": 1,
+  "thoughtsTokenCount": 86,
+  "totalTokenCount": 241
+ },
+ "usage_complete": true,
+ "cost_usd": 0.00044175,
+ "cost_basis": "recorded by the v0.8 pilot (candidate + thinking tokens at list prices)",
+ "response": {
+  "candidates": [
+   {
+    "content": {
+     "parts": [
+      {
+       "text": "D",
+       "thoughtSignature": "EswDCskDAWkUfRNvEWKGCJmD+TS8gSojy5OofNue7mdTAP6ES4vaCkxr1mjNpopJsOWQXmCBn6I01FGoEjHvUBajPuS2oGiLHrq0rNXsgyh+BIHFbMpKCuoH4IqP9vv5DdUBJQVtFromZaNiOC4Ts3SmyzJ5xPOfOBEeeC53NKne+5ZkyNDMBgDf6BRyVj9i5r3M3pLBpCXSxFL6T6kFM2MN28VTOlT8W65FMfw8Gu8IzN07uuSvtaoydlMsVNr+xcckPOc4Ujj1bHHx/IWL19NRLqEqucqBZ2TBUVnTPdFbdT+5MLF+wPe7izXl2tSryaWonQu7VW/WtCBCiswEAtzWNVkoMPTJ0KiQSXABOcuhK3q2Ghkfr/j+lV4eTH0vtwuqKxV6pP6ZTVLFqvCHqWcpIizLZJMcSwVikyVkfxLEvKS2hnZpG4Yp9suLcZscgq+vv8GDxiHA/EWMGkvvCf6BMEqf7nmEh1NXyKOEW00VFGv0Yo8e2Ispblo3NuYv1Th4GrbyQbQe29VsTDsvADWCISUcEUIeCEtTXQQL8hTl1Bre0Eqsru9wdX6qObbPyTXpoKUY/QV4sZpA3wb9Au6vEzIXzefWLfiirDwwzQ=="
+      }
+     ],
+     "role": "model"
+    },
+    "finishReason": "STOP",
+    "index": 0
+   }
+  ],
+  "usageMetadata": {
+   "promptTokenCount": 154,
+   "candidatesTokenCount": 1,
+   "totalTokenCount": 241,
+   "promptTokensDetails": [
+    {
+     "modality": "TEXT",
+     "tokenCount": 154
+    }
+   ],
+   "thoughtsTokenCount": 86,
+   "serviceTier": "standard"
+  },
+  "modelVersion": "gemini-3.8-flash",
+  "responseId": "ii4Ca9-0Kaad_uMP9cLl2QU"
+ },
+ "error": null,
+ "converted_from_pilot": true
+}

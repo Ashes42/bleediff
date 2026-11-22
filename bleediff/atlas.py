@@ -43,6 +43,7 @@ import sys
 from collections import Counter
 
 from . import CHOICES, __version__
+from .answers import (ANSWER_ONLY, ANSWER_ONLY_COLUMNS, COMPARISON_COLUMNS, DIRECT_PROBABILITY, AnswersError, answer_only_rows, atlas_markdown, atlas_summary, build_hosted, validate_specs)
 from .batch import _csv_safe, rank_rows
 from .errors import Inconclusive
 from .fold import argmax_choice
@@ -148,6 +149,11 @@ def load_manifest(path: str) -> tuple[dict, str]:
             if cell in seen_cells:
                 raise AtlasInputError(f"two primary sessions for the same task/model/presentation {cell}; mark repeats with 'replicate_of'")
             seen_cells.add(cell)
+    if "answer_only_sessions" in doc:
+        try:
+            validate_specs(doc["answer_only_sessions"])
+        except AnswersError as e:
+            raise AtlasInputError(str(e)) from None
     ids = {s["id"] for s in sessions}
     for s in sessions:
         r = s.get("replicate_of")
@@ -501,6 +507,13 @@ def build_atlas(manifest_path: str, *, marker: float = DEFAULT_MARKER, keep_goin
         replicate_checks.append({"session_id": s["id"], "replicate_of": s["replicate_of"], "bit_identical": bool(ident), "candidates_compared": len(a)})
     for c in cells:
         c.pop("_src", None)
+        c["measurement_type"] = DIRECT_PROBABILITY
+    hosted = None
+    if doc.get("answer_only_sessions"):
+        try:
+            hosted = build_hosted(doc["answer_only_sessions"], base, cells, keep_going=keep_going, display=_display)
+        except AnswersError as e:
+            raise AtlasInputError(str(e)) from None
     presentations: dict[str, set] = {}
     for c in cells:
         presentations.setdefault(c["task_id"], set()).add(c["presentation"])
@@ -511,7 +524,7 @@ def build_atlas(manifest_path: str, *, marker: float = DEFAULT_MARKER, keep_goin
     warnings += [f"presentation {p!r} has sessions with different prompt templates; check that they are comparable" for p, h in tpl.items() if len(h) > 1]
     for src in sources:
         warnings += [f"{src['id']}: {w}" for w in src.get("warnings", [])]
-    return {
+    result = {
         "schema": ATLAS_SCHEMA, "bleediff_version": __version__, "code_revision": code_revision(), "measurement_type": MEASUREMENT_TYPE,
         "input_manifest": {"name": os.path.basename(manifest_path), "sha256": file_sha256(manifest_path)}, "effect_marker_nats": marker,
         "thresholds": {"saturated_baseline_p": SATURATION_P, "low_coverage_below": LOW_COVERAGE},
@@ -521,6 +534,11 @@ def build_atlas(manifest_path: str, *, marker: float = DEFAULT_MARKER, keep_goin
                         "The effect marker is a descriptive size, not a significance threshold; small numbers of tasks and models are not evidence of a universal effect."],
         "category_labels": CATEGORY_LABELS, "sources": sources, "replicate_checks": replicate_checks, "warnings": warnings, "cells": cells,
         "aggregate": aggregate(cells, marker), "model_comparison": model_comparison(cells)}
+    if hosted is not None:
+        result["answer_only"] = hosted
+        result["measurement_types"] = {DIRECT_PROBABILITY: "local sessions: saved A-D probabilities, margins, shifts, ranks (sections of this report and candidates.csv)",
+                                       ANSWER_ONLY: "hosted sessions: returned answers only; no probabilities, margins or rankings (answer_only block, answer-only.csv)"}
+    return result
 
 
 # --------------------------------------------------------------------------------------
@@ -691,6 +709,8 @@ def summary_lines(atlas: dict, f: dict, marker: float) -> list[str]:
         lines.append(f"A/B crossings that are NOT overall answer flips: {len(cross)} (the arg-max answer did not change)")
     for w in atlas["warnings"]:
         lines.append("WARNING: " + w)
+    if atlas.get("answer_only"):
+        lines += atlas_summary(atlas["answer_only"], f["model"])
     return lines
 
 
@@ -779,6 +799,10 @@ def write_report(path: str, atlas: dict, f: dict, marker: float) -> None:
         rs = [r for r in agree if r["metric"] == comp]
         if rs:
             L.append(f"- {comp}: same sign for all models in {sum(1 for r in rs if r['same_sign_all_models'])} of {len(rs)} tasks")
+    if atlas.get("answer_only"):
+        L += ["", "## Measurement types", "", f"- **{DIRECT_PROBABILITY}** (all sections above): saved A-D probabilities from local sessions.",
+              f"- **{ANSWER_ONLY}** (the sections below): returned answers of hosted models without probabilities. Never ranked and never combined with the probability results.", ""]
+        L += atlas_markdown(atlas["answer_only"], f["model"])
     L += ["", "## Flags", "", "- SATURATED_BASELINE: the baseline's highest probability is at least %.3f; shifts are logit changes of an extremely confident baseline." % SATURATION_P,
           "- LOW_COVERAGE: answer-letter probability coverage below %.2f; the renormalised A-D probabilities rest on less mass." % LOW_COVERAGE,
           "- TOKEN_MISMATCH / LENGTH_UNMATCHED: prompt token counts differ between candidates or between compared categories.",
@@ -813,7 +837,7 @@ def cmd_atlas(args, *, out=None) -> int:
         if bad:
             raise Inconclusive(f"unknown outcome {bad}; choose from {list(OUTCOMES)}", reason="BAD_ARGS")
         atlas = build_atlas(args.manifest, marker=marker, keep_going=args.keep_going)
-        known_m = {c["model_id"] for c in atlas["cells"]}
+        known_m = {c["model_id"] for c in atlas["cells"]} | {x["model"]["id"] for x in (atlas.get("answer_only") or {}).get("sessions", [])}
         known_t = {c["task_id"] for c in atlas["cells"]}
         for key, known in (("model", known_m), ("task", known_t)):
             miss = [v for v in f[key] if v not in known]
@@ -830,9 +854,14 @@ def cmd_atlas(args, *, out=None) -> int:
         mc_cols, mc_rows = model_comparison_rows(atlas, f)
         _write_csv(os.path.join(args.out, "model-comparison.csv"), mc_cols, mc_rows)
         write_report(os.path.join(args.out, "report.md"), atlas, f, marker)
+        if atlas.get("answer_only"):
+            keep_sessions = [x for x in atlas["answer_only"]["sessions"] if not f["model"] or x["model"]["id"] in f["model"]]
+            _write_csv(os.path.join(args.out, "answer-only.csv"), ANSWER_ONLY_COLUMNS, answer_only_rows(keep_sessions))
+            _write_csv(os.path.join(args.out, "answer-level-comparison.csv"), COMPARISON_COLUMNS,
+                       [r for r in atlas["answer_only"]["comparison"] if r["measurement_type"] == DIRECT_PROBABILITY or not f["model"] or r["source"] in f["model"]])
         for line in summary_lines(atlas, f, marker):
             print(line, file=out)
-        print(f"\nWrote atlas.json, candidates.csv, category-summary.csv, model-comparison.csv and report.md to {args.out}", file=out)
+        print(f"\nWrote atlas.json, candidates.csv, category-summary.csv, model-comparison.csv and report.md to {args.out}" + (" (plus answer-only.csv and answer-level-comparison.csv)" if atlas.get("answer_only") else ""), file=out)
         return 0
     except Inconclusive as e:
         print(f"ERROR [{e.reason}]: {e}", file=out)
