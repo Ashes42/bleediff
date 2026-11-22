@@ -22,7 +22,7 @@ letters in only 17.5% of responses (those lists are not used). The Atlas reports
 is never added to "incorrect" or "competing", and a category label is provider metadata, not a finding about the prompt. `invalid` (prose, `**B**`, wrong letters) and `empty` (for example a reply that spent all of
 `max_tokens` on thinking) are non-answers too.
 
-**Secondary diagnostics are separate and labelled.** Lenient readings, for example rule S1 (the last non-empty line is one letter) or unwrapping `**B**`, are never mixed into the strict columns. They were defined after
+**Secondary diagnostics are separate and labelled.** Lenient readings, for example rule FLR-v1 (Final-Line Recovery: the last non-empty line is one letter) or unwrapping `**B**`, are never mixed into the strict columns. They were defined after
 replies were read, can credit replies the prompt forbade, and live only in analysis notes (`docs/EVIDENCE_RECONCILIATION.md`, `research/reconcile_evidence.py`), not in `bleediff anthropic --replay` output.
 
 ## 3. Live runs and the budget
@@ -39,7 +39,7 @@ Keys come only from `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, `GEMINI_API_KEY`; the
 plus 64, at the input price, plus an output reserve at the output price) must fit under the remaining budget: the reserve is `max_tokens` (Anthropic, a hard cap on thinking plus text),
 `max_completion_tokens` (OpenAI, includes reasoning) or `maxOutputTokens` plus a thinking allowance (Gemini), raised to twice the largest output seen so far. Afterwards the real usage is charged; missing or inconsistent usage is charged at the
 worst-case bound; a response costing more than its admitted bound stops the run (`COST_BOUND_EXCEEDED`). Not modelled: cache discounts and surcharges, price tiers (for example Haiku 5.5 prompts over 100,000 tokens), later
-price changes, taxes. Failed attempts that were retried and then succeeded are not charged in the estimate (the provider may have billed them). Treat the final figure as an estimate; check the provider's dashboard for billing.
+price changes, taxes. **Retries are accounted conservatively:** a retry is sent only if one more full worst-case attempt still fits under the remaining estimate (otherwise the run stops with `BUDGET_EXHAUSTED`), and every failed attempt that may have been processed (a network error or an HTTP 5xx, including 529) is charged at the worst-case bound, whether or not a later attempt succeeds. Rate limits (429) and other 4xx responses are not charged. The record shows `billable_attempts` and the cost basis. This still bounds an estimate, **not a guaranteed billing limit**: check the provider's dashboard for what you were actually billed.
 `--max-retries` (default 2, at most 5) bounds retries; quota/billing errors are never retried.
 
 **Claude settings.** Claude 5.x thinks adaptively and `max_tokens` caps thinking plus text; a tiny cap yields an empty non-answer. Use `--max-output-tokens 1024` and, to limit thinking, `--effort low`. `--thinking`,

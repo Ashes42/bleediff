@@ -17,7 +17,8 @@ request must fit under the remaining cap:
 where the output reserve is the provider's bound on billed output tokens (OpenAI: ``max_completion_tokens``, which includes reasoning tokens; Anthropic: ``max_tokens``, a hard cap on thinking plus text; Gemini: ``maxOutputTokens``
 plus a thinking allowance, the explicit thinking budget or, when none is set, another ``maxOutputTokens``), raised to twice the largest output count observed so far.
 After a response the cost is computed from the reported usage (candidate + thinking tokens, and any tokens visible only in the total, at the output price). Missing or
-inconsistent usage is charged at ``worst`` and flagged; a response whose cost exceeds the bound it was admitted under stops the run (COST_BOUND_EXCEEDED). Retries are bounded.
+inconsistent usage is charged at ``worst`` and flagged; a response whose cost exceeds the bound it was admitted under stops the run (COST_BOUND_EXCEEDED). Retries are bounded and budget-admitted: a retry is sent only if one more full worst-case attempt fits under the remaining cap, and every failed
+attempt that may have been billed (transport error, HTTP 5xx) is charged at ``worst``; 429 and other 4xx responses are not. None of this is a guarantee about the provider's bill.
 """
 
 from __future__ import annotations
@@ -62,6 +63,7 @@ class HostedError(Inconclusive):
     def __init__(self, message: str, *, reason: str | None = None, http_status: int | None = None, transient: bool = False, key: str | None = None):
         super().__init__(redact(message, key), reason=reason)
         self.http_status, self.transient = http_status, transient
+        self.billable_attempts = 0           # attempts of this request that may have been processed (and billed) by the provider; set by generate()
 
 
 class TransportError(Exception):
@@ -152,36 +154,58 @@ def scrub_private_reasoning(obj):
     return out
 
 
-def generate(provider: Provider, post, model: str, body: dict, key: str, *, timeout: float, max_retries: int, sleep) -> dict:
-    """POST one request with bounded retries. Returns {'json', 'attempts', 'http_status'}; raises HostedError (redacted) otherwise."""
+def generate(provider: Provider, post, model: str, body: dict, key: str, *, timeout: float, max_retries: int, sleep, admit=None) -> dict:
+    """POST one request with bounded retries. Returns {'json', 'attempts', 'http_status', 'billable_failures'}; raises HostedError (redacted) otherwise.
+
+    RETRY ACCOUNTING. An attempt that ends in a transport error or an HTTP 5xx (including 529) may have been processed and billed by the provider, so it is *billable*; 429 and other
+    4xx responses are not. ``admit(billable_so_far)`` is called before every RETRY and must return True if one more full worst-case attempt still fits under the remaining estimated
+    budget; if it returns False the retry is not sent and the request fails with BUDGET_EXHAUSTED. Every raised HostedError and the returned dict carry the count of billable
+    attempts (``billable_attempts`` / ``billable_failures``) so the caller can charge each one conservatively."""
     url = provider.endpoint(model)
     data = json.dumps(body).encode("utf-8")
-    attempts = 0
+    attempts = billable = 0
+
+    def fail(message, **kw):
+        e = HostedError(message, key=key, **kw)
+        e.billable_attempts = billable
+        return e
+
+    def may_retry() -> bool:
+        return attempts <= max_retries and (admit is None or admit(billable))
+
     while True:
         attempts += 1
         try:
             status, headers, raw = post(url, data, key, timeout)
         except TransportError as e:
-            if attempts <= max_retries:
+            billable += 1
+            if may_retry():
                 sleep(min(30, 2 ** attempts))
                 continue
-            raise HostedError(f"network error ({e}) after {attempts} attempt(s)", reason="TRANSPORT_ERROR", transient=True, key=key) from None
+            if attempts <= max_retries:
+                raise fail(f"BUDGET_EXHAUSTED: a retry after attempt {attempts} (network error {e}) would exceed the estimated budget", reason="BUDGET_EXHAUSTED") from None
+            raise fail(f"network error ({e}) after {attempts} attempt(s)", reason="TRANSPORT_ERROR", transient=True) from None
         if status == 200:
             try:
-                return {"json": json.loads(raw.decode("utf-8")), "attempts": attempts, "http_status": 200}
+                return {"json": json.loads(raw.decode("utf-8")), "attempts": attempts, "http_status": 200, "billable_failures": billable}
             except ValueError:
-                raise HostedError("the API returned HTTP 200 with a body that is not JSON", reason="BAD_RESPONSE", http_status=200, key=key) from None
+                billable += 1
+                raise fail("the API returned HTTP 200 with a body that is not JSON", reason="BAD_RESPONSE", http_status=200) from None
         msg, code = _server_error(raw, key)
+        if status >= 500:
+            billable += 1
         if status == 429 and code in NON_RETRYABLE_QUOTA_CODES:         # an exhausted quota will not recover by retrying
-            raise HostedError(f"HTTP 429 ({code}): {msg}", reason="QUOTA_EXHAUSTED", http_status=429, key=key)
+            raise fail(f"HTTP 429 ({code}): {msg}", reason="QUOTA_EXHAUSTED", http_status=429)
         if status in TRANSIENT_HTTP:
-            if attempts <= max_retries:
+            if may_retry():
                 ra = (headers or {}).get("Retry-After") or (headers or {}).get("retry-after")
                 sleep(min(60, int(ra)) if isinstance(ra, str) and ra.isdigit() else min(30, 2 ** attempts))
                 continue
-            raise HostedError(f"HTTP {status} after {attempts} attempt(s): {msg}", reason="RATE_LIMITED" if status == 429 else "SERVER_ERROR", http_status=status, transient=True, key=key)
+            if attempts <= max_retries:
+                raise fail(f"BUDGET_EXHAUSTED: a retry after attempt {attempts} (HTTP {status}) would exceed the estimated budget", reason="BUDGET_EXHAUSTED", http_status=status)
+            raise fail(f"HTTP {status} after {attempts} attempt(s): {msg}", reason="RATE_LIMITED" if status == 429 else "SERVER_ERROR", http_status=status, transient=True)
         reason = {401: "AUTH_FAILED", 403: "AUTH_FAILED", 404: "MODEL_NOT_AVAILABLE", 400: "BAD_REQUEST"}.get(status, "HTTP_ERROR")
-        raise HostedError(f"HTTP {status}: {msg}", reason=reason, http_status=status, key=key)
+        raise fail(f"HTTP {status}: {msg}", reason=reason, http_status=status)
 
 
 # --------------------------------------------------------------------------------------
@@ -252,7 +276,7 @@ def run_session(provider: Provider, *, prompts_path: str, model: str, out_dir: s
             "prompts": {"file": "prompts.json", "source_name": prompts["name"], "sha256": prompts["sha256"], "items": len(prompts["items"])}, "passes": passes,
             "budget": {"cap_usd": budget, "price_in_per_million_tokens": price_in_per_m, "price_out_per_million_tokens": price_out_per_m, "kind": "ESTIMATE from your supplied prices and reported usage; not a provider billing total",
                        "rules": "the worst case of the next request must fit under the remaining cap; missing usage is charged at the worst-case bound; a response exceeding its admitted bound stops the run; "
-                                "failed transport/5xx requests are charged at the worst-case bound; 4xx/429 are not charged"},
+                                "every failed transport/5xx attempt (including ones that are retried) is charged at the worst-case bound and a retry must fit under the remaining cap as one more worst-case attempt; 4xx/429 are not charged"},
             "max_retries": max_retries, "bleediff_version": __version__, "code_revision": code_revision(), "started_utc": _now()}
     spent, max_seen_out, consecutive, n_req = 0.0, 0, 0, 0
     status, stop_reason, loop_done = "complete", None, False
@@ -274,13 +298,15 @@ def run_session(provider: Provider, *, prompts_path: str, model: str, out_dir: s
                 t0 = time.time()
                 n_req += 1
                 try:
-                    got = generate(provider, post, model, body, key, timeout=timeout, max_retries=max_retries, sleep=sleep)
+                    got = generate(provider, post, model, body, key, timeout=timeout, max_retries=max_retries, sleep=sleep,
+                                   admit=lambda billable, _s=spent, _w=worst: _s + (billable + 1) * _w <= budget)       # a retry must fit as one more full worst-case attempt
                 except HostedError as e:
-                    charged = worst if e.reason in ("TRANSPORT_ERROR", "SERVER_ERROR", "BAD_RESPONSE") else 0.0
+                    charged = worst * e.billable_attempts                # every attempt that may have been billed is charged at the worst-case bound
                     spent += charged
                     write_new(os.path.join(out_dir, "records", name + ".json"), {**base, "status": "error", "answer": None, "http_status": e.http_status, "attempts": None, "elapsed_s": round(time.time() - t0, 3),
                                                                              "error": {"reason": e.reason, "message": str(e)[:400], "transient": e.transient}, "usage": {}, "usage_complete": False,
-                                                                             "cost_usd": charged, "cost_basis": "worst_case_bound (the request may have been processed)" if charged else "not charged (request rejected)"})
+                                                                             "cost_usd": charged, "billable_attempts": e.billable_attempts,
+                                                                             "cost_basis": f"worst_case_bound x {e.billable_attempts} attempt(s) that may have been processed" if charged else "not charged (request rejected)"})
                     consecutive += 1
                     if not e.transient or consecutive >= MAX_CONSECUTIVE_FAILURES:
                         status, stop_reason = "aborted", f"{e.reason}: {e}"
@@ -292,6 +318,10 @@ def run_session(provider: Provider, *, prompts_path: str, model: str, out_dir: s
                 usage = provider.usage(resp)
                 cost, basis, complete = billed_cost(usage, pin, pout, upper_prompt, reserve)
                 exceeded = complete and cost > worst * (1 + 1e-9) + 1e-12
+                retried = got.get("billable_failures", 0)
+                if retried:                                              # earlier failed attempts of this request may also have been billed: each is charged at the worst-case bound
+                    cost += retried * worst
+                    basis = f"{basis}+{retried}_failed_attempt(s)_at_worst_case_bound"
                 spent += cost
                 max_seen_out = max(max_seen_out, (usage.get("candidatesTokenCount") or 0) + (usage.get("thoughtsTokenCount") or 0), (usage.get("totalTokenCount") or 0) - (usage.get("promptTokenCount") or 0))
                 write_new(os.path.join(out_dir, "records", name + ".json"), {**base, **parsed, "model_version": provider.version_of(resp), "http_status": got["http_status"], "attempts": got["attempts"],

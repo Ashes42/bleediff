@@ -1,4 +1,4 @@
-run,stage,model,cell,condition,pass,prompt_sha256,strict_status,strict_outcome,stop_reason,refusal_category,input_tokens,output_tokens,s1_final_line_outcome,record_id
+run,stage,model,cell,condition,pass,prompt_sha256,strict_status,strict_outcome,stop_reason,refusal_category,input_tokens,output_tokens,flr_v1_outcome,record_id
 v0.10,pilot,claude-haiku-5-5,q1-lab-ph-m1,BASELINE,1,0b7f9d663bb0d45f6612a466bfaebaea29f813e1841e26b0cb4975ccf7b75ad0,ok,correct,end_turn,,228,3,correct,rec-747aa15e8841
 v0.10,pilot,claude-haiku-5-5,q1-lab-ph-m1,BASELINE,2,0b7f9d663bb0d45f6612a466bfaebaea29f813e1841e26b0cb4975ccf7b75ad0,ok,correct,end_turn,,228,3,correct,rec-cc6a79305f8b
 v0.10,pilot,claude-haiku-5-5,q1-lab-ph-m1,COMPETING,1,9d63c20077f29323ede83f5f7730f1179b4038b0148d0c29ac6be150500fdbf1,ok,competing,end_turn,,296,286,competing,rec-3a47e33bf80e

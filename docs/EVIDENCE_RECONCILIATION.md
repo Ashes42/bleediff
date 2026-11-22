@@ -46,8 +46,8 @@ q1-m1 for comparison (Haiku): F0 9/9 refusal (v0.10 2, v0.12 4, v0.13 3); S1 5/5
 Every number above, and every Haiku/Sonnet table in the original reports, uses the strict primary parse stored in each record: a reply counts as an answer only if it is exactly one letter A-D; `stop_reason: refusal` is a
 refusal (a provider decision, not an answer); anything else is `invalid` or `empty`. No record was reclassified.
 
-## Secondary extraction rule S1 (post-hoc, separately labelled)
-v0.11 reported a lenient "Diagnostic B" for Sonnet 5.5. It is documented here as **secondary extraction rule S1**: *take the last non-empty line of the visible reply, strip whitespace and markdown emphasis
+## Secondary extraction rule FLR-v1, Final-Line Recovery (post-hoc, separately labelled)
+v0.11 reported a lenient "Diagnostic B" for Sonnet 5.5. It is documented here as **secondary extraction rule FLR-v1 (Final-Line Recovery)**: *take the last non-empty line of the visible reply, strip whitespace and markdown emphasis
 (`*`, `_`, `` ` ``, `~`), and accept it if it is exactly one letter A-D.* It was defined **after** the Sonnet replies had been read, it credits replies the prompt forbade (prose followed by a letter), and it is never
-mixed into the strict columns (`s1_final_line_outcome` is a separate column in the index). Rule S1 here is unrelated to the filler string named S1 in v0.13-v0.15. Re-derived from the raw records: Sonnet
-BASELINE, PROSE, RANDOM_AB and RANDOM_OTHER 32/32 correct each; COMPETING 2 correct / 30 competing (the v0.11 numbers). It describes the letter Sonnet settled on, not format compliance. Refusals are not reclassified by S1.
+mixed into the strict columns (`flr_v1_outcome` is a separate column in the index). FLR-v1 is unrelated to the experimental filler identifier S1 in v0.13-v0.15. Re-derived from the raw records: Sonnet
+BASELINE, PROSE, RANDOM_AB and RANDOM_OTHER 32/32 correct each; COMPETING 2 correct / 30 competing (the v0.11 numbers). It describes the letter Sonnet settled on, not format compliance. Refusals are not reclassified by FLR-v1.

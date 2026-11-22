@@ -56,8 +56,8 @@ The non-answers are different things:
 - Incorrect answers are only ever the competing letter in COMPETING (there were no other-incorrect answers anywhere).
 
 ### Secondary diagnostic (labelled; not part of the table above)
-Rule S1 (post-hoc): read the last non-empty line of the reply, strip markdown emphasis, accept one letter A-D. It changes only the two Claude columns: Sonnet becomes 32/0/0/0 in the first four rows and 2/30/0/0 in
-COMPETING (the same totals as GPT-4.1 mini); Haiku's `**B**` becomes correct (PROSE 32/0/0/0) and its refusals stay refusals. S1 was defined after the replies were read and credits replies the prompt forbade;
+Rule FLR-v1 (Final-Line Recovery, post-hoc): read the last non-empty line of the reply, strip markdown emphasis, accept one letter A-D. It changes only the two Claude columns: Sonnet becomes 32/0/0/0 in the first four rows and 2/30/0/0 in
+COMPETING (the same totals as GPT-4.1 mini); Haiku's `**B**` becomes correct (PROSE 32/0/0/0) and its refusals stay refusals. FLR-v1 was defined after the replies were read and credits replies the prompt forbade;
 it describes the letter Sonnet settled on, not format compliance. See [`../../docs/EVIDENCE_RECONCILIATION.md`](../../docs/EVIDENCE_RECONCILIATION.md).
 
 ## Contents

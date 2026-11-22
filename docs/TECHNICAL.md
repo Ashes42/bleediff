@@ -411,7 +411,7 @@ classified; no probability, margin, confidence or rank is ever derived. Usage gu
 * `bleediff.hosted-prompts/1` (input dataset: items with cell, question, mapping, condition, prompt, prompt hash, correct and competing letter), `bleediff.hosted-session/1` (`session.json`) and `bleediff.hosted-answer/1`
   (`records/<cell>__<condition>__pass<k>.json`: request parameters without credentials, strict `status` in {ok, invalid, blocked, empty, malformed, error}, `answer`, response, usage, estimated cost).
 * Strict primary parse: a reply is an answer only if it is exactly one of A-D after trimming. Provider refusals are `blocked` and are non-answers, never incorrect answers. Secondary diagnostics (for example the post-hoc
-  "last line is one letter" rule S1) are outside the engine, labelled, and never replace the strict result (`research/reconcile_evidence.py`, `EVIDENCE_RECONCILIATION.md`).
+  "last line is one letter" rule FLR-v1) are outside the engine, labelled, and never replace the strict result (`research/reconcile_evidence.py`, `EVIDENCE_RECONCILIATION.md`).
 * Spending guard: an enforced cap on an ESTIMATE (supplied list prices x reported usage), checked before every request against the worst case of the next request; it is not a provider billing total.
 * Saved responses are scrubbed of opaque thinking signatures and reasoning text (`hosted.scrub_private_reasoning`) before they are written. `--replay` re-validates and re-analyses a saved session offline.
 

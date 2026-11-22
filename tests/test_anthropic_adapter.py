@@ -220,6 +220,61 @@ class TestLiveRunWithMockHttp(unittest.TestCase):
         self.assertEqual(ses["problems"], [])
         self.assertTrue(all(r["status"] == "ok" and r["answer"] == "A" for r in ses["records"]))
 
+    def _worst(self, ds, pin, pout, max_out):
+        first = read_json(ds)["items"][0]["prompt"]
+        return H.prompt_tokens_upper(first) * pin / 1e6 + max_out * pout / 1e6
+
+    def test_failed_billable_attempts_before_a_success_are_charged_at_the_worst_case_bound(self):
+        d = tmp()
+        ds = make_dataset(os.path.join(d, "prompts.json"), mappings=("m1",), conditions=("BASELINE",))
+        worst = self._worst(ds, 1.0, 10.0, 100)
+        res, api, out, _ = run_live(lambda p, n: (529, error_body("overloaded_error", "Overloaded")) if n <= 2 else correct_answerer(p, n), dataset=ds,
+                                    extra={"max_retries": 2, "max_output_tokens": 100})
+        self.assertEqual((res["status"], api.calls), ("complete", 3))
+        rec = read_json(os.path.join(out, "records", "q1-m1__BASELINE__pass1.json"))
+        own = 120 * 1.0 / 1e6 + 1 * 10.0 / 1e6                                         # the successful attempt: 120 input + 1 output tokens
+        self.assertAlmostEqual(rec["cost_usd"], own + 2 * worst, places=9)
+        self.assertIn("2_failed_attempt(s)_at_worst_case_bound", rec["cost_basis"])
+        self.assertAlmostEqual(res["estimated_spend_usd"], own + 2 * worst, places=9)
+        self.assertFalse(rec["cost_exceeded_preflight_bound"])                          # the retry charge never trips the per-response bound check
+
+    def test_a_retry_is_only_sent_if_it_fits_the_remaining_estimated_budget(self):
+        d = tmp()
+        ds = make_dataset(os.path.join(d, "prompts.json"), mappings=("m1",), conditions=("BASELINE",))
+        worst = self._worst(ds, 1.0, 10.0, 100)
+        for transient in ((529, error_body("overloaded_error", "Overloaded")), (500, error_body("api_error", "boom"))):
+            res, api, out, _ = run_live(lambda p, n, t=transient: t, dataset=ds, budget=1.5 * worst, extra={"max_retries": 5, "max_output_tokens": 100})
+            self.assertEqual((res["status"], api.calls, api.sleeps), ("aborted", 1, []), transient[0])       # the first attempt fits; a second full worst case would not
+            self.assertIn("BUDGET_EXHAUSTED", res["stop_reason"])
+            self.assertAlmostEqual(res["estimated_spend_usd"], worst, places=9)
+            self.assertLessEqual(res["estimated_spend_usd"], 1.5 * worst)
+        # with room for exactly two attempts the second is sent and the third is not
+        res, api, out, _ = run_live(lambda p, n: (503, error_body("api_error", "down")), dataset=ds, budget=2.5 * worst, extra={"max_retries": 5, "max_output_tokens": 100})
+        self.assertEqual((res["status"], api.calls), ("aborted", 2))
+        self.assertAlmostEqual(res["estimated_spend_usd"], 2 * worst, places=9)
+        self.assertLessEqual(api.calls * worst, 2.5 * worst)                            # every outbound attempt was admitted against the remaining estimate
+
+    def test_transport_errors_are_billable_attempts_but_rate_limits_are_not(self):
+        d = tmp()
+        ds = make_dataset(os.path.join(d, "prompts.json"), mappings=("m1",), conditions=("BASELINE",))
+        worst = self._worst(ds, 1.0, 10.0, 100)
+        res, api, out, _ = run_live(lambda p, n: (200, H.TransportError("URLError")) if n <= 1 else correct_answerer(p, n), dataset=ds, extra={"max_retries": 2, "max_output_tokens": 100})
+        self.assertAlmostEqual(res["estimated_spend_usd"], 120e-6 + 10e-6 + worst, places=9)
+        res, api, out, _ = run_live(lambda p, n: (429, error_body("rate_limit_error", "slow")) if n <= 2 else correct_answerer(p, n), dataset=ds, extra={"max_retries": 2, "max_output_tokens": 100})
+        self.assertEqual((res["status"], api.calls), ("complete", 3))
+        self.assertAlmostEqual(res["estimated_spend_usd"], 120e-6 + 10e-6, places=9)  # 429 is not billable: nothing extra
+        rec = read_json(os.path.join(out, "records", "q1-m1__BASELINE__pass1.json"))
+        self.assertNotIn("failed_attempt", rec["cost_basis"])
+
+    def test_exhausted_retries_charge_every_billable_attempt_once(self):
+        d = tmp()
+        ds = make_dataset(os.path.join(d, "prompts.json"), mappings=("m1",), conditions=("BASELINE",))
+        worst = self._worst(ds, 1.0, 10.0, 100)
+        res, api, out, _ = run_live(lambda p, n: (502, error_body("api_error", "bad gateway")), dataset=ds, extra={"max_retries": 2, "max_output_tokens": 100})
+        rec = read_json(os.path.join(out, "records", "q1-m1__BASELINE__pass1.json"))
+        self.assertEqual((rec["status"], rec["billable_attempts"], api.calls), ("error", 3, 3))
+        self.assertAlmostEqual(rec["cost_usd"], 3 * worst, places=9)
+
     def test_http_errors_follow_the_anthropic_error_shapes(self):
         cases = ((401, "authentication_error", "AUTH_FAILED"), (403, "permission_error", "AUTH_FAILED"), (404, "not_found_error", "MODEL_NOT_AVAILABLE"),
                  (400, "invalid_request_error", "BAD_REQUEST"), (413, "request_too_large", "HTTP_ERROR"))
