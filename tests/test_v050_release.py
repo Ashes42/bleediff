@@ -17,10 +17,9 @@ import unittest
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
-sys.path.insert(0, os.path.join(ROOT, "research"))
 
 import bleediff  # noqa: E402
-import reconcile_evidence as RE  # noqa: E402
+from research import reconcile_evidence as RE  # noqa: E402
 
 CMP = os.path.join(ROOT, "examples", "hosted-comparison")
 INDEX = os.path.join(ROOT, "docs", "evidence", "raw-index-v0.10-v0.15")
