@@ -7,3 +7,4 @@ fixtures/config-audit-robustness/** -text
 research/data/** -text
 examples/atlas/** -text
 examples/four-mapping/** -text
+examples/gemini-answer-only/** -text

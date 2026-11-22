@@ -1,0 +1,39 @@
+{
+ "schema": "bleediff.hosted-session/1",
+ "measurement_type": "ANSWER_ONLY",
+ "provider": "gemini",
+ "model": "gemini-3.8-flash",
+ "endpoint": "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent",
+ "generation_config": {
+  "temperature": 1,
+  "topP": 1,
+  "maxOutputTokens": 512,
+  "candidateCount": 1,
+  "seed": 0,
+  "thinkingConfig": {
+   "thinkingLevel": "low"
+  }
+ },
+ "logprobs_requested": false,
+ "logprobs_note": "never requested: every tested Gemini model rejects responseLogprobs, so this session is ANSWER_ONLY",
+ "prompts": {
+  "file": "../prompts.json",
+  "source_name": "frozen-requests.json (v0.7 pilot)",
+  "sha256": "a8144a5a220dc11ef24f2a35e6822452a9c83d629d927494430fbddfa9ebeb35",
+  "items": 80
+ },
+ "passes": 2,
+ "budget": {
+  "cap_usd": 2.0,
+  "price_in_per_million_tokens": 0.75,
+  "price_out_per_million_tokens": 3.75,
+  "rules": "v0.8 pilot: shared $2 cap across both models, checked before each request"
+ },
+ "max_retries": 3,
+ "bleediff_version": "0.4.0 (pilot scripts; records converted to the bleediff.hosted-answer/1 format)",
+ "status": "complete",
+ "stop_reason": null,
+ "requests_attempted": 160,
+ "estimated_spend_usd": 0.08984699999999995,
+ "converted_from_pilot": "runs/v0.8-gemini-pilot (local, git-ignored); only the records, request configuration and usage were kept"
+}

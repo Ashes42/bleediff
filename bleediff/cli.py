@@ -1,4 +1,4 @@
-"""CLI: calibrate | bleed | bounce | diff | inspect (the frozen research lexicon) and track (v0.3 decision-margin tracker).
+"""CLI: calibrate | bleed | bounce | diff | inspect (the frozen research lexicon), track (decision-margin tracker), atlas and gemini (answer-only hosted runs).
 
 Exit codes: 0 = PASS / ok, 1 = FAIL NO_EXPOSURE (or bleed preview mismatch), 2 = INCONCLUSIVE.
 """
@@ -51,6 +51,7 @@ from .track import DEFAULT_FIXTURES as TRACK_FIXTURES
 from .track import DEFAULT_SCENARIO as TRACK_SCENARIO
 from .track import cmd_track
 from .atlas import cmd_atlas
+from .gemini import THINKING_LEVELS, cmd_gemini
 
 DEFAULT_SERVER = "http://127.0.0.1:8080"
 DEFAULT_FIXTURES = os.path.join("fixtures", "contexts.json")
@@ -435,6 +436,27 @@ def build_parser() -> argparse.ArgumentParser:
     t.add_argument("--n-probs", type=int, default=DEFAULT_N_PROBS)
     t.add_argument("--timeout", type=float, default=120.0)
     t.set_defaults(fn=cmd_track)
+
+    g = sub.add_parser("gemini", help="ANSWER-ONLY measurements on the Gemini API (hosted models that expose no A-D probabilities), or --replay saved "
+                                      "evidence offline. Never produces probabilities, margins or confidence.")
+    g.add_argument("--replay", default=None, metavar="SESSION_DIR", help="offline: re-read and re-analyse a saved session (no key, no network); the v0.8 pilot layout also needs --prompts")
+    g.add_argument("--prompts", default=None, help="frozen prompt dataset (JSON, schema bleediff.hosted-prompts/1 or the v0.7 pilot's frozen-requests file)")
+    g.add_argument("--model", default=None, help="Gemini model id, e.g. gemini-3.8-flash (live runs)")
+    g.add_argument("--out", default=None, help="NEW session directory for a live run (never overwritten)")
+    g.add_argument("--passes", type=int, default=1, help="repeat every prompt this many times (default 1; repeats are replicate checks, not independent samples)")
+    g.add_argument("--budget", type=float, default=None, help="REQUIRED for live runs: maximum estimated spend in USD; the run stops before a request could exceed it")
+    g.add_argument("--price-in", type=float, default=None, help="REQUIRED for live runs: input price in USD per 1M tokens (list price; there are no built-in prices)")
+    g.add_argument("--price-out", type=float, default=None, help="REQUIRED for live runs: output price in USD per 1M tokens (thinking tokens are billed as output)")
+    g.add_argument("--max-output-tokens", type=int, default=512)
+    g.add_argument("--temperature", type=float, default=1.0)
+    g.add_argument("--top-p", type=float, default=1.0)
+    g.add_argument("--seed", type=int, default=0)
+    g.add_argument("--thinking-level", choices=list(THINKING_LEVELS), default=None, help="only for models that support it (a rejected value is reported, never retried)")
+    g.add_argument("--thinking-budget", type=int, default=None, help="thinking token budget for models that support it (not with --thinking-level)")
+    g.add_argument("--max-retries", type=int, default=2, help="retries per request for rate limits and transient errors (default 2, at most 5)")
+    g.add_argument("--timeout", type=float, default=120.0)
+    g.add_argument("--json-out", default=None, help="also write the analysis to a NEW json file")
+    g.set_defaults(fn=cmd_gemini)
 
     a = sub.add_parser("atlas", help="influence atlas: aggregate, compare and rank EXISTING batch sessions across tasks and models "
                                      "(reads saved results; never queries a model)")

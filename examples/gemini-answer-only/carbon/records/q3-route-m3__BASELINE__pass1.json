@@ -1,0 +1,88 @@
+{
+ "schema": "bleediff.hosted-answer/1",
+ "measurement_type": "ANSWER_ONLY",
+ "provider": "gemini",
+ "name": "q3-route-m3__BASELINE__pass1",
+ "cell": "q3-route-m3",
+ "question": "q3-route",
+ "mapping": "m3",
+ "condition": "BASELINE",
+ "pass": 1,
+ "prompt_sha256": "ce11c48e70da301cbb6de4b8afa12fd4dddca2b9edd4a84ba77cc12370ad08c0",
+ "fragment_sha256": null,
+ "correct_letter": "C",
+ "competing_letter": "D",
+ "model": "gemini-4-carbon",
+ "request": {
+  "endpoint": "https://generativelanguage.googleapis.com/v1beta/models/gemini-4-carbon:generateContent",
+  "generationConfig": {
+   "temperature": 1,
+   "topP": 1,
+   "maxOutputTokens": 512,
+   "candidateCount": 1,
+   "seed": 0,
+   "thinkingConfig": {
+    "thinkingLevel": "low"
+   }
+  },
+  "contents_sha256": "2bd3eb80535e4363bfb471212f234945ecee1e00c5b70fd7eaf00e439fc81141",
+  "credentials_recorded": false
+ },
+ "status": "ok",
+ "answer": "C",
+ "text": "C",
+ "finish_reason": "STOP",
+ "block_reason": null,
+ "model_version": "gemini-4-carbon",
+ "http_status": 200,
+ "attempts": 1,
+ "elapsed_s": 8.457,
+ "usage": {
+  "promptTokenCount": 167,
+  "candidatesTokenCount": 5,
+  "thoughtsTokenCount": null,
+  "totalTokenCount": 172
+ },
+ "usage_complete": true,
+ "cost_usd": 0.000384,
+ "cost_basis": "recorded by the v0.8 pilot (candidate + thinking tokens at list prices)",
+ "response": {
+  "candidates": [
+   {
+    "content": {
+     "parts": [
+      {
+       "text": "C",
+       "thoughtSignature": "EpUBCpIBAWkUfRPLSc1gzI2YPUJHzL95sRuqO0LW4LpM2LoAN/zdefxg8xOPmclcHp8whXYTGQbWVpnvkccOXi/SYurLEOSZRxRkr+XruTGRXxVeZ+Dp93PqdZk6jHmVa7sHgO9EZg2NX+K0Of8YICx1ciXtM/rx27qJxqn3PWBvibbrHW+8ht2+5IplIJqmU9ejBLxK+DQ="
+      }
+     ],
+     "role": "model"
+    },
+    "finishReason": "STOP",
+    "index": 0
+   }
+  ],
+  "usageMetadata": {
+   "promptTokenCount": 167,
+   "candidatesTokenCount": 5,
+   "totalTokenCount": 172,
+   "promptTokensDetails": [
+    {
+     "modality": "TEXT",
+     "tokenCount": 167
+    }
+   ],
+   "candidatesTokensDetails": [
+    {
+     "modality": "TEXT",
+     "tokenCount": 5
+    }
+   ],
+   "serviceTier": "standard"
+  },
+  "modelVersion": "gemini-4-carbon",
+  "responseId": "li4Ca6udKd6HjrEP0932OQ"
+ },
+ "error": null,
+ "converted_from_pilot": true
+}

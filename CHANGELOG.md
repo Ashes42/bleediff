@@ -3,6 +3,21 @@
 All notable changes. Versions identify the software that wrote a file, not an experiment or an algorithm; protocols and
 control algorithms have their own identifiers (see `docs/TECHNICAL.md`).
 
+## Next release candidates - hosted answer-only runner (feature branch, not yet released)
+
+### Added
+- `bleediff gemini` (`bleediff/gemini.py`, `bleediff/answers.py`): ANSWER_ONLY measurements on the Gemini `generateContent` API with frozen prompt datasets, A-D answer
+  parsing, answer-letter permutations (correct versus competing semantic answers), repeated passes, response validation, usage and cost recording, an enforced
+  `--budget` with explicit list prices (fail closed on missing usage), bounded retries, request/response provenance, and `--replay` of saved evidence offline. The key is
+  read from `GEMINI_API_KEY` only and is redacted from every message and record. No probabilities, margins or confidence are ever derived from answers.
+- Atlas: an optional `answer_only_sessions` manifest list; `answer_only` block in `atlas.json`, `answer-only.csv`, `answer-level-comparison.csv` and separate report
+  sections. Local cells are now labelled `measurement_type: DIRECT_PROBABILITY`; hosted answer-only sessions are `ANSWER_ONLY` and never enter margins, shifts, ranks or paired differences.
+- `examples/gemini-answer-only/`: the v0.8 Gemini pilot (2 models x 80 prompts x 2 passes) as a sanitized, hashed bundle that replays offline.
+- Tests: `tests/test_gemini_adapter.py` (mock HTTP, secrets, budget, parsing, replay, Atlas separation).
+
+### Unchanged
+- All direct-probability calculations, the research fold, published releases and tags.
+
 ## [0.4.0] - semantic answer roles and the four-mapping evidence bundle (exploratory)
 
 ### Added
