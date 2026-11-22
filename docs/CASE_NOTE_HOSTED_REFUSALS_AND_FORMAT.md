@@ -15,8 +15,8 @@ Follow-ups showed the behaviour depends on the exact string and the surrounding 
 
 ## 2. Sonnet: strict-format failures
 Sonnet 5.5 refused nothing but broke "reply with exactly one letter" in **60 of 160 requests** (all 32 COMPETING, 16 RANDOM_OTHER, 12 RANDOM_AB): visible prose that ends in a letter. Under the strict parse these are
-`invalid` non-answers, so Sonnet's strict COMPETING row has no answers. The separately labelled secondary rule S1 (last line is one letter; see the reconciliation note) puts Sonnet at 2 correct / 30 competing, the same totals as
-GPT-4.1 mini, and 32/32 correct in the other four conditions. S1 was defined after reading the replies and credits a reply the prompt forbade; the strict table remains the primary result.
+`invalid` non-answers, so Sonnet's strict COMPETING row has no answers. The separately labelled secondary rule FLR-v1 (Final-Line Recovery; last line is one letter; see the reconciliation note) puts Sonnet at 2 correct / 30 competing, the same totals as
+GPT-4.1 mini, and 32/32 correct in the other four conditions. FLR-v1 was defined after reading the replies and credits a reply the prompt forbade; the strict table remains the primary result.
 
 ## 3. The single-swap q2 contrast (v0.14)
 In question q2-m1, the unchanged string S1 (`ZVXX RXWK ...`) answered A in 7 of 7 raw requests, while S1g1, S1 with two adjacent letters exchanged (`ZXVX RXWK ...`), refused in 4 of 4 (one stage-1 draw plus three confirmation

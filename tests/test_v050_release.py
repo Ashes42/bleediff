@@ -1,5 +1,5 @@
 """v0.5.0 release checks, all offline: version and documentation, the hosted comparison bundle (replay, checksums, public-safety scan), the reconciled evidence index, the
-secondary extraction rule S1, and the duplicate-record guard of research/reconcile_evidence.py. No network, key or model."""
+secondary extraction rule FLR-v1, and the duplicate-record guard of research/reconcile_evidence.py. No network, key or model."""
 
 from __future__ import annotations
 
@@ -49,6 +49,24 @@ class TestVersionAndDocs(unittest.TestCase):
             for bad in ("discovered a vulnerability", "we found a vulnerability", "jailbreak works", "bypasses the safeguard", "safety bypass"):
                 self.assertNotIn(bad, read(name).lower(), (name, bad))
         self.assertIn("**not** a jailbreak, an attack technique or a security vulnerability", read("docs", "CASE_NOTE_HOSTED_REFUSALS_AND_FORMAT.md"))
+
+    def test_extraction_rule_is_named_flr_v1_and_s1_stays_the_filler_identifier(self):
+        for name in ("README.md", "RELEASE_NOTES_v0.5.0.md", "CHANGELOG.md", os.path.join("docs", "HOSTED_MODELS.md"), os.path.join("docs", "EVIDENCE_RECONCILIATION.md"),
+                     os.path.join("docs", "CASE_NOTE_HOSTED_REFUSALS_AND_FORMAT.md"), os.path.join("examples", "hosted-comparison", "README.md")):
+            text = read(name)
+            for stale in ("rule S1", "Rule S1", "rule (S1)", "s1_final_line"):
+                self.assertNotIn(stale, text, (name, stale))
+        t = read("docs", "EVIDENCE_RECONCILIATION.md")
+        self.assertIn("FLR-v1", t)
+        self.assertIn("Final-Line Recovery", t)
+        self.assertIn("experimental filler identifier S1", t)
+        self.assertIn("flr_v1_outcome", open(os.path.join(INDEX, "raw-record-index.csv"), encoding="utf-8").readline())
+
+    def test_budget_documentation_does_not_promise_a_billing_limit(self):
+        t = " ".join((read("README.md") + read("docs", "HOSTED_MODELS.md")).split())
+        self.assertIn("not a guaranteed billing limit", t)
+        self.assertIn("one more full worst-case attempt", t)
+        self.assertNotIn("guaranteed to cap your bill", t)
 
     def test_each_provider_has_usage_documentation(self):
         t = read("README.md") + read("docs", "HOSTED_MODELS.md")
@@ -110,20 +128,20 @@ class TestEvidenceIndex(unittest.TestCase):
         refusals = [r for r in self.rows if r["strict_outcome"] == "refusal"]
         self.assertEqual(len(refusals), 82)
         self.assertEqual({(r["stop_reason"], r["refusal_category"], r["output_tokens"]) for r in refusals}, {("refusal", "bio", "0")})
-        sonnet = collections.Counter((r["strict_outcome"], r["s1_final_line_outcome"]) for r in self.rows if "sonnet" in r["model"] and r["run"] == "v0.11" and r["stage"] == "pilot")
+        sonnet = collections.Counter((r["strict_outcome"], r["flr_v1_outcome"]) for r in self.rows if "sonnet" in r["model"] and r["run"] == "v0.11" and r["stage"] == "pilot")
         self.assertEqual(dict(sonnet), {("correct", "correct"): 100, ("invalid", "competing"): 30, ("invalid", "correct"): 30})
         invalid = sum(v for (a, _), v in sonnet.items() if a == "invalid")
-        self.assertEqual(invalid, 60)                              # the strict status is never rewritten by S1
+        self.assertEqual(invalid, 60)                              # the strict status is never rewritten by FLR-v1
 
 
 class TestReconcileTool(unittest.TestCase):
-    def test_secondary_rule_s1(self):
+    def test_secondary_rule_flr_v1(self):
         r = lambda t: {"content": [{"type": "text", "text": t}]}
-        self.assertEqual(RE.s1_final_line_letter(r("The evidence says so.\n\n**B**")), "B")
-        self.assertEqual(RE.s1_final_line_letter(r("reasoning\nB")), "B")
-        self.assertIsNone(RE.s1_final_line_letter(r("B is right because\nit holds.")))
-        self.assertIsNone(RE.s1_final_line_letter(r("")))
-        self.assertIsNone(RE.s1_final_line_letter({"content": [{"type": "thinking", "thinking": "B"}]}))   # thinking is never visible text
+        self.assertEqual(RE.flr_v1_letter(r("The evidence says so.\n\n**B**")), "B")
+        self.assertEqual(RE.flr_v1_letter(r("reasoning\nB")), "B")
+        self.assertIsNone(RE.flr_v1_letter(r("B is right because\nit holds.")))
+        self.assertIsNone(RE.flr_v1_letter(r("")))
+        self.assertIsNone(RE.flr_v1_letter({"content": [{"type": "thinking", "thinking": "B"}]}))   # thinking is never visible text
 
     def test_duplicate_message_ids_are_refused(self):
         with tempfile.TemporaryDirectory() as d:

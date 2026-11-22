@@ -4,14 +4,14 @@ Usage: python research/reconcile_evidence.py RUNS_DIR OUT_DIR
 
 Reads only ``bleediff.hosted-answer/1`` records (``<run>/**/records/*.json``). Writes (never overwrites):
   OUT_DIR/raw-record-index.csv     one row per unique raw request record: run, model, cell, condition label, prompt hash, STRICT status/outcome, refusal category, tokens,
-                                   the secondary final-line extraction (S1, a separately labelled post-hoc rule), and a pseudonymous record id (provider message ids are NOT written)
+                                   the secondary final-line extraction (FLR-v1, a separately labelled post-hoc rule), and a pseudonymous record id (provider message ids are NOT written)
   OUT_DIR/reconciliation.json      totals per run and per (model, cell, prompt hash)
 
 Strict classification is the one stored in each record by the original parser (exact single letter A-D; provider refusal = blocked; anything else invalid/empty). It is never changed here.
 
-SECONDARY EXTRACTION RULE S1 (post-hoc, diagnostic only): take the last non-empty line of the visible text, strip surrounding whitespace and markdown emphasis characters, and accept it if it is
-exactly one letter A-D. It was defined after the Sonnet 5.5 replies had been read (v0.11 "Diagnostic B"), credits replies the prompt forbids, and is reported in its own column. This S1 is
-unrelated to the filler string called S1 in v0.13-v0.15.
+SECONDARY EXTRACTION RULE FLR-v1, Final-Line Recovery (post-hoc, diagnostic only): take the last non-empty line of the visible text, strip surrounding whitespace and markdown emphasis characters, and accept it if it is
+exactly one letter A-D. It was defined after the Sonnet 5.5 replies had been read (v0.11 "Diagnostic B"), credits replies the prompt forbids, and is reported in its own column. FLR-v1 is
+unrelated to the experimental filler identifier S1 used in v0.13-v0.15.
 """
 
 from __future__ import annotations
@@ -35,8 +35,8 @@ def visible_text(response) -> str:
     return "".join(b.get("text", "") for b in content if isinstance(b, dict) and b.get("type") == "text" and isinstance(b.get("text"), str))
 
 
-def s1_final_line_letter(response):
-    """Secondary extraction rule S1 (post-hoc): last non-empty line is exactly one letter A-D once markdown emphasis is stripped. None otherwise."""
+def flr_v1_letter(response):
+    """Secondary extraction rule FLR-v1 (post-hoc): last non-empty line is exactly one letter A-D once markdown emphasis is stripped. None otherwise."""
     lines = [ln.strip() for ln in visible_text(response).splitlines() if ln.strip()]
     if not lines:
         return None
@@ -54,10 +54,10 @@ def outcome(rec: dict) -> str:
     return {"invalid": "invalid", "empty": "empty"}.get(rec.get("status"), "malformed")
 
 
-def s1_outcome(rec: dict) -> str:
+def flr_v1_outcome_of(rec: dict) -> str:
     if outcome(rec) == "refusal":
         return "refusal"
-    a = s1_final_line_letter(rec.get("response"))
+    a = flr_v1_letter(rec.get("response"))
     return "none" if a is None else "correct" if a == rec.get("correct_letter") else "competing" if a == rec.get("competing_letter") else "other_incorrect"
 
 
@@ -74,7 +74,7 @@ def load(runs_dir: str):
         rows.append({"run": rel.split("/")[0].split("-")[0], "stage": rel.split("/")[1] if rel.count("/") > 2 else "", "model": rec.get("model"), "cell": rec.get("cell"),
                      "condition": rec.get("condition"), "pass": rec.get("pass"), "prompt_sha256": rec.get("prompt_sha256"), "strict_status": rec.get("status"), "strict_outcome": outcome(rec),
                      "stop_reason": resp.get("stop_reason"), "refusal_category": (resp.get("stop_details") or {}).get("category"), "input_tokens": usage.get("promptTokenCount"),
-                     "output_tokens": (usage.get("candidatesTokenCount") or 0) + (usage.get("thoughtsTokenCount") or 0), "s1_final_line_outcome": s1_outcome(rec),
+                     "output_tokens": (usage.get("candidatesTokenCount") or 0) + (usage.get("thoughtsTokenCount") or 0), "flr_v1_outcome": flr_v1_outcome_of(rec),
                      "record_id": "rec-" + hashlib.sha256(rid.encode()).hexdigest()[:12], "_rid": rid})
     return rows
 
@@ -92,7 +92,7 @@ def main(argv) -> int:
         return 1
     os.makedirs(out_dir, exist_ok=False)
     cols = ["run", "stage", "model", "cell", "condition", "pass", "prompt_sha256", "strict_status", "strict_outcome", "stop_reason", "refusal_category", "input_tokens", "output_tokens",
-            "s1_final_line_outcome", "record_id"]
+            "flr_v1_outcome", "record_id"]
     with open(os.path.join(out_dir, "raw-record-index.csv"), "x", encoding="utf-8", newline="") as fh:
         w = csv.DictWriter(fh, fieldnames=cols, extrasaction="ignore", lineterminator="\n")
         w.writeheader()

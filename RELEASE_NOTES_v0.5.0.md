@@ -14,7 +14,7 @@ a jailbreak or a vulnerability.
 * **`examples/hosted-comparison/`**: Claude Haiku 5.5, Claude Sonnet 5.5, Gemini 3.8 Flash, Gemini 4 Carbon and GPT-4.1 mini on the same 80 frozen prompts x 2 passes, a results table, an Atlas manifest and
   `verify_comparison.py` (replays everything and scans the bundle for secrets, signatures, reasoning text and local identifiers).
 * **Evidence notes**: `docs/HOSTED_MODELS.md` (usage guide), `docs/EVIDENCE_RECONCILIATION.md` (522 unique raw request records reconciled; strict classifications preserved; the post-hoc final-line rule documented as a
-  separate secondary rule S1), `docs/CASE_NOTE_HOSTED_REFUSALS_AND_FORMAT.md`, and a per-request index in `docs/evidence/`.
+  separate secondary rule FLR-v1 (Final-Line Recovery)), `docs/CASE_NOTE_HOSTED_REFUSALS_AND_FORMAT.md`, and a per-request index in `docs/evidence/`.
 
 ## What the comparison shows (strict classification; 32 requests per condition)
 Under COMPETING evidence the models mostly followed the competing letter (correct/competing: Haiku 9/23, Carbon 4/28, GPT-4.1 mini 2/30, Flash 0/32; Sonnet had no valid answers). The more interesting differences are in
@@ -25,6 +25,7 @@ letter). A single-swap contrast in one question context did not reproduce in a s
 * Live runs and the committed Gemini example records no longer hold opaque thinking signatures (`thoughtSignature` values in 320 example records are replaced by placeholders; provider response ids in the Gemini and OpenAI
   example records are pseudonymized; answers, statuses and usage are unchanged).
 * `bleediff anthropic --help` shows an Anthropic model id as the example.
+* Estimated-budget accounting under retries: each retry must fit under the remaining estimate as one more worst-case attempt, and every failed attempt that may have been billed (network error, HTTP 5xx) is charged at the worst-case bound. Previously retries were not admitted against the budget and failed-then-retried attempts were not charged. The cap is still an estimate, not a guaranteed billing limit.
 
 ## Compatibility
 Additive. The v0.2.0 fold, `track`, `track --arms` and Atlas results for local sessions are unchanged; Atlas cells now carry `measurement_type: DIRECT_PROBABILITY`. v0.4.0 sessions and manifests load unchanged. The atlas
