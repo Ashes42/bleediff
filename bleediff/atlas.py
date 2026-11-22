@@ -30,6 +30,12 @@ INPUT MANIFEST (JSON, schema ``bleediff.atlas-input/1``; paths relative to the m
                "candidates": {"B_CLAIM": "claim", "TOPIC": "topic", "OFF": "offtopic", "NEUT": "neutral", "ID": "id"},
                "evidence": [{"role": "candidate_file|fixtures|other", "path": "arms/task-a.arms.json", "sha256": "optional"}],
                "replicate_of": "optional id of a primary session this one repeats (checked for bit-identity, not counted)"}]}
+
+OPTIONAL HOSTED ANSWER-ONLY SESSIONS (``bleediff gemini`` / ``bleediff openai`` sessions, or the saved pilots; see bleediff/answers.py)
+ "answer_only_sessions": [{"id": "optional-unique-id", "session_dir": "gpt41mini", "model": {"id": "gpt-4.1-mini", "name": "readable"}, "prompts": "optional path (legacy layouts)"}]
+They are labelled ANSWER_ONLY, reported in separate sections and CSVs (answer-only.csv, answer-level-comparison.csv) and NEVER enter the margin, shift, rank or paired-difference
+results, which stay DIRECT_PROBABILITY (every local cell carries measurement_type). No probability margin or leaderboard is computed for answer-only data, and observed answer
+counts are never compared with internal probabilities.
 """
 
 from __future__ import annotations

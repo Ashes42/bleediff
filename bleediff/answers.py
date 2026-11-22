@@ -1,8 +1,8 @@
 """Answer-only (``ANSWER_ONLY``) hosted measurements: frozen prompt datasets, response parsing, saved-session validation and offline analysis.
 
 WHAT THIS MODULE IS FOR
-Some hosted models return an answer but expose no log-probabilities for the four choices (the tested Gemini API configuration:
-every tested model rejects ``responseLogprobs``). Bleediff's direct-probability measurements (``DIRECT_PROBABILITY``: normalised A-D
+Some hosted models return an answer but expose no usable log-probabilities for the four choices (the tested Gemini API configuration: every tested
+model rejects ``responseLogprobs``; the tested OpenAI model returned only a top-20 list that held all four letters in 17.5% of responses). Bleediff's direct-probability measurements (``DIRECT_PROBABILITY``: normalised A-D
 probabilities, log-odds margins, coverage) cannot be produced for them, and nothing here pretends otherwise:
 
 * no probabilities, no log-odds margins, no residuals, no "confidence" and no leaderboard are ever computed from answers;
@@ -155,6 +155,78 @@ def usage_from(response) -> dict:
     return {k: _int(u.get(k)) for k in ("promptTokenCount", "candidatesTokenCount", "thoughtsTokenCount", "totalTokenCount")}
 
 
+def parse_openai_answer(response) -> dict:
+    """Interpret an OpenAI Chat Completions response (same statuses as ``parse_answer``). A refusal or a ``content_filter`` finish is 'blocked'.
+    Any ``logprobs`` in the response are ignored here: this analysis reads the returned message only."""
+    out = {"status": "malformed", "answer": None, "text": None, "finish_reason": None, "block_reason": None}
+    if not isinstance(response, dict):
+        return out
+    choices = response.get("choices")
+    if choices is None:                       # an error body or anything else without a 'choices' member
+        return out
+    if choices == []:
+        out["status"] = "empty"
+        return out
+    if not isinstance(choices, list) or not isinstance(choices[0], dict):
+        return out
+    ch = choices[0]
+    fr = ch.get("finish_reason")
+    out["finish_reason"] = str(fr)[:40] if fr is not None else None
+    msg = ch.get("message")
+    if not isinstance(msg, dict):
+        return out
+    content, refusal = msg.get("content"), msg.get("refusal")
+    if content is not None and not isinstance(content, str):
+        return out
+    out["text"] = (content or "")[:200]
+    if refusal:
+        out["block_reason"] = "refusal"
+    elif out["finish_reason"] == "content_filter":
+        out["block_reason"] = "content_filter"
+    if out["block_reason"]:
+        out["status"] = "blocked"
+        return out
+    s = (content or "").strip()
+    if not s:
+        out["status"] = "empty"
+    elif s in CHOICES:
+        out["status"], out["answer"] = "ok", s
+    else:
+        out["status"] = "invalid"
+    return out
+
+
+def usage_from_openai(response) -> dict:
+    """OpenAI usage mapped onto the shared four keys. ``completion_tokens`` already INCLUDES reasoning tokens, so the visible count is the difference;
+    candidate + thinking therefore always equals the billed completion tokens (nothing is counted twice)."""
+    u = response.get("usage") if isinstance(response, dict) else None
+    u = u if isinstance(u, dict) else {}
+    det = u.get("completion_tokens_details")
+    reasoning = _int(det.get("reasoning_tokens")) if isinstance(det, dict) else None
+    comp = _int(u.get("completion_tokens"))
+    visible = comp if (comp is None or reasoning is None) else max(0, comp - reasoning)
+    return {"promptTokenCount": _int(u.get("prompt_tokens")), "candidatesTokenCount": visible, "thoughtsTokenCount": reasoning, "totalTokenCount": _int(u.get("total_tokens"))}
+
+
+PARSERS = {"gemini": parse_answer, "openai": parse_openai_answer}
+USAGES = {"gemini": usage_from, "openai": usage_from_openai}
+
+
+def detect_provider(response) -> str:
+    return "openai" if isinstance(response, dict) and "choices" in response else "gemini"
+
+
+def has_logprobs(response) -> bool:
+    """True when a saved response carries per-token log-probabilities (either provider's shape)."""
+    if not isinstance(response, dict):
+        return False
+    c = response.get("candidates")
+    if isinstance(c, list) and any(isinstance(x, dict) and x.get("logprobsResult") for x in c):
+        return True
+    c = response.get("choices")
+    return isinstance(c, list) and any(isinstance(x, dict) and x.get("logprobs") for x in c)
+
+
 def role_of(answer, item) -> str | None:
     if answer is None:
         return None
@@ -172,27 +244,38 @@ def _split_name(name: str):
         return None
 
 
-def _normalise(rec: dict, prompts: dict | None, legacy: bool, problems: list, fname: str) -> dict | None:
+def _normalise(rec: dict, prompts: dict | None, legacy: bool, problems: list, fname: str, warnings: list | None = None) -> dict | None:
     if not isinstance(rec, dict):
         problems.append(f"{fname}: not a JSON object")
         return None
     if FORBIDDEN_KEYS & set(rec):
         problems.append(f"{fname}: an ANSWER_ONLY record must not carry probability fields ({sorted(FORBIDDEN_KEYS & set(rec))})")
     resp = rec.get("response")
-    if isinstance(resp, dict) and isinstance(resp.get("candidates"), list) and any(isinstance(c, dict) and c.get("logprobsResult") for c in resp["candidates"]):
-        problems.append(f"{fname}: the response contains logprobs, so this is not an ANSWER_ONLY record")
+    provider = rec.get("provider") or detect_provider(resp)
+    if provider not in PARSERS:
+        problems.append(f"{fname}: unknown provider {provider!r}")
+        return None
+    parse, usage_of = PARSERS[provider], USAGES[provider]
+    if has_logprobs(resp):
+        if legacy:      # original pilot files may hold partial top-20 logprobs; this analysis never reads them
+            if warnings is not None and not any("logprobs" in w for w in warnings):
+                warnings.append("the original pilot records carry partial per-token logprobs; they are ignored (answers come from the returned message only)")
+        else:
+            problems.append(f"{fname}: the response contains logprobs, so this is not an ANSWER_ONLY record")
     if legacy:
         parts = _split_name(rec.get("name"))
         if not parts:
             problems.append(f"{fname}: cannot read cell/condition/pass from the record name {rec.get('name')!r}")
             return None
         cell, cond, pas = parts
-        parsed = parse_answer(resp) if isinstance(resp, dict) else {"status": "error", "answer": None, "text": None, "finish_reason": None, "block_reason": None}
-        usage = usage_from(resp)
-        r = {"name": rec["name"], "cell": cell, "condition": cond, "pass": pas, "prompt_sha256": rec.get("request_prompt_sha256"), "model": rec.get("model"),
-             "model_version": (resp or {}).get("modelVersion") if isinstance(resp, dict) else None, "http_status": rec.get("http_status"), "usage": usage,
+        parsed = parse(resp) if isinstance(resp, dict) else {"status": "error", "answer": None, "text": None, "finish_reason": None, "block_reason": None}
+        usage = usage_of(resp)
+        model = rec.get("model") or ((rec.get("request_body") or {}).get("model") if isinstance(rec.get("request_body"), dict) else None)
+        version = (resp.get("modelVersion") if provider == "gemini" else resp.get("model")) if isinstance(resp, dict) else None
+        r = {"name": rec["name"], "provider": provider, "cell": cell, "condition": cond, "pass": pas, "prompt_sha256": rec.get("request_prompt_sha256"), "model": model,
+             "model_version": version, "http_status": rec.get("http_status"), "usage": usage,
              "usage_complete": usage["promptTokenCount"] is not None and (usage["candidatesTokenCount"] is not None or usage["thoughtsTokenCount"] is not None),
-             "cost_usd": rec.get("estimated_cost_usd"), "cost_basis": "recorded by the v0.8 pilot (candidates + thinking tokens at list prices)", "attempts": 1, "response": resp, **parsed}
+             "cost_usd": rec.get("estimated_cost_usd"), "cost_basis": "recorded by the original pilot (billed output tokens at list prices)", "attempts": 1, "response": resp, **parsed}
         return r
     if rec.get("schema") != RECORD_SCHEMA:
         problems.append(f"{fname}: unexpected record schema {rec.get('schema')!r}")
@@ -207,13 +290,14 @@ def _normalise(rec: dict, prompts: dict | None, legacy: bool, problems: list, fn
         problems.append(f"{fname}: unknown status {rec['status']!r}")
         return None
     r = dict(rec)
+    r["provider"] = provider
     if isinstance(resp, dict):
-        p = parse_answer(resp)
+        p = parse(resp)
         for k in ("status", "answer"):
             if rec.get(k) != p[k]:
                 problems.append(f"{fname}: stored {k} {rec.get(k)!r} disagrees with the saved response ({p[k]!r})")
         r.update({"status": p["status"], "answer": p["answer"], "text": p["text"], "finish_reason": p["finish_reason"], "block_reason": p["block_reason"]})
-    r.setdefault("usage", usage_from(resp) if isinstance(resp, dict) else {})
+    r.setdefault("usage", usage_of(resp) if isinstance(resp, dict) else {})
     return r
 
 
@@ -264,7 +348,7 @@ def read_session(path: str, prompts_path: str | None = None) -> dict:
         except ValueError:
             problems.append(f"{f}: not valid JSON")
             continue
-        r = _normalise(rec, prompts, kind == "legacy", problems, f)
+        r = _normalise(rec, prompts, kind == "legacy", problems, f, warnings)
         if r is None:
             continue
         item = prompts["by_key"].get((r["cell"], r["condition"]))
@@ -508,7 +592,7 @@ def build_hosted(specs: list, base: str, local_cells: list, *, keep_going: bool 
                 raise AnswersError(f"answer-only session {s['id']!r} failed validation: " + "; ".join(ses["problems"][:5]) + " (use --keep-going to exclude it)")
             excluded.append({"id": s["id"], "session_dir": shown, "errors": ses["problems"]})
             continue
-        provider = (ses["meta"] or {}).get("provider", "gemini")
+        provider = (ses["meta"] or {}).get("provider") or (ses["records"][0].get("provider") if ses["records"] else "unknown")
         versions = sorted({r.get("model_version") for r in ses["records"] if r.get("model_version")})
         sessions.append({"id": s["id"], "measurement_type": ANSWER_ONLY, "provider": provider, "model": {"id": s["model"]["id"], "name": s["model"].get("name", s["model"]["id"]), "returned_versions": versions},
                          "session_dir": shown, "kind": ses["kind"], "digest": ses["digest"], "prompt_dataset_sha256": ses["prompts"]["sha256"], "warnings": ses["warnings"], "analysis": analyze(ses["records"], ses["prompts"])})

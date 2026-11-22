@@ -19,7 +19,7 @@ permutation support and clearer labels) and a sanitized, offline-reproducible **
 | `bleediff track` | Interactive decision-margin tracker: edit a text fragment, press Enter, see how the answer probabilities and the A/B margin move. | yes (`llama-server`) |
 | `bleediff track --arms FILE` | Batch influence ranking: score a list of labelled candidate fragments against one clean baseline and rank the observed effects. | yes |
 | `bleediff atlas` | Cross-task, cross-model report over saved batch sessions: validated sources, paired category effects, correctness outcomes, filters. | **no** (reads saved results) |
-| `bleediff gemini` | ANSWER_ONLY runs on the Gemini API (hosted models without A-D probabilities), or `--replay` of saved evidence. | live: Gemini key and budget; replay: **no** |
+| `bleediff gemini`, `bleediff openai` | ANSWER_ONLY runs on the Gemini / OpenAI APIs (hosted models without usable A-D probabilities), or `--replay` of saved evidence. | live: API key and budget; replay: **no** |
 | `calibrate`, `bounce`, `diff`, `inspect` | The v0.2.0 three-request fold research CLI (unchanged). | yes |
 
 The v0.2.0 research fold (`M = (p1 + p2 + p3) / 3` against a clean baseline, `delta_contrast = R_B - R_A`), its equations, thresholds,
@@ -89,9 +89,9 @@ preferred-answer flips and newly induced incorrect answers (only when the clean 
 (last five columns) and the Atlas label which margin is which, and the fixed A/B margin stays available as `margin_AB`. A summary of the
 first four-mapping experiment is in [`docs/FOUR_MAPPING_SUMMARY.md`](docs/FOUR_MAPPING_SUMMARY.md) and summarized below.
 
-### `bleediff gemini`: hosted answer-only runs (Gemini API)
+### `bleediff gemini` and `bleediff openai`: hosted answer-only runs
 
-Some hosted models return an answer but **no A-D probabilities**: every tested Gemini model rejects `responseLogprobs`. `bleediff gemini` measures such models
+Some hosted models return an answer but **no usable A-D probabilities**: every tested Gemini model rejects `responseLogprobs`, and the tested OpenAI model (GPT-4.1 mini) returned only a top-20 list that held all four letters in 17.5% of its responses. `bleediff gemini` (Gemini `generateContent`) and `bleediff openai` (Chat Completions) measure such models
 as **`ANSWER_ONLY`**: it sends the prompts of a frozen dataset, parses each reply as one letter A-D, tracks the correct versus the competing answer across
 answer-letter permutations, and reports correct / competing / other-incorrect answers, newly induced incorrect answers, answer flips and agreement between repeated
 passes. It never produces probabilities, log-odds margins, confidence or a leaderboard (existing `DIRECT_PROBABILITY` measurements are unchanged).
@@ -99,15 +99,25 @@ passes. It never produces probabilities, log-odds margins, confidence or a leade
 ```
 # offline, free: replay saved evidence (the v0.8 pilot, converted; see examples/gemini-answer-only/README.md)
 python -m bleediff gemini --replay examples/gemini-answer-only/flash
+python -m bleediff openai --replay examples/openai-answer-only/gpt41mini      # the saved GPT-4.1 mini pilot (examples/openai-answer-only/README.md)
+python -m bleediff atlas --manifest examples/openai-answer-only/atlas-input.json --out runs/hosted-atlas   # local + Gemini + OpenAI, measurement types kept apart
 
 # live (sends requests with your key and may cost money): the key is read from the GEMINI_API_KEY environment variable only
 python -m bleediff gemini --prompts examples/gemini-answer-only/prompts.json --model gemini-3.8-flash --out runs/my-gemini-run \
     --passes 2 --budget 1.00 --price-in 0.75 --price-out 3.75 --thinking-level low
+# OpenAI: the key comes from the OPENAI_API_KEY environment variable only
+python -m bleediff openai --prompts examples/openai-answer-only/prompts.json --model gpt-4.1-mini --out runs/my-openai-run \
+    --passes 2 --budget 1.00 --price-in 0.40 --price-out 1.60
 ```
 
-A live run needs an explicit `--budget` (USD) and list prices (`--price-in` / `--price-out`, USD per 1M tokens; there are no built-in prices). Before every request the worst
-case of the next request must fit under the remaining budget; thinking tokens are billed as output; missing usage metadata is charged at the worst-case bound and flagged;
-retries are bounded (`--max-retries`, default 2). The session directory (`session.json`, a copy of the prompts, one record per request with the request configuration,
+A live run needs an explicit `--budget` (USD) and list prices (`--price-in` / `--price-out`, USD per 1M tokens; there are no built-in prices). **The budget is a cap on an
+ESTIMATE, not on the provider's bill**: it uses the prices you supply and the usage the provider reports (cached-token discounts, tiers and later price changes are not modelled). Before
+every request the worst case of the NEXT request must fit under the remaining budget: the prompt (one token per UTF-8 byte, an upper bound) at the input price plus a reserve for
+output at the output price. The reserve is `max_completion_tokens` for OpenAI (it includes reasoning tokens), and `maxOutputTokens` plus a thinking allowance for Gemini (the explicit
+`--thinking-budget`, or another full cap when none is set); it grows to twice the largest output seen so far. Reasoning and thinking tokens are billed as output (OpenAI's
+`completion_tokens` already contains them, so they are not counted twice). Missing or inconsistent usage metadata is charged at the worst-case bound and flagged, a response that costs more
+than the bound it was admitted under stops the run (`COST_BOUND_EXCEEDED`), and retries are bounded (`--max-retries`, default 2). Only parameters the selected model supports are sent
+(for OpenAI: `--temperature`/`--top-p` only for `gpt-4*`, `--reasoning-effort` only for reasoning models; others are refused before any request).  The session directory (`session.json`, a copy of the prompts, one record per request with the request configuration,
 full response, usage and cost, never the key) is new each time and can be replayed offline. The Atlas accepts such sessions in an optional `answer_only_sessions` list and
 reports them in separate `ANSWER_ONLY` sections and CSVs next to the `DIRECT_PROBABILITY` results (`examples/gemini-answer-only/atlas-input.json`).
 
@@ -277,8 +287,8 @@ Both Qwen models share the Qwen2.5 tokenizer, so every frozen text and control k
 * `bleediff/roles.py` (v0.4.0) the semantic answer-role scoring used by `track --arms` and the Atlas.
 * `examples/atlas/` small sanitized example datasets (saved batch sessions, candidate files, fixtures, atlas input manifests) that
   reproduce the v0.3.0 findings offline, and `mention_contrasts.py`.
-* `bleediff/answers.py`, `bleediff/gemini.py` answer-only measurements and the Gemini adapter (feature branch).
-* `examples/gemini-answer-only/` the Gemini pilot as a replayable ANSWER_ONLY bundle.
+* `bleediff/answers.py`, `bleediff/hosted.py`, `bleediff/gemini.py`, `bleediff/openai_chat.py` answer-only analysis, the shared hosted engine and the two provider adapters (feature branch).
+* `examples/gemini-answer-only/`, `examples/openai-answer-only/` the Gemini and GPT-4.1 mini pilots as replayable ANSWER_ONLY bundles.
 * `examples/four-mapping/` the sanitized four-mapping evidence bundle (48 sessions, SHA-256 list) and `verify_summary.py` (v0.4.0).
 * `fixtures/` scenario fixtures, preserved controls and the protocol and preregistration documents.
 * `docs/TECHNICAL.md` the detailed method and history; `CHANGELOG.md`; `RELEASE_NOTES_v0.2.0.md`, `RELEASE_NOTES_v0.3.0.md`, `RELEASE_NOTES_v0.4.0.md`; `docs/FOUR_MAPPING_SUMMARY.md`.
