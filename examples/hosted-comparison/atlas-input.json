@@ -1,6 +1,6 @@
 {
   "schema": "bleediff.atlas-input/1",
-  "note": "TEMPLATE for the comparative hosted pilot. The two Claude entries point at session directories that exist only after the Claude pilot has been run (runs/ is git-ignored): run the commands in README.md first, then copy this file next to the sessions or keep it here, and run `python -m bleediff atlas --manifest <this file> --out runs/hosted-comparison`. Local sessions are DIRECT_PROBABILITY; every hosted session is ANSWER_ONLY.",
+  "note": "Hosted ANSWER_ONLY sessions (Claude Haiku 5.5, Claude Sonnet 5.5, Gemini 3.8 Flash, Gemini 4 Carbon, GPT-4.1 mini) on the same 80 frozen prompts, next to local DIRECT_PROBABILITY sessions of the same four questions and mappings (examples/four-mapping). The two measurement types are reported separately and never merged. Offline: python -m bleediff atlas --manifest examples/hosted-comparison/atlas-input.json --out runs/hosted-comparison",
   "sessions": [
     {
       "id": "q1-lab-ph-m1/qwen1.5b/raw",
@@ -1254,7 +1254,7 @@
   "answer_only_sessions": [
     {
       "id": "claude-haiku-5-5/chat",
-      "session_dir": "../../runs/claude-haiku-5-5",
+      "session_dir": "haiku55",
       "model": {
         "id": "claude-haiku-5-5",
         "name": "Claude Haiku 5.5"
@@ -1262,7 +1262,7 @@
     },
     {
       "id": "claude-sonnet-5-5/chat",
-      "session_dir": "../../runs/claude-sonnet-5-5",
+      "session_dir": "sonnet55",
       "model": {
         "id": "claude-sonnet-5-5",
         "name": "Claude Sonnet 5.5"

@@ -53,7 +53,7 @@
      "parts": [
       {
        "text": "C",
-       "thoughtSignature": "ErgGCrUGAWkUfRNxXTYAJZt8gkOGYk3gYeyy9YUsBoPYEC/cG/CKN0i/KOQft8g1YflF3Sbf8OJIeFgX64PVHSf0Gh67bXMJWrqbeadjBbwzjKOFR+4qZqkHJuJ0Q1yR0i4ls08E0ZXDAD5mCG7YuTFwiWCguJH809fBxt8vfW8SkPzNjmOmqnzj1mx7g+HIoe+ehJABIJg81SqeG6E5/YoTj3EN/dx37NavElkWRbr1WRpUhWK7jEuHkUgXmhvA1fkKoYYDc/ekmDpKq1LCPR6fvORXrPQUfURuYBhEn/avSjL0DxoevsA9KN9qe+pvI9YXDH7yyx1A6CgyfzdVVlVAkpZ1cpx4BxzUHBlIc6F/tHeoo7uH8N8br/nONhCf9DRXpdn+ftxjGwtHEFXsl+vwzOkHYD/7GVo+QWCdMJljQV5AZh1ZycVwVhK+5mlfDasSDFI/d4OJIi6EuaDP44UmNU8V//iYaBTYXfRXQvPtKf6jgCV6/tl6H/gPGes9Aqi/3qHv9tkiahrHwyDdFV2hoNf52BTJcRE+aynoZFIyWHrzCIbWkm90aIlcxLqWqB2QQJHtV+8MvfS/8nTMThnxQL1XPGVFbA0HM8jxsqXrbefqTkH08WH4Fp5CbDqHQ+LEKgLREWtrTxZFElwVYUlFD40JlsJvAtN3xEJ+LYJFs427jVrQVM/FaHbQgIbXoAPMIHfgOl1BW6Sqiodiw0/QnwStTiHeyP4yfm0eoEFCuL5JJUwwDULHyeqNTqSmhaz49ib3e/6M1bDm4dlEGpsEmbR8BwhatIFRPLE9WFUGtwPrDvRVASygWf6mUrdGBkRQ2mSyAC/g4iZ7UKELyfRsZB0Qn+wVHQORxA2IkVwMG9x3bp8VMak3Xprz5lMpwKgPJTdf5I/SUV2McSdv/RuUHT76nWtsF/Xk1VVj2TrdzVBhhQOE7Xeha6U/0jusR9GkKrdBgYaVv32zAMm+ZhsjboX9Yo3jMgn5U5Vy5T4eQ8fcmenXhvnLPUMl04uSFTEX3sWTXBhc455juMm/PJNrzfn/aZnIi9LrJNzIqWelNxR3OqALnbn9HLdEGMa6EpyrFZkyjAMwplM="
+       "thoughtSignature": "[REDACTED:opaque-thinking-signature]"
       }
      ],
      "role": "model"
@@ -76,7 +76,7 @@
    "serviceTier": "standard"
   },
   "modelVersion": "gemini-3.8-flash",
-  "responseId": "sC0Ca4OPIYbVjrEPjpvvoQs"
+  "responseId": "resp-acf4a3be8e1d5a5e"
  },
  "error": null,
  "converted_from_pilot": true

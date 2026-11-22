@@ -1,0 +1,42 @@
+{
+ "schema": "bleediff.hosted-session/1",
+ "measurement_type": "ANSWER_ONLY",
+ "provider": "anthropic",
+ "model": "claude-sonnet-5-5",
+ "endpoint": "https://api.anthropic.com/v1/messages",
+ "generation_config": {
+  "model": "claude-sonnet-5-5",
+  "max_tokens": 1024,
+  "output_config": {
+   "effort": "low"
+  }
+ },
+ "logprobs_requested": false,
+ "logprobs_note": "not available: the Anthropic Messages API has no logprobs parameter, so this session is ANSWER_ONLY",
+ "prompts": {
+  "file": "prompts.json",
+  "source_name": "prompts.json",
+  "sha256": "a8144a5a220dc11ef24f2a35e6822452a9c83d629d927494430fbddfa9ebeb35",
+  "items": 80
+ },
+ "passes": 2,
+ "budget": {
+  "cap_usd": 1.95,
+  "price_in_per_million_tokens": 2.0,
+  "price_out_per_million_tokens": 10.0,
+  "kind": "ESTIMATE from your supplied prices and reported usage; not a provider billing total",
+  "rules": "the worst case of the next request must fit under the remaining cap; missing usage is charged at the worst-case bound; a response exceeding its admitted bound stops the run; failed transport/5xx requests are charged at the worst-case bound; 4xx/429 are not charged"
+ },
+ "max_retries": 2,
+ "bleediff_version": "0.4.0",
+ "code_revision": {
+  "git_commit": "34636ab255ad03c003c127954d1bc0b1517f49f6",
+  "dirty": false
+ },
+ "started_utc": "2026-11-22T01:40:50Z",
+ "finished_utc": "2026-11-22T01:47:14Z",
+ "status": "complete",
+ "stop_reason": null,
+ "requests_attempted": 160,
+ "estimated_spend_usd": 0.20589400000000013
+}

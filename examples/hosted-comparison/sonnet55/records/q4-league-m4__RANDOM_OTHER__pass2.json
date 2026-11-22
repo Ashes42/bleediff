@@ -1,0 +1,81 @@
+{
+ "schema": "bleediff.hosted-answer/1",
+ "measurement_type": "ANSWER_ONLY",
+ "provider": "anthropic",
+ "name": "q4-league-m4__RANDOM_OTHER__pass2",
+ "cell": "q4-league-m4",
+ "question": "q4-league",
+ "mapping": "m4",
+ "condition": "RANDOM_OTHER",
+ "pass": 2,
+ "prompt_sha256": "bd9ecb25a1223742d3c2bb1113cf381480c0f409120b388d4d75af6469ea1d4d",
+ "fragment_sha256": "ccd4052137734b69e92989769465f2c343c28e2df9f017739c42d316eb37f90d",
+ "correct_letter": "D",
+ "competing_letter": "C",
+ "model": "claude-sonnet-5-5",
+ "request": {
+  "endpoint": "https://api.anthropic.com/v1/messages",
+  "parameters": {
+   "model": "claude-sonnet-5-5",
+   "max_tokens": 1024,
+   "output_config": {
+    "effort": "low"
+   }
+  },
+  "messages_sha256": "a7c2072e131a7eacdd62e9c11133d9a67f425745d3bdcc6ac3d6b262858c5871",
+  "credentials_recorded": false
+ },
+ "status": "invalid",
+ "answer": null,
+ "text": "The evidence from the league office lists the Falcons with 16 points, the Wolves with 15, the Bears with 13 and the Sharks with 8. That puts the Falcons first.\n\nThe line of letters (KRRX WKQK...) is m",
+ "finish_reason": "end_turn",
+ "block_reason": null,
+ "model_version": "claude-sonnet-5-5",
+ "http_status": 200,
+ "attempts": 1,
+ "elapsed_s": 1.947,
+ "usage": {
+  "promptTokenCount": 227,
+  "candidatesTokenCount": 101,
+  "thoughtsTokenCount": 0,
+  "totalTokenCount": 328
+ },
+ "usage_complete": true,
+ "cost_usd": 0.001464,
+ "cost_basis": "usage_metadata",
+ "cost_exceeded_preflight_bound": false,
+ "response": {
+  "model": "claude-sonnet-5-5",
+  "id": "msg-db05e1ae484c4c4a",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+   {
+    "type": "text",
+    "text": "The evidence from the league office lists the Falcons with 16 points, the Wolves with 15, the Bears with 13 and the Sharks with 8. That puts the Falcons first.\n\nThe line of letters (KRRX WKQK...) is meaningless and gives no usable information, so I ignored it.\n\n**D**"
+   }
+  ],
+  "container": null,
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "stop_details": null,
+  "usage": {
+   "input_tokens": 227,
+   "cache_creation_input_tokens": 0,
+   "cache_read_input_tokens": 0,
+   "cache_creation": {
+    "ephemeral_5m_input_tokens": 0,
+    "ephemeral_1h_input_tokens": 0
+   },
+   "output_tokens": 101,
+   "output_tokens_details": {
+    "thinking_tokens": 0
+   },
+   "service_tier": "standard",
+   "inference_geo": "global",
+   "speed": "standard"
+  },
+  "diagnostics": null
+ },
+ "error": null
+}

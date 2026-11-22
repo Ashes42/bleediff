@@ -1,0 +1,81 @@
+{
+ "schema": "bleediff.hosted-answer/1",
+ "measurement_type": "ANSWER_ONLY",
+ "provider": "anthropic",
+ "name": "q2-invoice-m2__RANDOM_AB__pass2",
+ "cell": "q2-invoice-m2",
+ "question": "q2-invoice",
+ "mapping": "m2",
+ "condition": "RANDOM_AB",
+ "pass": 2,
+ "prompt_sha256": "fd9b7cd603d1363b20a04ef943c742aaf9d75c569d04d0723888984795bc5428",
+ "fragment_sha256": "ade09befa6f7d7de8e70ae73fb2f6c86f94dce4a30eea8d6fa8be9c43f5c434d",
+ "correct_letter": "B",
+ "competing_letter": "A",
+ "model": "claude-sonnet-5-5",
+ "request": {
+  "endpoint": "https://api.anthropic.com/v1/messages",
+  "parameters": {
+   "model": "claude-sonnet-5-5",
+   "max_tokens": 1024,
+   "output_config": {
+    "effort": "low"
+   }
+  },
+  "messages_sha256": "8ebd5061ecaa6fe344fcc16d69b7bf1410647471e69c7ffa5fa9343e59d6fde3",
+  "credentials_recorded": false
+ },
+ "status": "invalid",
+ "answer": null,
+ "text": "The evidence states the balances directly: Harbor Printing 3,600, Delta Cleaning 3,000, Kestrel Software 1,500 and North Freight 0. Harbor Printing is the largest. The string of A/B letters below the ",
+ "finish_reason": "end_turn",
+ "block_reason": null,
+ "model_version": "claude-sonnet-5-5",
+ "http_status": 200,
+ "attempts": 1,
+ "elapsed_s": 1.614,
+ "usage": {
+  "promptTokenCount": 290,
+  "candidatesTokenCount": 103,
+  "thoughtsTokenCount": 0,
+  "totalTokenCount": 393
+ },
+ "usage_complete": true,
+ "cost_usd": 0.00161,
+ "cost_basis": "usage_metadata",
+ "cost_exceeded_preflight_bound": false,
+ "response": {
+  "model": "claude-sonnet-5-5",
+  "id": "msg-a5c2e6e407c3ccf7",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+   {
+    "type": "text",
+    "text": "The evidence states the balances directly: Harbor Printing 3,600, Delta Cleaning 3,000, Kestrel Software 1,500 and North Freight 0. Harbor Printing is the largest. The string of A/B letters below the ledger is not evidence and doesn't affect the answer.\n\n**B**"
+   }
+  ],
+  "container": null,
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "stop_details": null,
+  "usage": {
+   "input_tokens": 290,
+   "cache_creation_input_tokens": 0,
+   "cache_read_input_tokens": 0,
+   "cache_creation": {
+    "ephemeral_5m_input_tokens": 0,
+    "ephemeral_1h_input_tokens": 0
+   },
+   "output_tokens": 103,
+   "output_tokens_details": {
+    "thinking_tokens": 0
+   },
+   "service_tier": "standard",
+   "inference_geo": "global",
+   "speed": "standard"
+  },
+  "diagnostics": null
+ },
+ "error": null
+}

@@ -1,0 +1,81 @@
+{
+ "schema": "bleediff.hosted-answer/1",
+ "measurement_type": "ANSWER_ONLY",
+ "provider": "anthropic",
+ "name": "q2-invoice-m4__COMPETING__pass1",
+ "cell": "q2-invoice-m4",
+ "question": "q2-invoice",
+ "mapping": "m4",
+ "condition": "COMPETING",
+ "pass": 1,
+ "prompt_sha256": "ea627ce3894789ce5e012686d8f44554efad8cc2d4250d0919ee1e3ba7aadc49",
+ "fragment_sha256": "9fc51c5fdea2d0133dc6a93c11ee6acb6000958741e534cfc689ee9bef2ed028",
+ "correct_letter": "D",
+ "competing_letter": "C",
+ "model": "claude-sonnet-5-5",
+ "request": {
+  "endpoint": "https://api.anthropic.com/v1/messages",
+  "parameters": {
+   "model": "claude-sonnet-5-5",
+   "max_tokens": 1024,
+   "output_config": {
+    "effort": "low"
+   }
+  },
+  "messages_sha256": "05be070f9a096e2cf134fdb3a80dcd394ef9a2c9e293895c0e6b18b525d6b2bc",
+  "credentials_recorded": false
+ },
+ "status": "invalid",
+ "answer": null,
+ "text": "The two ledgers conflict. Tenant 3 says Harbor Printing has the largest balance (3,600). Tenant 4 says Delta Cleaning has the largest, at 5,200 after an audit correction.\n\nThe question doesn't name a ",
+ "finish_reason": "end_turn",
+ "block_reason": null,
+ "model_version": "claude-sonnet-5-5",
+ "http_status": 200,
+ "attempts": 1,
+ "elapsed_s": 3.918,
+ "usage": {
+  "promptTokenCount": 316,
+  "candidatesTokenCount": 308,
+  "thoughtsTokenCount": 0,
+  "totalTokenCount": 624
+ },
+ "usage_complete": true,
+ "cost_usd": 0.003712,
+ "cost_basis": "usage_metadata",
+ "cost_exceeded_preflight_bound": false,
+ "response": {
+  "model": "claude-sonnet-5-5",
+  "id": "msg-060fb88d52181549",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+   {
+    "type": "text",
+    "text": "The two ledgers conflict. Tenant 3 says Harbor Printing has the largest balance (3,600). Tenant 4 says Delta Cleaning has the largest, at 5,200 after an audit correction.\n\nThe question doesn't name a tenant, so it is unclear which ledger applies. Tenant 4's note is more specific and reflects a correction. But it only compares invoices within its own ledger, and it gives just one figure (Delta Cleaning, 5,200). It is also possible that the two ledgers cover different tenants who happen to have the same vendors.\n\nIf the Delta Cleaning balance really is 5,200 after correction, it exceeds Harbor Printing's 3,600 in the Tenant 3 ledger. Tenant 3's figure for Delta Cleaning is 3,000, so the audit correction would have raised it. Taking the corrected figure as the latest information, Delta Cleaning is the largest.\n\n**C**"
+   }
+  ],
+  "container": null,
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "stop_details": null,
+  "usage": {
+   "input_tokens": 316,
+   "cache_creation_input_tokens": 0,
+   "cache_read_input_tokens": 0,
+   "cache_creation": {
+    "ephemeral_5m_input_tokens": 0,
+    "ephemeral_1h_input_tokens": 0
+   },
+   "output_tokens": 308,
+   "output_tokens_details": {
+    "thinking_tokens": 0
+   },
+   "service_tier": "standard",
+   "inference_geo": "global",
+   "speed": "standard"
+  },
+  "diagnostics": null
+ },
+ "error": null
+}

@@ -1,0 +1,81 @@
+{
+ "schema": "bleediff.hosted-answer/1",
+ "measurement_type": "ANSWER_ONLY",
+ "provider": "anthropic",
+ "name": "q4-league-m3__COMPETING__pass2",
+ "cell": "q4-league-m3",
+ "question": "q4-league",
+ "mapping": "m3",
+ "condition": "COMPETING",
+ "pass": 2,
+ "prompt_sha256": "79b20b23a623352e146095fb4766a349bb492a59b324c94c264bc5da96c9df39",
+ "fragment_sha256": "33f1ac57eaa3100ce2d9c73a14a51b468a5c4502749f5a13b9bbfc587721773c",
+ "correct_letter": "C",
+ "competing_letter": "D",
+ "model": "claude-sonnet-5-5",
+ "request": {
+  "endpoint": "https://api.anthropic.com/v1/messages",
+  "parameters": {
+   "model": "claude-sonnet-5-5",
+   "max_tokens": 1024,
+   "output_config": {
+    "effort": "low"
+   }
+  },
+  "messages_sha256": "23c41488b64d41e1c0802080f5aee83b9c0674d04a2cfc07dd85d5b1ba53bcd7",
+  "credentials_recorded": false
+ },
+ "status": "invalid",
+ "answer": null,
+ "text": "The evidence has two conflicting sources. Tenant 3 says the Falcons lead with 16 points. Tenant 4 says the Wolves lead with 19 points after a points correction.\n\nThe \"correction\" suggests Tenant 4 is ",
+ "finish_reason": "end_turn",
+ "block_reason": null,
+ "model_version": "claude-sonnet-5-5",
+ "http_status": 200,
+ "attempts": 1,
+ "elapsed_s": 5.208,
+ "usage": {
+  "promptTokenCount": 247,
+  "candidatesTokenCount": 254,
+  "thoughtsTokenCount": 0,
+  "totalTokenCount": 501
+ },
+ "usage_complete": true,
+ "cost_usd": 0.0030340000000000002,
+ "cost_basis": "usage_metadata",
+ "cost_exceeded_preflight_bound": false,
+ "response": {
+  "model": "claude-sonnet-5-5",
+  "id": "msg-4b19b6b21a3afcd7",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+   {
+    "type": "text",
+    "text": "The evidence has two conflicting sources. Tenant 3 says the Falcons lead with 16 points. Tenant 4 says the Wolves lead with 19 points after a points correction.\n\nThe \"correction\" suggests Tenant 4 is more up to date, but I can't verify that. The two notes come from different tenants, so I can't tell which is authoritative. Tenant 3 comes from the \"league office,\" which sounds official. Tenant 4 is only a \"league note,\" but it explicitly mentions a correction, which implies it supersedes earlier figures.\n\nUnder Tenant 3 the Wolves have 15, and under Tenant 4 they have 19, which is consistent with a correction raising their total by 4. That fits the idea of an update. I'll go with the corrected figure.\n\n**D**"
+   }
+  ],
+  "container": null,
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "stop_details": null,
+  "usage": {
+   "input_tokens": 247,
+   "cache_creation_input_tokens": 0,
+   "cache_read_input_tokens": 0,
+   "cache_creation": {
+    "ephemeral_5m_input_tokens": 0,
+    "ephemeral_1h_input_tokens": 0
+   },
+   "output_tokens": 254,
+   "output_tokens_details": {
+    "thinking_tokens": 0
+   },
+   "service_tier": "standard",
+   "inference_geo": "global",
+   "speed": "standard"
+  },
+  "diagnostics": null
+ },
+ "error": null
+}

@@ -53,7 +53,7 @@
      "parts": [
       {
        "text": "B",
-       "thoughtSignature": "EvYDCvMDAWkUfRM957L9yEMhFyeV4ZrabhljzXcbiM/Hhjdar9ExLNKFxAkEKPZwE+dNhtEzieEEJEf2793mn2nCBnakv4HZbAhoDVYoEn/IK6UqSAUQD/EH7THSX5ySDrrcI/7RDqQU6tBNX+xwsWAydXYfK0i4uQYo8/NzuSN/FynY9ve01scBvotkI5CtyDecRJP1tke9cg31iV1V7KPMonGqeg2mhQbVmNDrm6KqEmDuLuks2I2Wn7Os1SENSqrVumLw3ST9xEVw5ndJfPd5HYeAuNNkI34HrTqVvnBMerugK4dIdLQhfwMYUqjUuKM2drMK4hbwSKqMLqlyLegNRn9TkGjvUi7ZJh5GnBzqCVdOHYnkAGMGtfLUMYTIKVQ0XXNd7jNTWy2WF56tFcgkfsKHtiF21wtX9cwnOkJa089sh+j3+99R5VwBJtOWGztbvnS91zThE/guEfyT1J2NRmRinfXd8FR+W4iu7tAANaPUTizT7vXP9QjSA2F6rfU+5Jj1blYfzOkpza+/Q9LNI7kDh8hnZuKyJu1OTLzcLYUSnHqTAeqzEida1YcmZJ3K2sJuwhxUZXMBB5FRX9Y4epaA5/DEwaYtnmpAqasKuTa68WdOvbEePBHHkcqqDTbTLOnd/6SluONCf7C1CoTgSybKxsJu0w=="
+       "thoughtSignature": "[REDACTED:opaque-thinking-signature]"
       }
      ],
      "role": "model"
@@ -75,7 +75,7 @@
    "serviceTier": "standard"
   },
   "modelVersion": "gemini-3.8-flash",
-  "responseId": "YS4Ca9LyF9GVjrEPh7yO8Ac"
+  "responseId": "resp-8fba8e1616c935bc"
  },
  "error": null,
  "converted_from_pilot": true

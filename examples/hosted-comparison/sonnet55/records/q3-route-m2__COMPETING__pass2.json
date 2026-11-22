@@ -1,0 +1,81 @@
+{
+ "schema": "bleediff.hosted-answer/1",
+ "measurement_type": "ANSWER_ONLY",
+ "provider": "anthropic",
+ "name": "q3-route-m2__COMPETING__pass2",
+ "cell": "q3-route-m2",
+ "question": "q3-route",
+ "mapping": "m2",
+ "condition": "COMPETING",
+ "pass": 2,
+ "prompt_sha256": "46efbf60fe47b205284f73e33b055f2bba073589e9cae0cdb75ae8be67ff7e94",
+ "fragment_sha256": "2248690a75a6b7f9736ecdf80fdce133a3318993205c1a25b397a438c08feb30",
+ "correct_letter": "B",
+ "competing_letter": "A",
+ "model": "claude-sonnet-5-5",
+ "request": {
+  "endpoint": "https://api.anthropic.com/v1/messages",
+  "parameters": {
+   "model": "claude-sonnet-5-5",
+   "max_tokens": 1024,
+   "output_config": {
+    "effort": "low"
+   }
+  },
+  "messages_sha256": "cebe50b6709834ba809b689387af1e2af2e7e3b7537aba5910c459a4fd5557f5",
+  "credentials_recorded": false
+ },
+ "status": "invalid",
+ "answer": null,
+ "text": "The evidence conflicts. Tenant 3 says Ridge Road is shortest at 29 minutes. Tenant 4 says that with the reopened bridge, Lakeshore is shortest at 24 minutes.\n\nThe rule asks for the sum of the leg time",
+ "finish_reason": "end_turn",
+ "block_reason": null,
+ "model_version": "claude-sonnet-5-5",
+ "http_status": 200,
+ "attempts": 1,
+ "elapsed_s": 4.872,
+ "usage": {
+  "promptTokenCount": 287,
+  "candidatesTokenCount": 260,
+  "thoughtsTokenCount": 0,
+  "totalTokenCount": 547
+ },
+ "usage_complete": true,
+ "cost_usd": 0.003174,
+ "cost_basis": "usage_metadata",
+ "cost_exceeded_preflight_bound": false,
+ "response": {
+  "model": "claude-sonnet-5-5",
+  "id": "msg-dc8693bc9c8c1848",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+   {
+    "type": "text",
+    "text": "The evidence conflicts. Tenant 3 says Ridge Road is shortest at 29 minutes. Tenant 4 says that with the reopened bridge, Lakeshore is shortest at 24 minutes.\n\nThe rule asks for the sum of the leg times, but neither source gives leg times. Both give totals. Tenant 4's note appears to be a more recent update, since the bridge has reopened, and it gives a Lakeshore total (24) lower than Tenant 3's Lakeshore total (32) and lower than Ridge Road's 29. If the reopened bridge changed Lakeshore's time, Tenant 4's figure supersedes Tenant 3's. Ridge Road at 29 is still higher than 24.\n\nLakeshore is therefore the shortest.\n\n**A**"
+   }
+  ],
+  "container": null,
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "stop_details": null,
+  "usage": {
+   "input_tokens": 287,
+   "cache_creation_input_tokens": 0,
+   "cache_read_input_tokens": 0,
+   "cache_creation": {
+    "ephemeral_5m_input_tokens": 0,
+    "ephemeral_1h_input_tokens": 0
+   },
+   "output_tokens": 260,
+   "output_tokens_details": {
+    "thinking_tokens": 0
+   },
+   "service_tier": "standard",
+   "inference_geo": "global",
+   "speed": "standard"
+  },
+  "diagnostics": null
+ },
+ "error": null
+}

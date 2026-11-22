@@ -53,7 +53,7 @@
      "parts": [
       {
        "text": "C",
-       "thoughtSignature": "EpQBCpEBAWkUfRNPyt9TbfmiGvCqMp+lSvGe/LjLLH64+wwh0YXLR5l/vOZKzFklfalgchlyYHPzZ9sL0+9qH3dSX8W1PHrY6HjCYMhDy6IB1SCuD2FPvvSE/0lCETSq5iPCwQvBgJP6UzT/HDlEjbEgGP4piFI8llLlnjhoO7GTWd9yTKkaAYw+96WiP3pmfPak+6i9aQ=="
+       "thoughtSignature": "[REDACTED:opaque-thinking-signature]"
       }
      ],
      "role": "model"
@@ -81,7 +81,7 @@
    "serviceTier": "standard"
   },
   "modelVersion": "gemini-4-carbon",
-  "responseId": "sDACa6fEA9GU_uMP8vaHYQ"
+  "responseId": "resp-07990a6d1adc41a3"
  },
  "error": null,
  "converted_from_pilot": true

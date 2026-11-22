@@ -53,7 +53,7 @@
      "parts": [
       {
        "text": "A",
-       "thoughtSignature": "EpcDCpQDAWkUfRP1CdWSEsPybcf2kAO9gznNDx0bY6TzUN6it3zyL16d8mgSKDVseFHcueohorWK9b49BH7WB3+pJNua+a3bAqeFXHtJKI7+kRAxqYzF+lSRFuIrxPQTGJbdWga/lINrMn/FcY/ZV7jo4wraLapPtm9e7OsBqvlRTkCUI64mL2lc5tfFI4RL90ukPuVfW5pZLGV0OCbsV3PmSRzTwsYCU8KKrOKBkwyEICozeGIikgrGDPseqAhAgmNbnxXAEHZdYeg4tK/okp2K24qL4vnJ5+ErhI8CJVDtQgMGXCt5V/Q/fjr3Rzf0ej1nRnXuPtbhuai8tCUR1MqPzqHyNXAdeTv3BaEWO01LMVpJnkQICAmk3Cq+uRqdd2LHMSL06TPju3w3S0iSm2p92GgXZTv3vqK7lWrjVpYXez/L28Ud8MpVq95y8/tnGsLH4CUYGV0igzyvJYYNVukqo4v7tUFdKXU+p5ZOGgjmCYRvkrWL0jtSfZY/iSXtn6brUB0yMt1zWJ6tcMVzeAE4Yb3y3aVDgrw="
+       "thoughtSignature": "[REDACTED:opaque-thinking-signature]"
       }
      ],
      "role": "model"
@@ -76,7 +76,7 @@
    "serviceTier": "standard"
   },
   "modelVersion": "gemini-3.8-flash",
-  "responseId": "Ii8Ca4mSI8PO-8YP-sPOwAM"
+  "responseId": "resp-4b88383e5ff7c75b"
  },
  "error": null,
  "converted_from_pilot": true

@@ -1,0 +1,81 @@
+{
+ "schema": "bleediff.hosted-answer/1",
+ "measurement_type": "ANSWER_ONLY",
+ "provider": "anthropic",
+ "name": "q1-lab-ph-m3__RANDOM_OTHER__pass1",
+ "cell": "q1-lab-ph-m3",
+ "question": "q1-lab-ph",
+ "mapping": "m3",
+ "condition": "RANDOM_OTHER",
+ "pass": 1,
+ "prompt_sha256": "39a85b4549dfa30a15f31c60927770549fd480e66a51fabab79ac7176c49ec3f",
+ "fragment_sha256": "ccd4052137734b69e92989769465f2c343c28e2df9f017739c42d316eb37f90d",
+ "correct_letter": "C",
+ "competing_letter": "D",
+ "model": "claude-haiku-5-5",
+ "request": {
+  "endpoint": "https://api.anthropic.com/v1/messages",
+  "parameters": {
+   "model": "claude-haiku-5-5",
+   "max_tokens": 1024,
+   "output_config": {
+    "effort": "low"
+   }
+  },
+  "messages_sha256": "7f76c0f66addcde2ffefb79fe390080d0fc1ce799e471ff00707f1795671c06d",
+  "credentials_recorded": false
+ },
+ "status": "ok",
+ "answer": "C",
+ "text": "C",
+ "finish_reason": "end_turn",
+ "block_reason": null,
+ "model_version": "claude-haiku-5-5",
+ "http_status": 200,
+ "attempts": 1,
+ "elapsed_s": 2.454,
+ "usage": {
+  "promptTokenCount": 262,
+  "candidatesTokenCount": 3,
+  "thoughtsTokenCount": 0,
+  "totalTokenCount": 265
+ },
+ "usage_complete": true,
+ "cost_usd": 2.7700000000000002e-05,
+ "cost_basis": "usage_metadata",
+ "cost_exceeded_preflight_bound": false,
+ "response": {
+  "model": "claude-haiku-5-5",
+  "id": "msg-52645040d3b28205",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+   {
+    "type": "text",
+    "text": "C"
+   }
+  ],
+  "container": null,
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "stop_details": null,
+  "usage": {
+   "input_tokens": 262,
+   "cache_creation_input_tokens": 0,
+   "cache_read_input_tokens": 0,
+   "cache_creation": {
+    "ephemeral_5m_input_tokens": 0,
+    "ephemeral_1h_input_tokens": 0
+   },
+   "output_tokens": 3,
+   "output_tokens_details": {
+    "thinking_tokens": 0
+   },
+   "service_tier": "standard",
+   "inference_geo": "global",
+   "speed": "standard"
+  },
+  "diagnostics": null
+ },
+ "error": null
+}

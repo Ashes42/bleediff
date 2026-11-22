@@ -449,7 +449,7 @@ def build_parser() -> argparse.ArgumentParser:
         g = sub.add_parser(prov, help=help_text)
         g.add_argument("--replay", default=None, metavar="SESSION_DIR", help="offline: re-read and re-analyse a saved session (no key, no network); the original pilot layout also needs --prompts")
         g.add_argument("--prompts", default=None, help="frozen prompt dataset (JSON, schema bleediff.hosted-prompts/1 or the v0.7 pilot's frozen-requests file)")
-        g.add_argument("--model", default=None, help="model id, e.g. gemini-3.8-flash or gpt-4.1-mini (live runs)")
+        g.add_argument("--model", default=None, help="model id, e.g. " + {"gemini": "gemini-3.8-flash", "openai": "gpt-4.1-mini", "anthropic": "claude-haiku-5-5"}[prov] + " (live runs)")
         g.add_argument("--out", default=None, help="NEW session directory for a live run (never overwritten)")
         g.add_argument("--passes", type=int, default=1, help="repeat every prompt this many times (default 1; repeats are replicate checks, not independent samples)")
         g.add_argument("--budget", type=float, default=None, help="REQUIRED for live runs: cap on ESTIMATED spend in USD, computed from your prices and the reported usage (not a provider billing total); "

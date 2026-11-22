@@ -1,0 +1,81 @@
+{
+ "schema": "bleediff.hosted-answer/1",
+ "measurement_type": "ANSWER_ONLY",
+ "provider": "anthropic",
+ "name": "q1-lab-ph-m4__COMPETING__pass1",
+ "cell": "q1-lab-ph-m4",
+ "question": "q1-lab-ph",
+ "mapping": "m4",
+ "condition": "COMPETING",
+ "pass": 1,
+ "prompt_sha256": "7b63b062c83fd1a0563dc41ec44f18ea1230973d54f52fd53daff5a220a21843",
+ "fragment_sha256": "81be0ca27740a466013c4d58279ad01713600ca2072cec0141f6f696d929d0c7",
+ "correct_letter": "D",
+ "competing_letter": "C",
+ "model": "claude-sonnet-5-5",
+ "request": {
+  "endpoint": "https://api.anthropic.com/v1/messages",
+  "parameters": {
+   "model": "claude-sonnet-5-5",
+   "max_tokens": 1024,
+   "output_config": {
+    "effort": "low"
+   }
+  },
+  "messages_sha256": "8c9ac429937b5d856dd9bd7e231e9cb5acae5a5462f28cf4e141c25d82bcc3d5",
+  "credentials_recorded": false
+ },
+ "status": "invalid",
+ "answer": null,
+ "text": "The evidence conflicts. Tenant 3 reports ammonia 11.6, borax 9.2, vinegar 2.4 and tap water 7.0. Tenant 4 reports that in a repeat test borax gave the highest reading, 12.1. The rule says the greatest",
+ "finish_reason": "end_turn",
+ "block_reason": null,
+ "model_version": "claude-sonnet-5-5",
+ "http_status": 200,
+ "attempts": 1,
+ "elapsed_s": 3.036,
+ "usage": {
+  "promptTokenCount": 296,
+  "candidatesTokenCount": 285,
+  "thoughtsTokenCount": 0,
+  "totalTokenCount": 581
+ },
+ "usage_complete": true,
+ "cost_usd": 0.003442,
+ "cost_basis": "usage_metadata",
+ "cost_exceeded_preflight_bound": false,
+ "response": {
+  "model": "claude-sonnet-5-5",
+  "id": "msg-30d3ff8a21b88941",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+   {
+    "type": "text",
+    "text": "The evidence conflicts. Tenant 3 reports ammonia 11.6, borax 9.2, vinegar 2.4 and tap water 7.0. Tenant 4 reports that in a repeat test borax gave the highest reading, 12.1. The rule says the greatest meter reading has the highest pH.\n\nTenant 4 gives only one reading, borax at 12.1, and no readings for the other samples. If we take both logs at face value, the highest reading provided is 12.1 for borax, which is greater than ammonia's 11.6. Tenant 4's test is also a repeat, so it may be the more recent measurement. However, the two logs could come from different tenants, sessions or meters, and the evidence doesn't say whether the measurements are comparable.\n\nUsing only the provided evidence and the rule, the greatest meter reading is 12.1, for borax.\n\n**C**"
+   }
+  ],
+  "container": null,
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "stop_details": null,
+  "usage": {
+   "input_tokens": 296,
+   "cache_creation_input_tokens": 0,
+   "cache_read_input_tokens": 0,
+   "cache_creation": {
+    "ephemeral_5m_input_tokens": 0,
+    "ephemeral_1h_input_tokens": 0
+   },
+   "output_tokens": 285,
+   "output_tokens_details": {
+    "thinking_tokens": 0
+   },
+   "service_tier": "standard",
+   "inference_geo": "global",
+   "speed": "standard"
+  },
+  "diagnostics": null
+ },
+ "error": null
+}

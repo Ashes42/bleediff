@@ -35,5 +35,7 @@ Estimated cost of the original pilot: $0.0104 at list prices ($0.40 / $1.60 per 
 The two passes gave the same answer in 80 of 80 prompts (replicate stability, not confidence). Replay recomputes all of this from the saved records.
 
 ## Provenance and limits
+Records carry no credentials; provider response ids are pseudonymized (`resp-<hash>`) and no reasoning content or signatures are present. Answers, statuses and usage are unchanged from the converted pilot.
+
 Converted from the local, git-ignored pilot directory (not distributed); only records, request parameters, usage and the returned message were kept. One wording per fragment, 16 non-independent cells
 (4 questions x 4 mappings), one model, chat presentation (the local runs used raw completion): comparison with the local sessions is descriptive and answer-level only.

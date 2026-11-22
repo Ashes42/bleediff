@@ -53,7 +53,7 @@
      "parts": [
       {
        "text": "C",
-       "thoughtSignature": "EpELCo4LAWkUfRPExvZ9eWsxQKw4YR70FETuIFZQeqhAcbo1lG60upY/eO2Hd8oO4bWMN6aAqm0Warp8XIpeME4lIduVHV81RqJPU4D8hXoAr02bNaFZ6V4W/mAWLQvLIat7nWIvK0cHoq/sNwekeRaKILXR4KF36gSqu9JboYXmJ3Jx5SQBsWDt94Q0zT/q1pgu1VhnGQcX7JbtzD+YcamVjEumy9+r9eVr+yR25C2XmwQltcx9S9FyKzKbrEyHqBH+6YShqZSRByQxiiFFYMYcpGBh5IjZ2BAZpCDsdKZhedTMpJbnikXt3IJky8A3Fe8Hfub3/qLlbtCS4wOxhdNB2jV5OtZ+h0exDMYEv52eLkV8LuzXOF+6AlrQLTXba1Uuc5wEAPKUXUtSieb51v0doT47aDJpEqU5axmWa8zTJnk3VjjvkyhDok+v3oKBYBYxGXoQYrTfSlv/KbR6nS8n5LWxEa1dWMuCRLMnfwik0SUWu6UlyDG6h+Ea1z6uvW1+wOKjbpAvBIJ4T9kyrp388y/WE3ndCoEcyIjwd0H4rj2T8DubQ4yAOtebQLL7/po8Yt1Wb31Ha++IQCQQ9MbmteAff6FGltGkfOlElU71vpmRQxKgsE9NdLn64LDOW1UIQLtCJ43lroN3ETfJd1FwDYFouqy9fmtP+p4hUMMWX7rcx9ZjrmgQTZZRH7QDhSon/FVVK4RHD/AW1jQ5skKoQkxocGdOETT7f/3PDNTbKF3yTQqNeRI7YgYjhJL7IHnLBEbhVzBfsHfgZJOhXZ+fHQXwvUMPTsAmwgSoEMdcn2rlvunuf5RY1g7IwL4pqjbg5HYa/HqEM+9tLf0FROVvWk70ESitCpTk0+ZViwpVXG/zLhiUXhKjbUJhMEdAvulpm3iUfdgDdGwtAsz9xVqrbDV30lZQCdGqTYWoP9gB8QZ10LeWHohTlkmGW0VpUlSAnuiW4U9lFqU4SEsCMbhvFEeHvHCNSsWHeVK5lvqoob6yIUQlNAXCLZcJJmTCL+5P4b4u07j+AdWm3y/jPagB1GFphDgY627xQkcc5bcfVvaey1YgzrmbI9KrLmtDku0C1zAHKU+lJw1NNsHi+QfHbco2Fk8ByzmcKSae89pUpwMXqvxOHlciN0opGh7JIx++OuvoPRvHji9ftSxagDLMoKR0tapPX99isPAhzz0JxOyAPHHyu9yScufVFusjfI2L/AfoWBWWWkpfaNfpWEcmqUcOVaKOkUFsezeF5lxrgO9fPpL2K2m3M6XEK7TbNPee4mfnrYe+I3GmdRkwe6ufYIImiEXEgSi47mrjwLGzwSnFs/h3MkXvcG0j7XK/tj+bk7kFfC/BNk2cNOAho3z2r0XYAOA2+bhyiLVe3RNgN9VfXODktkcfuaDXhTtZCU+8E5bcBPhGqUvQ+wWJz5XfLTJQyU0n4OrlPk+m41Cde9o67XGD2Y+A4tXR7/pokYhhZcEyWzOEDP2YZSDNrF4lvQt4kz10QqrPwCqm72LTwuCmjuozPRsrjUlYD4T9krVtx7wD9xlnjOUu4wAxKPNnHIsvepM0RUVnALe4ZBbshOzJFXlgsWMvdt09Rubdf5MUy5Eq7Nd56CV2fxo/RWWptC4c0kNI2iEtWxSX6nKdD2yR70WcywwILs4cm7I43LTJL/YoNQ1OqtmJT+kDNhDBe6Mdi/UDKDxeAWh6+e14WG5T3u9hTRXPYEKSh6fsufkAHzvoeHIbfjpPCyynyGxKf8YbK29SqmyFG6B6vL7yGPks/Ob4R59acmSOETaDdrrk+/2g8z/nwDZ/6uSB73dzq4UPqMQKu5UOAvnlZ9o7kU7DwU8jeuFlT3LakKPRm8SVcjv6/yplqRoIj0yxcau3BdeM4QYWgBD3pveNmO0ZMZYl"
+       "thoughtSignature": "[REDACTED:opaque-thinking-signature]"
       }
      ],
      "role": "model"
@@ -76,7 +76,7 @@
    "serviceTier": "standard"
   },
   "modelVersion": "gemini-3.8-flash",
-  "responseId": "Gy8Ca4LZN9TE_PUPwfmvyAY"
+  "responseId": "resp-9d954e52acd93286"
  },
  "error": null,
  "converted_from_pilot": true

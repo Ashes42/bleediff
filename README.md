@@ -4,15 +4,16 @@
 
 **Bleediff is a local GGUF evaluation CLI that measures how added context changes a model's A/B/C/D choice probabilities.** It runs
 against a `llama-server` you start yourself, uses only the Python 3.11+ standard library, and keeps no prompts or fragment text
-unless you ask. Version **0.4.0** is an **exploratory research toolkit** with measurements on three local models. It is not a
+unless you ask. Version **0.5.0** is an **exploratory research toolkit** with measurements on three local models and, answer-level only, five hosted models. It is not a
 security scanner and has not demonstrated a vulnerability.
 
-## What is in v0.4.0
+## What is in v0.5.0
 
-v0.4.0 adds **semantic answer-role scoring** (the correct and the competing answers can sit at any letters A to D, with answer-letter
+v0.5.0 adds **hosted-model support**: `bleediff gemini`, `bleediff openai` and `bleediff anthropic` (`ANSWER_ONLY` runs with an enforced estimated-spend cap, redacted evidence and offline `--replay`), Atlas sections that keep
+`ANSWER_ONLY` and `DIRECT_PROBABILITY` apart, and a replayable five-model comparison ([`examples/hosted-comparison/`](examples/hosted-comparison/README.md); guide: [`docs/HOSTED_MODELS.md`](docs/HOSTED_MODELS.md)).
+Release notes: [`RELEASE_NOTES_v0.5.0.md`](RELEASE_NOTES_v0.5.0.md). v0.4.0 had added **semantic answer-role scoring** (the correct and the competing answers can sit at any letters A to D, with answer-letter
 permutation support and clearer labels) and a sanitized, offline-reproducible **four-mapping evidence bundle**
-([`examples/four-mapping/`](examples/four-mapping/README.md)). v0.3.0 sessions and datasets load unchanged. Release notes:
-[`RELEASE_NOTES_v0.4.0.md`](RELEASE_NOTES_v0.4.0.md).
+([`examples/four-mapping/`](examples/four-mapping/README.md)); v0.3.0 sessions and datasets load unchanged ([`RELEASE_NOTES_v0.4.0.md`](RELEASE_NOTES_v0.4.0.md)).
 
 | Command | What it does | Needs a model? |
 |---|---|---|
@@ -41,6 +42,11 @@ python examples/atlas/mention_contrasts.py runs/atlas-slot-swap/atlas.json
 # the four-mapping experiment: rebuild the Atlas and check every documented number offline (examples/four-mapping/README.md)
 python -m bleediff atlas --manifest examples/four-mapping/atlas-input.json --out runs/four-mapping
 python examples/four-mapping/verify_summary.py runs/four-mapping/atlas.json
+
+# hosted models, replayed offline (no key, no network): five models on the same 80 frozen prompts (examples/hosted-comparison/README.md)
+python -m bleediff anthropic --replay examples/hosted-comparison/haiku55
+python -m bleediff atlas --manifest examples/hosted-comparison/atlas-input.json --out runs/hosted-comparison
+python examples/hosted-comparison/verify_comparison.py
 ```
 
 `--out` directories must not exist; reports are never overwritten. Nothing here downloads or runs a model.
@@ -94,7 +100,14 @@ first four-mapping experiment is in [`docs/FOUR_MAPPING_SUMMARY.md`](docs/FOUR_M
 Some hosted models return an answer but **no usable A-D probabilities**: every tested Gemini model rejects `responseLogprobs`, and the tested OpenAI model (GPT-4.1 mini) returned only a top-20 list that held all four letters in 17.5% of its responses. the Anthropic Messages API has no logprobs parameter at all. `bleediff gemini` (Gemini `generateContent`), `bleediff openai` (Chat Completions) and `bleediff anthropic` (Claude Messages) measure such models
 as **`ANSWER_ONLY`**: it sends the prompts of a frozen dataset, parses each reply as one letter A-D, tracks the correct versus the competing answer across
 answer-letter permutations, and reports correct / competing / other-incorrect answers, newly induced incorrect answers, answer flips and agreement between repeated
-passes. It never produces probabilities, log-odds margins, confidence or a leaderboard (existing `DIRECT_PROBABILITY` measurements are unchanged).
+passes. It never produces probabilities, log-odds margins, confidence or a leaderboard (existing `DIRECT_PROBABILITY` measurements are unchanged). Full guide: [`docs/HOSTED_MODELS.md`](docs/HOSTED_MODELS.md).
+
+**Four distinctions to keep in mind when reading hosted results**
+
+* **`DIRECT_PROBABILITY` versus `ANSWER_ONLY`.** Local runs measure the probabilities of A-D; hosted runs observe only the letter returned. The two are reported separately and never merged; no hosted result has a margin, confidence or rank.
+* **Provider refusals versus incorrect answers.** A refusal (for example Anthropic `stop_reason: refusal`) is a provider decision to return nothing. It is a non-answer, never counted as incorrect or competing, and its category label is provider metadata, not a measured cause.
+* **Strict parsing versus secondary diagnostics.** The primary parse accepts only a reply that is exactly one letter A-D; prose, `**B**` and empty replies are `invalid`/`empty` non-answers. Lenient readings (for example "last line is one letter") are separate, labelled and post-hoc, and never replace the strict result.
+* **Estimated budget enforcement versus provider billing.** `--budget` caps an estimate computed from the prices you supply and the usage reported, with a worst-case reserve checked before every request. It is not the provider's bill: caching, price tiers and failed-then-retried attempts are not modelled.
 
 ```
 # offline, free: replay saved evidence (the v0.8 pilot, converted; see examples/gemini-answer-only/README.md)
@@ -116,12 +129,12 @@ python -m bleediff openai --prompts examples/openai-answer-only/prompts.json --m
 A live run needs an explicit `--budget` (USD) and list prices (`--price-in` / `--price-out`, USD per 1M tokens; there are no built-in prices). **The budget is a cap on an
 ESTIMATE, not on the provider's bill**: it uses the prices you supply and the usage the provider reports (cached-token discounts, tiers and later price changes are not modelled). Before
 every request the worst case of the NEXT request must fit under the remaining budget: the prompt (one token per UTF-8 byte, an upper bound) at the input price plus a reserve for
-output at the output price. The reserve is `max_completion_tokens` for OpenAI (it includes reasoning tokens), and `maxOutputTokens` plus a thinking allowance for Gemini (the explicit
+output at the output price. The reserve is `max_tokens` for Anthropic (a hard cap on thinking plus text), `max_completion_tokens` for OpenAI (it includes reasoning tokens), and `maxOutputTokens` plus a thinking allowance for Gemini (the explicit
 `--thinking-budget`, or another full cap when none is set); it grows to twice the largest output seen so far. Reasoning and thinking tokens are billed as output (OpenAI's
 `completion_tokens` already contains them, so they are not counted twice). Missing or inconsistent usage metadata is charged at the worst-case bound and flagged, a response that costs more
 than the bound it was admitted under stops the run (`COST_BOUND_EXCEEDED`), and retries are bounded (`--max-retries`, default 2). Only parameters the selected model supports are sent
-(for OpenAI: `--temperature`/`--top-p` only for `gpt-4*`, `--reasoning-effort` only for reasoning models; for Claude: `--effort`, `--thinking`, never `--temperature` with `--top-p`; others are refused before any request). A real probe showed that `claude-haiku-5-5` with `max_tokens` 8 spends all of it on thinking and returns no text; such a reply is recorded as an empty non-answer, never guessed. `examples/hosted-comparison/` prepares the five-model comparison (Claude Haiku and Sonnet, Gemini Flash and Carbon, GPT-4.1 mini) with a runbook and an offline cost estimator.  The session directory (`session.json`, a copy of the prompts, one record per request with the request configuration,
-full response, usage and cost, never the key) is new each time and can be replayed offline. The Atlas accepts such sessions in an optional `answer_only_sessions` list and
+(for OpenAI: `--temperature`/`--top-p` only for `gpt-4*`, `--reasoning-effort` only for reasoning models; for Claude: `--effort`, `--thinking`, never `--temperature` with `--top-p`; others are refused before any request). A real probe showed that `claude-haiku-5-5` with `max_tokens` 8 spends all of it on thinking and returns no text; such a reply is recorded as an empty non-answer, never guessed. `examples/hosted-comparison/` is the five-model comparison (Claude Haiku and Sonnet, Gemini Flash and Carbon, GPT-4.1 mini), replayable offline.  The session directory (`session.json`, a copy of the prompts, one record per request with the request configuration,
+full response with opaque thinking signatures and any reasoning text replaced by placeholders, usage and cost, never the key) is new each time and can be replayed offline. The Atlas accepts such sessions in an optional `answer_only_sessions` list and
 reports them in separate `ANSWER_ONLY` sections and CSVs next to the `DIRECT_PROBABILITY` results (`examples/gemini-answer-only/atlas-input.json`).
 
 ### `bleediff atlas`: cross-task and cross-model report
@@ -291,10 +304,11 @@ Both Qwen models share the Qwen2.5 tokenizer, so every frozen text and control k
 * `examples/atlas/` small sanitized example datasets (saved batch sessions, candidate files, fixtures, atlas input manifests) that
   reproduce the v0.3.0 findings offline, and `mention_contrasts.py`.
 * `bleediff/answers.py`, `bleediff/hosted.py`, `bleediff/gemini.py`, `bleediff/openai_chat.py`, `bleediff/anthropic_messages.py` answer-only analysis, the shared hosted engine and the three provider adapters (feature branch).
-* `examples/gemini-answer-only/`, `examples/openai-answer-only/` the Gemini and GPT-4.1 mini pilots as replayable ANSWER_ONLY bundles; `examples/hosted-comparison/` the prepared (not yet run) Claude comparison.
+* `examples/gemini-answer-only/`, `examples/openai-answer-only/` the Gemini and GPT-4.1 mini pilots as replayable ANSWER_ONLY bundles; `examples/hosted-comparison/` the five-model comparison (Claude Haiku and Sonnet sessions, results table, `verify_comparison.py`).
+* `docs/HOSTED_MODELS.md` the hosted-model usage guide; `docs/EVIDENCE_RECONCILIATION.md`, `docs/CASE_NOTE_HOSTED_REFUSALS_AND_FORMAT.md` and `docs/evidence/` the reconciliation of the exploratory Claude runs (v0.10-v0.15), a short case note and a per-request index; `research/reconcile_evidence.py` regenerates the index.
 * `examples/four-mapping/` the sanitized four-mapping evidence bundle (48 sessions, SHA-256 list) and `verify_summary.py` (v0.4.0).
 * `fixtures/` scenario fixtures, preserved controls and the protocol and preregistration documents.
-* `docs/TECHNICAL.md` the detailed method and history; `CHANGELOG.md`; `RELEASE_NOTES_v0.2.0.md`, `RELEASE_NOTES_v0.3.0.md`, `RELEASE_NOTES_v0.4.0.md`; `docs/FOUR_MAPPING_SUMMARY.md`.
+* `docs/TECHNICAL.md` the detailed method and history; `CHANGELOG.md`; `RELEASE_NOTES_v0.2.0.md`, `RELEASE_NOTES_v0.3.0.md`, `RELEASE_NOTES_v0.4.0.md`, `RELEASE_NOTES_v0.5.0.md`; `docs/FOUR_MAPPING_SUMMARY.md`.
 * `tests/` stdlib `unittest` suite (a mock llama-server stands in for the model).
 
 Local run directories (`runs/`), model files and per-run sidecars are git-ignored and are not part of the repository.

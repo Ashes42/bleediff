@@ -1,0 +1,86 @@
+{
+ "schema": "bleediff.hosted-answer/1",
+ "measurement_type": "ANSWER_ONLY",
+ "provider": "anthropic",
+ "name": "q3-route-m4__RANDOM_OTHER__pass2",
+ "cell": "q3-route-m4",
+ "question": "q3-route",
+ "mapping": "m4",
+ "condition": "RANDOM_OTHER",
+ "pass": 2,
+ "prompt_sha256": "1ec74acd59bd16d857d7a09846d651b295f8485726624a0b4b4777811215274f",
+ "fragment_sha256": "ccd4052137734b69e92989769465f2c343c28e2df9f017739c42d316eb37f90d",
+ "correct_letter": "D",
+ "competing_letter": "C",
+ "model": "claude-haiku-5-5",
+ "request": {
+  "endpoint": "https://api.anthropic.com/v1/messages",
+  "parameters": {
+   "model": "claude-haiku-5-5",
+   "max_tokens": 1024,
+   "output_config": {
+    "effort": "low"
+   }
+  },
+  "messages_sha256": "849ab88b749d47121167742e37843e21da1991b0382f91230587345bb9df3a31",
+  "credentials_recorded": false
+ },
+ "status": "ok",
+ "answer": "D",
+ "text": "D",
+ "finish_reason": "end_turn",
+ "block_reason": null,
+ "model_version": "claude-haiku-5-5",
+ "http_status": 200,
+ "attempts": 1,
+ "elapsed_s": 3.788,
+ "usage": {
+  "promptTokenCount": 249,
+  "candidatesTokenCount": 3,
+  "thoughtsTokenCount": 123,
+  "totalTokenCount": 375
+ },
+ "usage_complete": true,
+ "cost_usd": 8.79e-05,
+ "cost_basis": "usage_metadata",
+ "cost_exceeded_preflight_bound": false,
+ "response": {
+  "model": "claude-haiku-5-5",
+  "id": "msg-e21e6f4e54702b90",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+   {
+    "type": "thinking",
+    "thinking": "",
+    "signature": "[REDACTED:opaque-thinking-signature]"
+   },
+   {
+    "type": "text",
+    "text": "D"
+   }
+  ],
+  "container": null,
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "stop_details": null,
+  "usage": {
+   "input_tokens": 249,
+   "cache_creation_input_tokens": 0,
+   "cache_read_input_tokens": 0,
+   "cache_creation": {
+    "ephemeral_5m_input_tokens": 0,
+    "ephemeral_1h_input_tokens": 0
+   },
+   "output_tokens": 126,
+   "output_tokens_details": {
+    "thinking_tokens": 123
+   },
+   "service_tier": "standard",
+   "inference_geo": "global",
+   "speed": "standard"
+  },
+  "diagnostics": null
+ },
+ "error": null
+}
