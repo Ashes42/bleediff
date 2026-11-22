@@ -2,7 +2,8 @@
 
 WHAT THIS MODULE IS FOR
 Some hosted models return an answer but expose no usable log-probabilities for the four choices (the tested Gemini API configuration: every tested
-model rejects ``responseLogprobs``; the tested OpenAI model returned only a top-20 list that held all four letters in 17.5% of responses). Bleediff's direct-probability measurements (``DIRECT_PROBABILITY``: normalised A-D
+model rejects ``responseLogprobs``; the tested OpenAI model returned only a top-20 list that held all four letters in 17.5% of responses; the Anthropic Messages API has no
+logprobs parameter at all). Bleediff's direct-probability measurements (``DIRECT_PROBABILITY``: normalised A-D
 probabilities, log-odds margins, coverage) cannot be produced for them, and nothing here pretends otherwise:
 
 * no probabilities, no log-odds margins, no residuals, no "confidence" and no leaderboard are ever computed from answers;
@@ -208,12 +209,64 @@ def usage_from_openai(response) -> dict:
     return {"promptTokenCount": _int(u.get("prompt_tokens")), "candidatesTokenCount": visible, "thoughtsTokenCount": reasoning, "totalTokenCount": _int(u.get("total_tokens"))}
 
 
-PARSERS = {"gemini": parse_answer, "openai": parse_openai_answer}
-USAGES = {"gemini": usage_from, "openai": usage_from_openai}
+def parse_anthropic_answer(response) -> dict:
+    """Interpret an Anthropic Messages response (same statuses as ``parse_answer``). Only ``text`` blocks count; ``thinking`` / ``redacted_thinking`` blocks are ignored, so a reply
+    that spent its whole ``max_tokens`` on thinking is honestly 'empty'. ``stop_reason: refusal`` is 'blocked'."""
+    out = {"status": "malformed", "answer": None, "text": None, "finish_reason": None, "block_reason": None}
+    if not isinstance(response, dict):
+        return out
+    content = response.get("content")
+    if not isinstance(content, list):                 # an error body, or anything without a content list
+        return out
+    sr = response.get("stop_reason")
+    out["finish_reason"] = str(sr)[:40] if sr is not None else None
+    if any(not isinstance(b, dict) for b in content):
+        return out
+    texts = [b["text"] for b in content if b.get("type") == "text" and isinstance(b.get("text"), str)]
+    text = "".join(texts)
+    out["text"] = text[:200]
+    if out["finish_reason"] == "refusal":
+        out["block_reason"] = "refusal"
+        out["status"] = "blocked"
+        return out
+    s = text.strip()
+    if not s:
+        out["status"] = "empty"
+    elif s in CHOICES:
+        out["status"], out["answer"] = "ok", s
+    else:
+        out["status"] = "invalid"
+    return out
+
+
+def usage_from_anthropic(response) -> dict:
+    """Anthropic usage mapped onto the shared four keys. ``output_tokens`` already INCLUDES thinking tokens (``output_tokens_details.thinking_tokens`` is a subset), so
+    candidate + thinking equals the billed output tokens. Input-side tokens are input + cache reads + cache writes (cache writes counted twice: a conservative bound
+    for the 1.25x/2x write prices; the adapter never enables caching)."""
+    u = response.get("usage") if isinstance(response, dict) else None
+    u = u if isinstance(u, dict) else {}
+    inp = _int(u.get("input_tokens"))
+    read, write = _int(u.get("cache_read_input_tokens")) or 0, _int(u.get("cache_creation_input_tokens")) or 0
+    prompt = None if inp is None else inp + read + 2 * write
+    out = _int(u.get("output_tokens"))
+    det = u.get("output_tokens_details")
+    thinking = _int(det.get("thinking_tokens")) if isinstance(det, dict) else None
+    visible = out if (out is None or thinking is None) else max(0, out - thinking)
+    total = prompt + out if (prompt is not None and out is not None) else None
+    return {"promptTokenCount": prompt, "candidatesTokenCount": visible, "thoughtsTokenCount": thinking, "totalTokenCount": total}
+
+
+PARSERS = {"gemini": parse_answer, "openai": parse_openai_answer, "anthropic": parse_anthropic_answer}
+USAGES = {"gemini": usage_from, "openai": usage_from_openai, "anthropic": usage_from_anthropic}
 
 
 def detect_provider(response) -> str:
-    return "openai" if isinstance(response, dict) and "choices" in response else "gemini"
+    if isinstance(response, dict):
+        if "choices" in response:
+            return "openai"
+        if response.get("type") == "message" or "stop_reason" in response:
+            return "anthropic"
+    return "gemini"
 
 
 def has_logprobs(response) -> bool:

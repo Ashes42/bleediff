@@ -1,0 +1,43 @@
+{
+ "note": "Real response of claude-haiku-5-5 to the frozen BASELINE prompt of q1-lab-ph-m1 with max_tokens 8 (adaptive thinking ate all 8 tokens: no text block). Only the opaque thinking signature was replaced; request ids and headers were dropped.",
+ "http_status": 200,
+ "request_body_without_prompt": {
+  "model": "claude-haiku-5-5",
+  "max_tokens": 8
+ },
+ "prompt_sha256": "0b7f9d663bb0d45f6612a466bfaebaea29f813e1841e26b0cb4975ccf7b75ad0",
+ "response": {
+  "model": "claude-haiku-5-5",
+  "id": "msg_removed",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+   {
+    "type": "thinking",
+    "thinking": "",
+    "signature": "<opaque signature removed>"
+   }
+  ],
+  "container": null,
+  "stop_reason": "max_tokens",
+  "stop_sequence": null,
+  "stop_details": null,
+  "usage": {
+   "input_tokens": 228,
+   "cache_creation_input_tokens": 0,
+   "cache_read_input_tokens": 0,
+   "cache_creation": {
+    "ephemeral_5m_input_tokens": 0,
+    "ephemeral_1h_input_tokens": 0
+   },
+   "output_tokens": 8,
+   "output_tokens_details": {
+    "thinking_tokens": 8
+   },
+   "service_tier": "standard",
+   "inference_geo": "global",
+   "speed": "standard"
+  },
+  "diagnostics": null
+ }
+}

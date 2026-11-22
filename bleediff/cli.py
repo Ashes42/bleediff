@@ -53,6 +53,7 @@ from .track import cmd_track
 from .atlas import cmd_atlas
 from .gemini import THINKING_LEVELS, cmd_gemini
 from .openai_chat import REASONING_EFFORTS, cmd_openai
+from .anthropic_messages import CLAUDE_EFFORTS, CLAUDE_THINKING, cmd_anthropic
 
 DEFAULT_SERVER = "http://127.0.0.1:8080"
 DEFAULT_FIXTURES = os.path.join("fixtures", "contexts.json")
@@ -442,7 +443,9 @@ def build_parser() -> argparse.ArgumentParser:
             ("gemini", cmd_gemini, "ANSWER-ONLY measurements on the Gemini API (hosted models that expose no A-D probabilities), or --replay saved evidence offline. "
                                    "Never produces probabilities, margins or confidence.", {"temperature": 1.0, "top_p": 1.0}),
             ("openai", cmd_openai, "ANSWER-ONLY measurements on the OpenAI Chat Completions API, or --replay saved evidence offline (the saved GPT-4.1 mini pilot included). "
-                                   "Never produces probabilities, margins or confidence.", {"temperature": None, "top_p": None})):
+                                   "Never produces probabilities, margins or confidence.", {"temperature": None, "top_p": None}),
+            ("anthropic", cmd_anthropic, "ANSWER-ONLY measurements on the Anthropic Messages API (Claude), or --replay saved evidence offline. The API has no logprobs: "
+                                         "never produces probabilities, margins or confidence.", {"temperature": None, "top_p": None})):
         g = sub.add_parser(prov, help=help_text)
         g.add_argument("--replay", default=None, metavar="SESSION_DIR", help="offline: re-read and re-analyse a saved session (no key, no network); the original pilot layout also needs --prompts")
         g.add_argument("--prompts", default=None, help="frozen prompt dataset (JSON, schema bleediff.hosted-prompts/1 or the v0.7 pilot's frozen-requests file)")
@@ -453,13 +456,19 @@ def build_parser() -> argparse.ArgumentParser:
                                                                  "the run stops before a request could exceed it")
         g.add_argument("--price-in", type=float, default=None, help="REQUIRED for live runs: input price in USD per 1M tokens (list price; there are no built-in prices)")
         g.add_argument("--price-out", type=float, default=None, help="REQUIRED for live runs: output price in USD per 1M tokens (thinking/reasoning tokens are billed as output)")
-        g.add_argument("--max-output-tokens", type=int, default=512, help="cap on output tokens per request; also the basis of the per-request spending reserve")
-        g.add_argument("--temperature", type=float, default=defaults["temperature"], help="sampling temperature" + ("" if prov == "gemini" else " (only for gpt-4* models; refused for others)"))
-        g.add_argument("--top-p", type=float, default=defaults["top_p"], help="nucleus sampling" + ("" if prov == "gemini" else " (only for gpt-4* models; refused for others)"))
-        g.add_argument("--seed", type=int, default=0)
+        g.add_argument("--max-output-tokens", type=int, default=1024 if prov == "anthropic" else 512,
+                       help="cap on output tokens per request (for Claude and OpenAI reasoning models it also bounds thinking); also the basis of the per-request spending reserve")
+        g.add_argument("--temperature", type=float, default=defaults["temperature"], help="sampling temperature" + {"gemini": "", "openai": " (only for gpt-4* models; refused for others)", "anthropic": " (omit to use the API default)"}[prov])
+        g.add_argument("--top-p", type=float, default=defaults["top_p"], help="nucleus sampling" + {"gemini": "", "openai": " (only for gpt-4* models; refused for others)", "anthropic": " (not together with --temperature)"}[prov])
+        if prov != "anthropic":
+            g.add_argument("--seed", type=int, default=0)
         if prov == "gemini":
             g.add_argument("--thinking-level", choices=list(THINKING_LEVELS), default=None, help="only for models that support it (a rejected value is reported, never retried)")
             g.add_argument("--thinking-budget", type=int, default=None, help="thinking token budget for models that support it (not with --thinking-level)")
+        elif prov == "anthropic":
+            g.add_argument("--effort", choices=list(CLAUDE_EFFORTS), default=None, help="output_config.effort: how much Claude thinks (soft guidance; lower = fewer thinking tokens). Omit for the model default")
+            g.add_argument("--thinking", choices=list(CLAUDE_THINKING), default=None, help="thinking mode, only if the model accepts it (a rejected value is reported, never retried)")
+            g.add_argument("--thinking-budget", type=int, default=None, help="legacy manual thinking budget (budget_tokens >= 1024) for models that still support it; Claude 4.7+ and 5.x reject it")
         else:
             g.add_argument("--reasoning-effort", choices=list(REASONING_EFFORTS), default=None, help="only for reasoning models (o1, o3, o4, gpt-5, gpt-6); refused for others")
         g.add_argument("--max-retries", type=int, default=2, help="retries per request for rate limits and transient errors (default 2, at most 5)")
