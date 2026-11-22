@@ -1,4 +1,4 @@
-"""Shared engine of the hosted ANSWER_ONLY adapters (``bleediff gemini``, ``bleediff openai``).
+"""Shared engine of the hosted ANSWER_ONLY adapters (``bleediff gemini``, ``bleediff openai``, ``bleediff anthropic``).
 
 A provider module supplies a small ``Provider`` record (endpoint, auth header, request builder, response parser, usage mapping, output-token reserve); this
 module supplies everything else once: bounded retries, secret redaction, cost estimation and the enforced spending cap, the session writer (``session.json``,
@@ -14,7 +14,7 @@ SPENDING LIMITS ARE ESTIMATES. The cap is enforced against YOUR supplied list pr
 billing total (cached-token discounts, tiers, taxes, retries on the provider side and price changes can all differ). Before every request the worst case of the NEXT
 request must fit under the remaining cap:
     worst = (UTF-8 bytes of the prompt + 64) x input price  +  output reserve x output price
-where the output reserve is the provider's bound on billed output tokens (OpenAI: ``max_completion_tokens``, which includes reasoning tokens; Gemini: ``maxOutputTokens``
+where the output reserve is the provider's bound on billed output tokens (OpenAI: ``max_completion_tokens``, which includes reasoning tokens; Anthropic: ``max_tokens``, a hard cap on thinking plus text; Gemini: ``maxOutputTokens``
 plus a thinking allowance, the explicit thinking budget or, when none is set, another ``maxOutputTokens``), raised to twice the largest output count observed so far.
 After a response the cost is computed from the reported usage (candidate + thinking tokens, and any tokens visible only in the total, at the output price). Missing or
 inconsistent usage is charged at ``worst`` and flagged; a response whose cost exceeds the bound it was admitted under stops the run (COST_BOUND_EXCEEDED). Retries are bounded.
@@ -39,7 +39,7 @@ from .answers import ANSWER_ONLY, RECORD_SCHEMA, SESSION_SCHEMA, AnswersError, a
 from .errors import Inconclusive
 from .meta import code_revision
 
-TRANSIENT_HTTP = frozenset({429, 500, 502, 503, 504})
+TRANSIENT_HTTP = frozenset({429, 500, 502, 503, 504, 529})          # 529 = Anthropic "overloaded"
 NON_RETRYABLE_QUOTA_CODES = frozenset({"insufficient_quota", "billing_not_active"})
 MAX_CONSECUTIVE_FAILURES = 3
 _MODEL_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,80}$")
@@ -94,7 +94,7 @@ def api_key(provider: Provider, env=None) -> str:
 def normalise_model(model) -> str:
     m = model[len("models/"):] if isinstance(model, str) and model.startswith("models/") else model
     if not isinstance(m, str) or not _MODEL_RE.match(m):
-        raise Inconclusive(f"invalid model name {model!r}: use a plain model id such as 'gemini-3.8-flash' or 'gpt-4.1-mini'", reason="BAD_ARGS")
+        raise Inconclusive(f"invalid model name {model!r}: use a plain model id such as 'gemini-3.8-flash', 'gpt-4.1-mini' or 'claude-haiku-5-5'", reason="BAD_ARGS")
     return m
 
 
@@ -315,7 +315,7 @@ def cmd_hosted(args, provider: Provider, option_names: tuple, *, out=None, post=
             key = api_key(provider, env)
             print(f"LIVE {provider.label} ANSWER-ONLY run: model {model}, {args.passes} pass(es), estimated-spend cap ${args.budget:.2f} (this sends requests with your key and may cost money)", file=out)
             res = run_session(provider, prompts_path=args.prompts, model=model, out_dir=args.out, passes=args.passes, budget=args.budget, price_in_per_m=args.price_in, price_out_per_m=args.price_out, key=key,
-                              post=post, sleep=sleep, max_output_tokens=args.max_output_tokens, temperature=args.temperature, top_p=args.top_p, seed=args.seed,
+                              post=post, sleep=sleep, max_output_tokens=args.max_output_tokens, temperature=args.temperature, top_p=args.top_p, seed=getattr(args, "seed", 0),
                               options={n: getattr(args, n, None) for n in option_names if getattr(args, n, None) is not None}, max_retries=args.max_retries, timeout=args.timeout)
             if res["requests_attempted"] == 0:
                 print(f"no request was sent; estimated spend $0.0000 of ${args.budget:.2f}; session saved to {args.out}", file=out)

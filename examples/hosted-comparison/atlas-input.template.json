@@ -1,0 +1,1296 @@
+{
+  "schema": "bleediff.atlas-input/1",
+  "note": "TEMPLATE for the comparative hosted pilot. The two Claude entries point at session directories that exist only after the Claude pilot has been run (runs/ is git-ignored): run the commands in README.md first, then copy this file next to the sessions or keep it here, and run `python -m bleediff atlas --manifest <this file> --out runs/hosted-comparison`. Local sessions are DIRECT_PROBABILITY; every hosted session is ANSWER_ONLY.",
+  "sessions": [
+    {
+      "id": "q1-lab-ph-m1/qwen1.5b/raw",
+      "session_dir": "../four-mapping/sessions/qwen1.5b/q1-lab-ph-m1",
+      "task": {
+        "id": "q1-lab-ph-m1",
+        "name": "Chemistry: highest pH (m1)"
+      },
+      "model": {
+        "id": "qwen1.5b",
+        "name": "Qwen2.5-1.5B-Instruct Q4_K_M",
+        "model_hash": "39a2f847bada8ee8f6d36f063af469b592aa4ff47e55e573f3f3a54df3a23095"
+      },
+      "presentation": "raw",
+      "correct_answer": "A",
+      "incorrect_answer": "B",
+      "candidates": {
+        "NEUTRAL": "neutral",
+        "RELEVANT": "topic",
+        "COMPETING": "claim",
+        "NEGATED": "negated",
+        "REPEATED": "repeated_claim"
+      },
+      "evidence": [
+        {
+          "role": "candidate_file",
+          "path": "../four-mapping/arms/m1m2/q1-lab-ph.arms.json",
+          "sha256": "50c567f894d8adad021d837d168f205673b67076d738d6c4c64e40920b8cc5a0"
+        },
+        {
+          "role": "fixtures",
+          "path": "../four-mapping/fixtures/counterfactual-m1m2.json",
+          "sha256": "e795a5c4f2abf4e2b7c2c7e5efee8829d54274703ebe964dfd555ad0aedc9043"
+        },
+        {
+          "role": "frozen",
+          "path": "../four-mapping/frozen/frozen-m1m2.json",
+          "sha256": "6933538052f2bfaa9dccda5c37f8b9bd5de757d9e23f36a0d1e4d86b5674ddde"
+        }
+      ]
+    },
+    {
+      "id": "q1-lab-ph-m2/qwen1.5b/raw",
+      "session_dir": "../four-mapping/sessions/qwen1.5b/q1-lab-ph-m2",
+      "task": {
+        "id": "q1-lab-ph-m2",
+        "name": "Chemistry: highest pH (m2)"
+      },
+      "model": {
+        "id": "qwen1.5b",
+        "name": "Qwen2.5-1.5B-Instruct Q4_K_M",
+        "model_hash": "39a2f847bada8ee8f6d36f063af469b592aa4ff47e55e573f3f3a54df3a23095"
+      },
+      "presentation": "raw",
+      "correct_answer": "B",
+      "incorrect_answer": "A",
+      "candidates": {
+        "NEUTRAL": "neutral",
+        "RELEVANT": "topic",
+        "COMPETING": "claim",
+        "NEGATED": "negated",
+        "REPEATED": "repeated_claim"
+      },
+      "evidence": [
+        {
+          "role": "candidate_file",
+          "path": "../four-mapping/arms/m1m2/q1-lab-ph.arms.json",
+          "sha256": "50c567f894d8adad021d837d168f205673b67076d738d6c4c64e40920b8cc5a0"
+        },
+        {
+          "role": "fixtures",
+          "path": "../four-mapping/fixtures/counterfactual-m1m2.json",
+          "sha256": "e795a5c4f2abf4e2b7c2c7e5efee8829d54274703ebe964dfd555ad0aedc9043"
+        },
+        {
+          "role": "frozen",
+          "path": "../four-mapping/frozen/frozen-m1m2.json",
+          "sha256": "6933538052f2bfaa9dccda5c37f8b9bd5de757d9e23f36a0d1e4d86b5674ddde"
+        }
+      ]
+    },
+    {
+      "id": "q1-lab-ph-m3/qwen1.5b/raw",
+      "session_dir": "../four-mapping/sessions/qwen1.5b/q1-lab-ph-m3",
+      "task": {
+        "id": "q1-lab-ph-m3",
+        "name": "Chemistry: highest pH (m3)"
+      },
+      "model": {
+        "id": "qwen1.5b",
+        "name": "Qwen2.5-1.5B-Instruct Q4_K_M",
+        "model_hash": "39a2f847bada8ee8f6d36f063af469b592aa4ff47e55e573f3f3a54df3a23095"
+      },
+      "presentation": "raw",
+      "correct_answer": "C",
+      "incorrect_answer": "D",
+      "candidates": {
+        "NEUTRAL": "neutral",
+        "COMPETING": "claim",
+        "REPEATED": "repeated_claim"
+      },
+      "evidence": [
+        {
+          "role": "candidate_file",
+          "path": "../four-mapping/arms/m3m4/q1-lab-ph.arms.json",
+          "sha256": "b69961367ddf60e288e3b6a6255847e0adc1b9804519054c49402f94545aa71b"
+        },
+        {
+          "role": "fixtures",
+          "path": "../four-mapping/fixtures/counterfactual-m3m4.json",
+          "sha256": "d60e7091b095eee76bd294133b6097f0b7ca49dea4b0f6abfe1d83f9e50fab2b"
+        },
+        {
+          "role": "frozen",
+          "path": "../four-mapping/frozen/frozen-m3m4.json",
+          "sha256": "7c1f1496ecc8deb307f8dcd7469164ac3206ea44f0e6c98e04fa753cfd148758"
+        }
+      ]
+    },
+    {
+      "id": "q1-lab-ph-m4/qwen1.5b/raw",
+      "session_dir": "../four-mapping/sessions/qwen1.5b/q1-lab-ph-m4",
+      "task": {
+        "id": "q1-lab-ph-m4",
+        "name": "Chemistry: highest pH (m4)"
+      },
+      "model": {
+        "id": "qwen1.5b",
+        "name": "Qwen2.5-1.5B-Instruct Q4_K_M",
+        "model_hash": "39a2f847bada8ee8f6d36f063af469b592aa4ff47e55e573f3f3a54df3a23095"
+      },
+      "presentation": "raw",
+      "correct_answer": "D",
+      "incorrect_answer": "C",
+      "candidates": {
+        "NEUTRAL": "neutral",
+        "COMPETING": "claim",
+        "REPEATED": "repeated_claim"
+      },
+      "evidence": [
+        {
+          "role": "candidate_file",
+          "path": "../four-mapping/arms/m3m4/q1-lab-ph.arms.json",
+          "sha256": "b69961367ddf60e288e3b6a6255847e0adc1b9804519054c49402f94545aa71b"
+        },
+        {
+          "role": "fixtures",
+          "path": "../four-mapping/fixtures/counterfactual-m3m4.json",
+          "sha256": "d60e7091b095eee76bd294133b6097f0b7ca49dea4b0f6abfe1d83f9e50fab2b"
+        },
+        {
+          "role": "frozen",
+          "path": "../four-mapping/frozen/frozen-m3m4.json",
+          "sha256": "7c1f1496ecc8deb307f8dcd7469164ac3206ea44f0e6c98e04fa753cfd148758"
+        }
+      ]
+    },
+    {
+      "id": "q2-invoice-m1/qwen1.5b/raw",
+      "session_dir": "../four-mapping/sessions/qwen1.5b/q2-invoice-m1",
+      "task": {
+        "id": "q2-invoice-m1",
+        "name": "Finance: largest outstanding balance (m1)"
+      },
+      "model": {
+        "id": "qwen1.5b",
+        "name": "Qwen2.5-1.5B-Instruct Q4_K_M",
+        "model_hash": "39a2f847bada8ee8f6d36f063af469b592aa4ff47e55e573f3f3a54df3a23095"
+      },
+      "presentation": "raw",
+      "correct_answer": "A",
+      "incorrect_answer": "B",
+      "candidates": {
+        "NEUTRAL": "neutral",
+        "RELEVANT": "topic",
+        "COMPETING": "claim",
+        "NEGATED": "negated",
+        "REPEATED": "repeated_claim"
+      },
+      "evidence": [
+        {
+          "role": "candidate_file",
+          "path": "../four-mapping/arms/m1m2/q2-invoice.arms.json",
+          "sha256": "bd963fafdd6d8fa185349c473f6b8534eae36cd212a8ef8e20be6362ad7a8e1c"
+        },
+        {
+          "role": "fixtures",
+          "path": "../four-mapping/fixtures/counterfactual-m1m2.json",
+          "sha256": "e795a5c4f2abf4e2b7c2c7e5efee8829d54274703ebe964dfd555ad0aedc9043"
+        },
+        {
+          "role": "frozen",
+          "path": "../four-mapping/frozen/frozen-m1m2.json",
+          "sha256": "6933538052f2bfaa9dccda5c37f8b9bd5de757d9e23f36a0d1e4d86b5674ddde"
+        }
+      ]
+    },
+    {
+      "id": "q2-invoice-m2/qwen1.5b/raw",
+      "session_dir": "../four-mapping/sessions/qwen1.5b/q2-invoice-m2",
+      "task": {
+        "id": "q2-invoice-m2",
+        "name": "Finance: largest outstanding balance (m2)"
+      },
+      "model": {
+        "id": "qwen1.5b",
+        "name": "Qwen2.5-1.5B-Instruct Q4_K_M",
+        "model_hash": "39a2f847bada8ee8f6d36f063af469b592aa4ff47e55e573f3f3a54df3a23095"
+      },
+      "presentation": "raw",
+      "correct_answer": "B",
+      "incorrect_answer": "A",
+      "candidates": {
+        "NEUTRAL": "neutral",
+        "RELEVANT": "topic",
+        "COMPETING": "claim",
+        "NEGATED": "negated",
+        "REPEATED": "repeated_claim"
+      },
+      "evidence": [
+        {
+          "role": "candidate_file",
+          "path": "../four-mapping/arms/m1m2/q2-invoice.arms.json",
+          "sha256": "bd963fafdd6d8fa185349c473f6b8534eae36cd212a8ef8e20be6362ad7a8e1c"
+        },
+        {
+          "role": "fixtures",
+          "path": "../four-mapping/fixtures/counterfactual-m1m2.json",
+          "sha256": "e795a5c4f2abf4e2b7c2c7e5efee8829d54274703ebe964dfd555ad0aedc9043"
+        },
+        {
+          "role": "frozen",
+          "path": "../four-mapping/frozen/frozen-m1m2.json",
+          "sha256": "6933538052f2bfaa9dccda5c37f8b9bd5de757d9e23f36a0d1e4d86b5674ddde"
+        }
+      ]
+    },
+    {
+      "id": "q2-invoice-m3/qwen1.5b/raw",
+      "session_dir": "../four-mapping/sessions/qwen1.5b/q2-invoice-m3",
+      "task": {
+        "id": "q2-invoice-m3",
+        "name": "Finance: largest outstanding balance (m3)"
+      },
+      "model": {
+        "id": "qwen1.5b",
+        "name": "Qwen2.5-1.5B-Instruct Q4_K_M",
+        "model_hash": "39a2f847bada8ee8f6d36f063af469b592aa4ff47e55e573f3f3a54df3a23095"
+      },
+      "presentation": "raw",
+      "correct_answer": "C",
+      "incorrect_answer": "D",
+      "candidates": {
+        "NEUTRAL": "neutral",
+        "COMPETING": "claim",
+        "REPEATED": "repeated_claim"
+      },
+      "evidence": [
+        {
+          "role": "candidate_file",
+          "path": "../four-mapping/arms/m3m4/q2-invoice.arms.json",
+          "sha256": "bb38cdf00b9d4137731a6f01071247281bfdfe53d5e0f41799f650981a17daeb"
+        },
+        {
+          "role": "fixtures",
+          "path": "../four-mapping/fixtures/counterfactual-m3m4.json",
+          "sha256": "d60e7091b095eee76bd294133b6097f0b7ca49dea4b0f6abfe1d83f9e50fab2b"
+        },
+        {
+          "role": "frozen",
+          "path": "../four-mapping/frozen/frozen-m3m4.json",
+          "sha256": "7c1f1496ecc8deb307f8dcd7469164ac3206ea44f0e6c98e04fa753cfd148758"
+        }
+      ]
+    },
+    {
+      "id": "q2-invoice-m4/qwen1.5b/raw",
+      "session_dir": "../four-mapping/sessions/qwen1.5b/q2-invoice-m4",
+      "task": {
+        "id": "q2-invoice-m4",
+        "name": "Finance: largest outstanding balance (m4)"
+      },
+      "model": {
+        "id": "qwen1.5b",
+        "name": "Qwen2.5-1.5B-Instruct Q4_K_M",
+        "model_hash": "39a2f847bada8ee8f6d36f063af469b592aa4ff47e55e573f3f3a54df3a23095"
+      },
+      "presentation": "raw",
+      "correct_answer": "D",
+      "incorrect_answer": "C",
+      "candidates": {
+        "NEUTRAL": "neutral",
+        "COMPETING": "claim",
+        "REPEATED": "repeated_claim"
+      },
+      "evidence": [
+        {
+          "role": "candidate_file",
+          "path": "../four-mapping/arms/m3m4/q2-invoice.arms.json",
+          "sha256": "bb38cdf00b9d4137731a6f01071247281bfdfe53d5e0f41799f650981a17daeb"
+        },
+        {
+          "role": "fixtures",
+          "path": "../four-mapping/fixtures/counterfactual-m3m4.json",
+          "sha256": "d60e7091b095eee76bd294133b6097f0b7ca49dea4b0f6abfe1d83f9e50fab2b"
+        },
+        {
+          "role": "frozen",
+          "path": "../four-mapping/frozen/frozen-m3m4.json",
+          "sha256": "7c1f1496ecc8deb307f8dcd7469164ac3206ea44f0e6c98e04fa753cfd148758"
+        }
+      ]
+    },
+    {
+      "id": "q3-route-m1/qwen1.5b/raw",
+      "session_dir": "../four-mapping/sessions/qwen1.5b/q3-route-m1",
+      "task": {
+        "id": "q3-route-m1",
+        "name": "Transit: shortest travel time (m1)"
+      },
+      "model": {
+        "id": "qwen1.5b",
+        "name": "Qwen2.5-1.5B-Instruct Q4_K_M",
+        "model_hash": "39a2f847bada8ee8f6d36f063af469b592aa4ff47e55e573f3f3a54df3a23095"
+      },
+      "presentation": "raw",
+      "correct_answer": "A",
+      "incorrect_answer": "B",
+      "candidates": {
+        "NEUTRAL": "neutral",
+        "RELEVANT": "topic",
+        "COMPETING": "claim",
+        "NEGATED": "negated",
+        "REPEATED": "repeated_claim"
+      },
+      "evidence": [
+        {
+          "role": "candidate_file",
+          "path": "../four-mapping/arms/m1m2/q3-route.arms.json",
+          "sha256": "98c71fd36e15bf044a10b13f77bdc088b94cdd3b07b2331811c88b56b561bb2e"
+        },
+        {
+          "role": "fixtures",
+          "path": "../four-mapping/fixtures/counterfactual-m1m2.json",
+          "sha256": "e795a5c4f2abf4e2b7c2c7e5efee8829d54274703ebe964dfd555ad0aedc9043"
+        },
+        {
+          "role": "frozen",
+          "path": "../four-mapping/frozen/frozen-m1m2.json",
+          "sha256": "6933538052f2bfaa9dccda5c37f8b9bd5de757d9e23f36a0d1e4d86b5674ddde"
+        }
+      ]
+    },
+    {
+      "id": "q3-route-m2/qwen1.5b/raw",
+      "session_dir": "../four-mapping/sessions/qwen1.5b/q3-route-m2",
+      "task": {
+        "id": "q3-route-m2",
+        "name": "Transit: shortest travel time (m2)"
+      },
+      "model": {
+        "id": "qwen1.5b",
+        "name": "Qwen2.5-1.5B-Instruct Q4_K_M",
+        "model_hash": "39a2f847bada8ee8f6d36f063af469b592aa4ff47e55e573f3f3a54df3a23095"
+      },
+      "presentation": "raw",
+      "correct_answer": "B",
+      "incorrect_answer": "A",
+      "candidates": {
+        "NEUTRAL": "neutral",
+        "RELEVANT": "topic",
+        "COMPETING": "claim",
+        "NEGATED": "negated",
+        "REPEATED": "repeated_claim"
+      },
+      "evidence": [
+        {
+          "role": "candidate_file",
+          "path": "../four-mapping/arms/m1m2/q3-route.arms.json",
+          "sha256": "98c71fd36e15bf044a10b13f77bdc088b94cdd3b07b2331811c88b56b561bb2e"
+        },
+        {
+          "role": "fixtures",
+          "path": "../four-mapping/fixtures/counterfactual-m1m2.json",
+          "sha256": "e795a5c4f2abf4e2b7c2c7e5efee8829d54274703ebe964dfd555ad0aedc9043"
+        },
+        {
+          "role": "frozen",
+          "path": "../four-mapping/frozen/frozen-m1m2.json",
+          "sha256": "6933538052f2bfaa9dccda5c37f8b9bd5de757d9e23f36a0d1e4d86b5674ddde"
+        }
+      ]
+    },
+    {
+      "id": "q3-route-m3/qwen1.5b/raw",
+      "session_dir": "../four-mapping/sessions/qwen1.5b/q3-route-m3",
+      "task": {
+        "id": "q3-route-m3",
+        "name": "Transit: shortest travel time (m3)"
+      },
+      "model": {
+        "id": "qwen1.5b",
+        "name": "Qwen2.5-1.5B-Instruct Q4_K_M",
+        "model_hash": "39a2f847bada8ee8f6d36f063af469b592aa4ff47e55e573f3f3a54df3a23095"
+      },
+      "presentation": "raw",
+      "correct_answer": "C",
+      "incorrect_answer": "D",
+      "candidates": {
+        "NEUTRAL": "neutral",
+        "COMPETING": "claim",
+        "REPEATED": "repeated_claim"
+      },
+      "evidence": [
+        {
+          "role": "candidate_file",
+          "path": "../four-mapping/arms/m3m4/q3-route.arms.json",
+          "sha256": "8b659e7058f59326d264085c23d3e1400b2a0d23af3daf27f95f4d509b71183a"
+        },
+        {
+          "role": "fixtures",
+          "path": "../four-mapping/fixtures/counterfactual-m3m4.json",
+          "sha256": "d60e7091b095eee76bd294133b6097f0b7ca49dea4b0f6abfe1d83f9e50fab2b"
+        },
+        {
+          "role": "frozen",
+          "path": "../four-mapping/frozen/frozen-m3m4.json",
+          "sha256": "7c1f1496ecc8deb307f8dcd7469164ac3206ea44f0e6c98e04fa753cfd148758"
+        }
+      ]
+    },
+    {
+      "id": "q3-route-m4/qwen1.5b/raw",
+      "session_dir": "../four-mapping/sessions/qwen1.5b/q3-route-m4",
+      "task": {
+        "id": "q3-route-m4",
+        "name": "Transit: shortest travel time (m4)"
+      },
+      "model": {
+        "id": "qwen1.5b",
+        "name": "Qwen2.5-1.5B-Instruct Q4_K_M",
+        "model_hash": "39a2f847bada8ee8f6d36f063af469b592aa4ff47e55e573f3f3a54df3a23095"
+      },
+      "presentation": "raw",
+      "correct_answer": "D",
+      "incorrect_answer": "C",
+      "candidates": {
+        "NEUTRAL": "neutral",
+        "COMPETING": "claim",
+        "REPEATED": "repeated_claim"
+      },
+      "evidence": [
+        {
+          "role": "candidate_file",
+          "path": "../four-mapping/arms/m3m4/q3-route.arms.json",
+          "sha256": "8b659e7058f59326d264085c23d3e1400b2a0d23af3daf27f95f4d509b71183a"
+        },
+        {
+          "role": "fixtures",
+          "path": "../four-mapping/fixtures/counterfactual-m3m4.json",
+          "sha256": "d60e7091b095eee76bd294133b6097f0b7ca49dea4b0f6abfe1d83f9e50fab2b"
+        },
+        {
+          "role": "frozen",
+          "path": "../four-mapping/frozen/frozen-m3m4.json",
+          "sha256": "7c1f1496ecc8deb307f8dcd7469164ac3206ea44f0e6c98e04fa753cfd148758"
+        }
+      ]
+    },
+    {
+      "id": "q4-league-m1/qwen1.5b/raw",
+      "session_dir": "../four-mapping/sessions/qwen1.5b/q4-league-m1",
+      "task": {
+        "id": "q4-league-m1",
+        "name": "Sports: league leader on points (m1)"
+      },
+      "model": {
+        "id": "qwen1.5b",
+        "name": "Qwen2.5-1.5B-Instruct Q4_K_M",
+        "model_hash": "39a2f847bada8ee8f6d36f063af469b592aa4ff47e55e573f3f3a54df3a23095"
+      },
+      "presentation": "raw",
+      "correct_answer": "A",
+      "incorrect_answer": "B",
+      "candidates": {
+        "NEUTRAL": "neutral",
+        "RELEVANT": "topic",
+        "COMPETING": "claim",
+        "NEGATED": "negated",
+        "REPEATED": "repeated_claim"
+      },
+      "evidence": [
+        {
+          "role": "candidate_file",
+          "path": "../four-mapping/arms/m1m2/q4-league.arms.json",
+          "sha256": "f11af63487e2b631bd5aa9b8d16b8d2d6c6d0909e13c556aee78c9e19e1d17aa"
+        },
+        {
+          "role": "fixtures",
+          "path": "../four-mapping/fixtures/counterfactual-m1m2.json",
+          "sha256": "e795a5c4f2abf4e2b7c2c7e5efee8829d54274703ebe964dfd555ad0aedc9043"
+        },
+        {
+          "role": "frozen",
+          "path": "../four-mapping/frozen/frozen-m1m2.json",
+          "sha256": "6933538052f2bfaa9dccda5c37f8b9bd5de757d9e23f36a0d1e4d86b5674ddde"
+        }
+      ]
+    },
+    {
+      "id": "q4-league-m2/qwen1.5b/raw",
+      "session_dir": "../four-mapping/sessions/qwen1.5b/q4-league-m2",
+      "task": {
+        "id": "q4-league-m2",
+        "name": "Sports: league leader on points (m2)"
+      },
+      "model": {
+        "id": "qwen1.5b",
+        "name": "Qwen2.5-1.5B-Instruct Q4_K_M",
+        "model_hash": "39a2f847bada8ee8f6d36f063af469b592aa4ff47e55e573f3f3a54df3a23095"
+      },
+      "presentation": "raw",
+      "correct_answer": "B",
+      "incorrect_answer": "A",
+      "candidates": {
+        "NEUTRAL": "neutral",
+        "RELEVANT": "topic",
+        "COMPETING": "claim",
+        "NEGATED": "negated",
+        "REPEATED": "repeated_claim"
+      },
+      "evidence": [
+        {
+          "role": "candidate_file",
+          "path": "../four-mapping/arms/m1m2/q4-league.arms.json",
+          "sha256": "f11af63487e2b631bd5aa9b8d16b8d2d6c6d0909e13c556aee78c9e19e1d17aa"
+        },
+        {
+          "role": "fixtures",
+          "path": "../four-mapping/fixtures/counterfactual-m1m2.json",
+          "sha256": "e795a5c4f2abf4e2b7c2c7e5efee8829d54274703ebe964dfd555ad0aedc9043"
+        },
+        {
+          "role": "frozen",
+          "path": "../four-mapping/frozen/frozen-m1m2.json",
+          "sha256": "6933538052f2bfaa9dccda5c37f8b9bd5de757d9e23f36a0d1e4d86b5674ddde"
+        }
+      ]
+    },
+    {
+      "id": "q4-league-m3/qwen1.5b/raw",
+      "session_dir": "../four-mapping/sessions/qwen1.5b/q4-league-m3",
+      "task": {
+        "id": "q4-league-m3",
+        "name": "Sports: league leader on points (m3)"
+      },
+      "model": {
+        "id": "qwen1.5b",
+        "name": "Qwen2.5-1.5B-Instruct Q4_K_M",
+        "model_hash": "39a2f847bada8ee8f6d36f063af469b592aa4ff47e55e573f3f3a54df3a23095"
+      },
+      "presentation": "raw",
+      "correct_answer": "C",
+      "incorrect_answer": "D",
+      "candidates": {
+        "NEUTRAL": "neutral",
+        "COMPETING": "claim",
+        "REPEATED": "repeated_claim"
+      },
+      "evidence": [
+        {
+          "role": "candidate_file",
+          "path": "../four-mapping/arms/m3m4/q4-league.arms.json",
+          "sha256": "cfc80136ef09d1243e0d95554e3092f769f5f255c62f38a6868e45082cf1a3aa"
+        },
+        {
+          "role": "fixtures",
+          "path": "../four-mapping/fixtures/counterfactual-m3m4.json",
+          "sha256": "d60e7091b095eee76bd294133b6097f0b7ca49dea4b0f6abfe1d83f9e50fab2b"
+        },
+        {
+          "role": "frozen",
+          "path": "../four-mapping/frozen/frozen-m3m4.json",
+          "sha256": "7c1f1496ecc8deb307f8dcd7469164ac3206ea44f0e6c98e04fa753cfd148758"
+        }
+      ]
+    },
+    {
+      "id": "q4-league-m4/qwen1.5b/raw",
+      "session_dir": "../four-mapping/sessions/qwen1.5b/q4-league-m4",
+      "task": {
+        "id": "q4-league-m4",
+        "name": "Sports: league leader on points (m4)"
+      },
+      "model": {
+        "id": "qwen1.5b",
+        "name": "Qwen2.5-1.5B-Instruct Q4_K_M",
+        "model_hash": "39a2f847bada8ee8f6d36f063af469b592aa4ff47e55e573f3f3a54df3a23095"
+      },
+      "presentation": "raw",
+      "correct_answer": "D",
+      "incorrect_answer": "C",
+      "candidates": {
+        "NEUTRAL": "neutral",
+        "COMPETING": "claim",
+        "REPEATED": "repeated_claim"
+      },
+      "evidence": [
+        {
+          "role": "candidate_file",
+          "path": "../four-mapping/arms/m3m4/q4-league.arms.json",
+          "sha256": "cfc80136ef09d1243e0d95554e3092f769f5f255c62f38a6868e45082cf1a3aa"
+        },
+        {
+          "role": "fixtures",
+          "path": "../four-mapping/fixtures/counterfactual-m3m4.json",
+          "sha256": "d60e7091b095eee76bd294133b6097f0b7ca49dea4b0f6abfe1d83f9e50fab2b"
+        },
+        {
+          "role": "frozen",
+          "path": "../four-mapping/frozen/frozen-m3m4.json",
+          "sha256": "7c1f1496ecc8deb307f8dcd7469164ac3206ea44f0e6c98e04fa753cfd148758"
+        }
+      ]
+    },
+    {
+      "id": "q1-lab-ph-m1/llama3b/raw",
+      "session_dir": "../four-mapping/sessions/llama3b/q1-lab-ph-m1",
+      "task": {
+        "id": "q1-lab-ph-m1",
+        "name": "Chemistry: highest pH (m1)"
+      },
+      "model": {
+        "id": "llama3b",
+        "name": "Llama-3.2-3B-Instruct Q4_K_M",
+        "model_hash": "b783b9826ac539b24b803f6caa51f159e64777b18223f2927fcc061de194c55e"
+      },
+      "presentation": "raw",
+      "correct_answer": "A",
+      "incorrect_answer": "B",
+      "candidates": {
+        "NEUTRAL": "neutral",
+        "RELEVANT": "topic",
+        "COMPETING": "claim",
+        "NEGATED": "negated",
+        "REPEATED": "repeated_claim"
+      },
+      "evidence": [
+        {
+          "role": "candidate_file",
+          "path": "../four-mapping/arms/m1m2/q1-lab-ph.arms.json",
+          "sha256": "50c567f894d8adad021d837d168f205673b67076d738d6c4c64e40920b8cc5a0"
+        },
+        {
+          "role": "fixtures",
+          "path": "../four-mapping/fixtures/counterfactual-m1m2.json",
+          "sha256": "e795a5c4f2abf4e2b7c2c7e5efee8829d54274703ebe964dfd555ad0aedc9043"
+        },
+        {
+          "role": "frozen",
+          "path": "../four-mapping/frozen/frozen-m1m2.json",
+          "sha256": "6933538052f2bfaa9dccda5c37f8b9bd5de757d9e23f36a0d1e4d86b5674ddde"
+        }
+      ]
+    },
+    {
+      "id": "q1-lab-ph-m2/llama3b/raw",
+      "session_dir": "../four-mapping/sessions/llama3b/q1-lab-ph-m2",
+      "task": {
+        "id": "q1-lab-ph-m2",
+        "name": "Chemistry: highest pH (m2)"
+      },
+      "model": {
+        "id": "llama3b",
+        "name": "Llama-3.2-3B-Instruct Q4_K_M",
+        "model_hash": "b783b9826ac539b24b803f6caa51f159e64777b18223f2927fcc061de194c55e"
+      },
+      "presentation": "raw",
+      "correct_answer": "B",
+      "incorrect_answer": "A",
+      "candidates": {
+        "NEUTRAL": "neutral",
+        "RELEVANT": "topic",
+        "COMPETING": "claim",
+        "NEGATED": "negated",
+        "REPEATED": "repeated_claim"
+      },
+      "evidence": [
+        {
+          "role": "candidate_file",
+          "path": "../four-mapping/arms/m1m2/q1-lab-ph.arms.json",
+          "sha256": "50c567f894d8adad021d837d168f205673b67076d738d6c4c64e40920b8cc5a0"
+        },
+        {
+          "role": "fixtures",
+          "path": "../four-mapping/fixtures/counterfactual-m1m2.json",
+          "sha256": "e795a5c4f2abf4e2b7c2c7e5efee8829d54274703ebe964dfd555ad0aedc9043"
+        },
+        {
+          "role": "frozen",
+          "path": "../four-mapping/frozen/frozen-m1m2.json",
+          "sha256": "6933538052f2bfaa9dccda5c37f8b9bd5de757d9e23f36a0d1e4d86b5674ddde"
+        }
+      ]
+    },
+    {
+      "id": "q1-lab-ph-m3/llama3b/raw",
+      "session_dir": "../four-mapping/sessions/llama3b/q1-lab-ph-m3",
+      "task": {
+        "id": "q1-lab-ph-m3",
+        "name": "Chemistry: highest pH (m3)"
+      },
+      "model": {
+        "id": "llama3b",
+        "name": "Llama-3.2-3B-Instruct Q4_K_M",
+        "model_hash": "b783b9826ac539b24b803f6caa51f159e64777b18223f2927fcc061de194c55e"
+      },
+      "presentation": "raw",
+      "correct_answer": "C",
+      "incorrect_answer": "D",
+      "candidates": {
+        "NEUTRAL": "neutral",
+        "COMPETING": "claim",
+        "REPEATED": "repeated_claim"
+      },
+      "evidence": [
+        {
+          "role": "candidate_file",
+          "path": "../four-mapping/arms/m3m4/q1-lab-ph.arms.json",
+          "sha256": "b69961367ddf60e288e3b6a6255847e0adc1b9804519054c49402f94545aa71b"
+        },
+        {
+          "role": "fixtures",
+          "path": "../four-mapping/fixtures/counterfactual-m3m4.json",
+          "sha256": "d60e7091b095eee76bd294133b6097f0b7ca49dea4b0f6abfe1d83f9e50fab2b"
+        },
+        {
+          "role": "frozen",
+          "path": "../four-mapping/frozen/frozen-m3m4.json",
+          "sha256": "7c1f1496ecc8deb307f8dcd7469164ac3206ea44f0e6c98e04fa753cfd148758"
+        }
+      ]
+    },
+    {
+      "id": "q1-lab-ph-m4/llama3b/raw",
+      "session_dir": "../four-mapping/sessions/llama3b/q1-lab-ph-m4",
+      "task": {
+        "id": "q1-lab-ph-m4",
+        "name": "Chemistry: highest pH (m4)"
+      },
+      "model": {
+        "id": "llama3b",
+        "name": "Llama-3.2-3B-Instruct Q4_K_M",
+        "model_hash": "b783b9826ac539b24b803f6caa51f159e64777b18223f2927fcc061de194c55e"
+      },
+      "presentation": "raw",
+      "correct_answer": "D",
+      "incorrect_answer": "C",
+      "candidates": {
+        "NEUTRAL": "neutral",
+        "COMPETING": "claim",
+        "REPEATED": "repeated_claim"
+      },
+      "evidence": [
+        {
+          "role": "candidate_file",
+          "path": "../four-mapping/arms/m3m4/q1-lab-ph.arms.json",
+          "sha256": "b69961367ddf60e288e3b6a6255847e0adc1b9804519054c49402f94545aa71b"
+        },
+        {
+          "role": "fixtures",
+          "path": "../four-mapping/fixtures/counterfactual-m3m4.json",
+          "sha256": "d60e7091b095eee76bd294133b6097f0b7ca49dea4b0f6abfe1d83f9e50fab2b"
+        },
+        {
+          "role": "frozen",
+          "path": "../four-mapping/frozen/frozen-m3m4.json",
+          "sha256": "7c1f1496ecc8deb307f8dcd7469164ac3206ea44f0e6c98e04fa753cfd148758"
+        }
+      ]
+    },
+    {
+      "id": "q2-invoice-m1/llama3b/raw",
+      "session_dir": "../four-mapping/sessions/llama3b/q2-invoice-m1",
+      "task": {
+        "id": "q2-invoice-m1",
+        "name": "Finance: largest outstanding balance (m1)"
+      },
+      "model": {
+        "id": "llama3b",
+        "name": "Llama-3.2-3B-Instruct Q4_K_M",
+        "model_hash": "b783b9826ac539b24b803f6caa51f159e64777b18223f2927fcc061de194c55e"
+      },
+      "presentation": "raw",
+      "correct_answer": "A",
+      "incorrect_answer": "B",
+      "candidates": {
+        "NEUTRAL": "neutral",
+        "RELEVANT": "topic",
+        "COMPETING": "claim",
+        "NEGATED": "negated",
+        "REPEATED": "repeated_claim"
+      },
+      "evidence": [
+        {
+          "role": "candidate_file",
+          "path": "../four-mapping/arms/m1m2/q2-invoice.arms.json",
+          "sha256": "bd963fafdd6d8fa185349c473f6b8534eae36cd212a8ef8e20be6362ad7a8e1c"
+        },
+        {
+          "role": "fixtures",
+          "path": "../four-mapping/fixtures/counterfactual-m1m2.json",
+          "sha256": "e795a5c4f2abf4e2b7c2c7e5efee8829d54274703ebe964dfd555ad0aedc9043"
+        },
+        {
+          "role": "frozen",
+          "path": "../four-mapping/frozen/frozen-m1m2.json",
+          "sha256": "6933538052f2bfaa9dccda5c37f8b9bd5de757d9e23f36a0d1e4d86b5674ddde"
+        }
+      ]
+    },
+    {
+      "id": "q2-invoice-m2/llama3b/raw",
+      "session_dir": "../four-mapping/sessions/llama3b/q2-invoice-m2",
+      "task": {
+        "id": "q2-invoice-m2",
+        "name": "Finance: largest outstanding balance (m2)"
+      },
+      "model": {
+        "id": "llama3b",
+        "name": "Llama-3.2-3B-Instruct Q4_K_M",
+        "model_hash": "b783b9826ac539b24b803f6caa51f159e64777b18223f2927fcc061de194c55e"
+      },
+      "presentation": "raw",
+      "correct_answer": "B",
+      "incorrect_answer": "A",
+      "candidates": {
+        "NEUTRAL": "neutral",
+        "RELEVANT": "topic",
+        "COMPETING": "claim",
+        "NEGATED": "negated",
+        "REPEATED": "repeated_claim"
+      },
+      "evidence": [
+        {
+          "role": "candidate_file",
+          "path": "../four-mapping/arms/m1m2/q2-invoice.arms.json",
+          "sha256": "bd963fafdd6d8fa185349c473f6b8534eae36cd212a8ef8e20be6362ad7a8e1c"
+        },
+        {
+          "role": "fixtures",
+          "path": "../four-mapping/fixtures/counterfactual-m1m2.json",
+          "sha256": "e795a5c4f2abf4e2b7c2c7e5efee8829d54274703ebe964dfd555ad0aedc9043"
+        },
+        {
+          "role": "frozen",
+          "path": "../four-mapping/frozen/frozen-m1m2.json",
+          "sha256": "6933538052f2bfaa9dccda5c37f8b9bd5de757d9e23f36a0d1e4d86b5674ddde"
+        }
+      ]
+    },
+    {
+      "id": "q2-invoice-m3/llama3b/raw",
+      "session_dir": "../four-mapping/sessions/llama3b/q2-invoice-m3",
+      "task": {
+        "id": "q2-invoice-m3",
+        "name": "Finance: largest outstanding balance (m3)"
+      },
+      "model": {
+        "id": "llama3b",
+        "name": "Llama-3.2-3B-Instruct Q4_K_M",
+        "model_hash": "b783b9826ac539b24b803f6caa51f159e64777b18223f2927fcc061de194c55e"
+      },
+      "presentation": "raw",
+      "correct_answer": "C",
+      "incorrect_answer": "D",
+      "candidates": {
+        "NEUTRAL": "neutral",
+        "COMPETING": "claim",
+        "REPEATED": "repeated_claim"
+      },
+      "evidence": [
+        {
+          "role": "candidate_file",
+          "path": "../four-mapping/arms/m3m4/q2-invoice.arms.json",
+          "sha256": "bb38cdf00b9d4137731a6f01071247281bfdfe53d5e0f41799f650981a17daeb"
+        },
+        {
+          "role": "fixtures",
+          "path": "../four-mapping/fixtures/counterfactual-m3m4.json",
+          "sha256": "d60e7091b095eee76bd294133b6097f0b7ca49dea4b0f6abfe1d83f9e50fab2b"
+        },
+        {
+          "role": "frozen",
+          "path": "../four-mapping/frozen/frozen-m3m4.json",
+          "sha256": "7c1f1496ecc8deb307f8dcd7469164ac3206ea44f0e6c98e04fa753cfd148758"
+        }
+      ]
+    },
+    {
+      "id": "q2-invoice-m4/llama3b/raw",
+      "session_dir": "../four-mapping/sessions/llama3b/q2-invoice-m4",
+      "task": {
+        "id": "q2-invoice-m4",
+        "name": "Finance: largest outstanding balance (m4)"
+      },
+      "model": {
+        "id": "llama3b",
+        "name": "Llama-3.2-3B-Instruct Q4_K_M",
+        "model_hash": "b783b9826ac539b24b803f6caa51f159e64777b18223f2927fcc061de194c55e"
+      },
+      "presentation": "raw",
+      "correct_answer": "D",
+      "incorrect_answer": "C",
+      "candidates": {
+        "NEUTRAL": "neutral",
+        "COMPETING": "claim",
+        "REPEATED": "repeated_claim"
+      },
+      "evidence": [
+        {
+          "role": "candidate_file",
+          "path": "../four-mapping/arms/m3m4/q2-invoice.arms.json",
+          "sha256": "bb38cdf00b9d4137731a6f01071247281bfdfe53d5e0f41799f650981a17daeb"
+        },
+        {
+          "role": "fixtures",
+          "path": "../four-mapping/fixtures/counterfactual-m3m4.json",
+          "sha256": "d60e7091b095eee76bd294133b6097f0b7ca49dea4b0f6abfe1d83f9e50fab2b"
+        },
+        {
+          "role": "frozen",
+          "path": "../four-mapping/frozen/frozen-m3m4.json",
+          "sha256": "7c1f1496ecc8deb307f8dcd7469164ac3206ea44f0e6c98e04fa753cfd148758"
+        }
+      ]
+    },
+    {
+      "id": "q3-route-m1/llama3b/raw",
+      "session_dir": "../four-mapping/sessions/llama3b/q3-route-m1",
+      "task": {
+        "id": "q3-route-m1",
+        "name": "Transit: shortest travel time (m1)"
+      },
+      "model": {
+        "id": "llama3b",
+        "name": "Llama-3.2-3B-Instruct Q4_K_M",
+        "model_hash": "b783b9826ac539b24b803f6caa51f159e64777b18223f2927fcc061de194c55e"
+      },
+      "presentation": "raw",
+      "correct_answer": "A",
+      "incorrect_answer": "B",
+      "candidates": {
+        "NEUTRAL": "neutral",
+        "RELEVANT": "topic",
+        "COMPETING": "claim",
+        "NEGATED": "negated",
+        "REPEATED": "repeated_claim"
+      },
+      "evidence": [
+        {
+          "role": "candidate_file",
+          "path": "../four-mapping/arms/m1m2/q3-route.arms.json",
+          "sha256": "98c71fd36e15bf044a10b13f77bdc088b94cdd3b07b2331811c88b56b561bb2e"
+        },
+        {
+          "role": "fixtures",
+          "path": "../four-mapping/fixtures/counterfactual-m1m2.json",
+          "sha256": "e795a5c4f2abf4e2b7c2c7e5efee8829d54274703ebe964dfd555ad0aedc9043"
+        },
+        {
+          "role": "frozen",
+          "path": "../four-mapping/frozen/frozen-m1m2.json",
+          "sha256": "6933538052f2bfaa9dccda5c37f8b9bd5de757d9e23f36a0d1e4d86b5674ddde"
+        }
+      ]
+    },
+    {
+      "id": "q3-route-m2/llama3b/raw",
+      "session_dir": "../four-mapping/sessions/llama3b/q3-route-m2",
+      "task": {
+        "id": "q3-route-m2",
+        "name": "Transit: shortest travel time (m2)"
+      },
+      "model": {
+        "id": "llama3b",
+        "name": "Llama-3.2-3B-Instruct Q4_K_M",
+        "model_hash": "b783b9826ac539b24b803f6caa51f159e64777b18223f2927fcc061de194c55e"
+      },
+      "presentation": "raw",
+      "correct_answer": "B",
+      "incorrect_answer": "A",
+      "candidates": {
+        "NEUTRAL": "neutral",
+        "RELEVANT": "topic",
+        "COMPETING": "claim",
+        "NEGATED": "negated",
+        "REPEATED": "repeated_claim"
+      },
+      "evidence": [
+        {
+          "role": "candidate_file",
+          "path": "../four-mapping/arms/m1m2/q3-route.arms.json",
+          "sha256": "98c71fd36e15bf044a10b13f77bdc088b94cdd3b07b2331811c88b56b561bb2e"
+        },
+        {
+          "role": "fixtures",
+          "path": "../four-mapping/fixtures/counterfactual-m1m2.json",
+          "sha256": "e795a5c4f2abf4e2b7c2c7e5efee8829d54274703ebe964dfd555ad0aedc9043"
+        },
+        {
+          "role": "frozen",
+          "path": "../four-mapping/frozen/frozen-m1m2.json",
+          "sha256": "6933538052f2bfaa9dccda5c37f8b9bd5de757d9e23f36a0d1e4d86b5674ddde"
+        }
+      ]
+    },
+    {
+      "id": "q3-route-m3/llama3b/raw",
+      "session_dir": "../four-mapping/sessions/llama3b/q3-route-m3",
+      "task": {
+        "id": "q3-route-m3",
+        "name": "Transit: shortest travel time (m3)"
+      },
+      "model": {
+        "id": "llama3b",
+        "name": "Llama-3.2-3B-Instruct Q4_K_M",
+        "model_hash": "b783b9826ac539b24b803f6caa51f159e64777b18223f2927fcc061de194c55e"
+      },
+      "presentation": "raw",
+      "correct_answer": "C",
+      "incorrect_answer": "D",
+      "candidates": {
+        "NEUTRAL": "neutral",
+        "COMPETING": "claim",
+        "REPEATED": "repeated_claim"
+      },
+      "evidence": [
+        {
+          "role": "candidate_file",
+          "path": "../four-mapping/arms/m3m4/q3-route.arms.json",
+          "sha256": "8b659e7058f59326d264085c23d3e1400b2a0d23af3daf27f95f4d509b71183a"
+        },
+        {
+          "role": "fixtures",
+          "path": "../four-mapping/fixtures/counterfactual-m3m4.json",
+          "sha256": "d60e7091b095eee76bd294133b6097f0b7ca49dea4b0f6abfe1d83f9e50fab2b"
+        },
+        {
+          "role": "frozen",
+          "path": "../four-mapping/frozen/frozen-m3m4.json",
+          "sha256": "7c1f1496ecc8deb307f8dcd7469164ac3206ea44f0e6c98e04fa753cfd148758"
+        }
+      ]
+    },
+    {
+      "id": "q3-route-m4/llama3b/raw",
+      "session_dir": "../four-mapping/sessions/llama3b/q3-route-m4",
+      "task": {
+        "id": "q3-route-m4",
+        "name": "Transit: shortest travel time (m4)"
+      },
+      "model": {
+        "id": "llama3b",
+        "name": "Llama-3.2-3B-Instruct Q4_K_M",
+        "model_hash": "b783b9826ac539b24b803f6caa51f159e64777b18223f2927fcc061de194c55e"
+      },
+      "presentation": "raw",
+      "correct_answer": "D",
+      "incorrect_answer": "C",
+      "candidates": {
+        "NEUTRAL": "neutral",
+        "COMPETING": "claim",
+        "REPEATED": "repeated_claim"
+      },
+      "evidence": [
+        {
+          "role": "candidate_file",
+          "path": "../four-mapping/arms/m3m4/q3-route.arms.json",
+          "sha256": "8b659e7058f59326d264085c23d3e1400b2a0d23af3daf27f95f4d509b71183a"
+        },
+        {
+          "role": "fixtures",
+          "path": "../four-mapping/fixtures/counterfactual-m3m4.json",
+          "sha256": "d60e7091b095eee76bd294133b6097f0b7ca49dea4b0f6abfe1d83f9e50fab2b"
+        },
+        {
+          "role": "frozen",
+          "path": "../four-mapping/frozen/frozen-m3m4.json",
+          "sha256": "7c1f1496ecc8deb307f8dcd7469164ac3206ea44f0e6c98e04fa753cfd148758"
+        }
+      ]
+    },
+    {
+      "id": "q4-league-m1/llama3b/raw",
+      "session_dir": "../four-mapping/sessions/llama3b/q4-league-m1",
+      "task": {
+        "id": "q4-league-m1",
+        "name": "Sports: league leader on points (m1)"
+      },
+      "model": {
+        "id": "llama3b",
+        "name": "Llama-3.2-3B-Instruct Q4_K_M",
+        "model_hash": "b783b9826ac539b24b803f6caa51f159e64777b18223f2927fcc061de194c55e"
+      },
+      "presentation": "raw",
+      "correct_answer": "A",
+      "incorrect_answer": "B",
+      "candidates": {
+        "NEUTRAL": "neutral",
+        "RELEVANT": "topic",
+        "COMPETING": "claim",
+        "NEGATED": "negated",
+        "REPEATED": "repeated_claim"
+      },
+      "evidence": [
+        {
+          "role": "candidate_file",
+          "path": "../four-mapping/arms/m1m2/q4-league.arms.json",
+          "sha256": "f11af63487e2b631bd5aa9b8d16b8d2d6c6d0909e13c556aee78c9e19e1d17aa"
+        },
+        {
+          "role": "fixtures",
+          "path": "../four-mapping/fixtures/counterfactual-m1m2.json",
+          "sha256": "e795a5c4f2abf4e2b7c2c7e5efee8829d54274703ebe964dfd555ad0aedc9043"
+        },
+        {
+          "role": "frozen",
+          "path": "../four-mapping/frozen/frozen-m1m2.json",
+          "sha256": "6933538052f2bfaa9dccda5c37f8b9bd5de757d9e23f36a0d1e4d86b5674ddde"
+        }
+      ]
+    },
+    {
+      "id": "q4-league-m2/llama3b/raw",
+      "session_dir": "../four-mapping/sessions/llama3b/q4-league-m2",
+      "task": {
+        "id": "q4-league-m2",
+        "name": "Sports: league leader on points (m2)"
+      },
+      "model": {
+        "id": "llama3b",
+        "name": "Llama-3.2-3B-Instruct Q4_K_M",
+        "model_hash": "b783b9826ac539b24b803f6caa51f159e64777b18223f2927fcc061de194c55e"
+      },
+      "presentation": "raw",
+      "correct_answer": "B",
+      "incorrect_answer": "A",
+      "candidates": {
+        "NEUTRAL": "neutral",
+        "RELEVANT": "topic",
+        "COMPETING": "claim",
+        "NEGATED": "negated",
+        "REPEATED": "repeated_claim"
+      },
+      "evidence": [
+        {
+          "role": "candidate_file",
+          "path": "../four-mapping/arms/m1m2/q4-league.arms.json",
+          "sha256": "f11af63487e2b631bd5aa9b8d16b8d2d6c6d0909e13c556aee78c9e19e1d17aa"
+        },
+        {
+          "role": "fixtures",
+          "path": "../four-mapping/fixtures/counterfactual-m1m2.json",
+          "sha256": "e795a5c4f2abf4e2b7c2c7e5efee8829d54274703ebe964dfd555ad0aedc9043"
+        },
+        {
+          "role": "frozen",
+          "path": "../four-mapping/frozen/frozen-m1m2.json",
+          "sha256": "6933538052f2bfaa9dccda5c37f8b9bd5de757d9e23f36a0d1e4d86b5674ddde"
+        }
+      ]
+    },
+    {
+      "id": "q4-league-m3/llama3b/raw",
+      "session_dir": "../four-mapping/sessions/llama3b/q4-league-m3",
+      "task": {
+        "id": "q4-league-m3",
+        "name": "Sports: league leader on points (m3)"
+      },
+      "model": {
+        "id": "llama3b",
+        "name": "Llama-3.2-3B-Instruct Q4_K_M",
+        "model_hash": "b783b9826ac539b24b803f6caa51f159e64777b18223f2927fcc061de194c55e"
+      },
+      "presentation": "raw",
+      "correct_answer": "C",
+      "incorrect_answer": "D",
+      "candidates": {
+        "NEUTRAL": "neutral",
+        "COMPETING": "claim",
+        "REPEATED": "repeated_claim"
+      },
+      "evidence": [
+        {
+          "role": "candidate_file",
+          "path": "../four-mapping/arms/m3m4/q4-league.arms.json",
+          "sha256": "cfc80136ef09d1243e0d95554e3092f769f5f255c62f38a6868e45082cf1a3aa"
+        },
+        {
+          "role": "fixtures",
+          "path": "../four-mapping/fixtures/counterfactual-m3m4.json",
+          "sha256": "d60e7091b095eee76bd294133b6097f0b7ca49dea4b0f6abfe1d83f9e50fab2b"
+        },
+        {
+          "role": "frozen",
+          "path": "../four-mapping/frozen/frozen-m3m4.json",
+          "sha256": "7c1f1496ecc8deb307f8dcd7469164ac3206ea44f0e6c98e04fa753cfd148758"
+        }
+      ]
+    },
+    {
+      "id": "q4-league-m4/llama3b/raw",
+      "session_dir": "../four-mapping/sessions/llama3b/q4-league-m4",
+      "task": {
+        "id": "q4-league-m4",
+        "name": "Sports: league leader on points (m4)"
+      },
+      "model": {
+        "id": "llama3b",
+        "name": "Llama-3.2-3B-Instruct Q4_K_M",
+        "model_hash": "b783b9826ac539b24b803f6caa51f159e64777b18223f2927fcc061de194c55e"
+      },
+      "presentation": "raw",
+      "correct_answer": "D",
+      "incorrect_answer": "C",
+      "candidates": {
+        "NEUTRAL": "neutral",
+        "COMPETING": "claim",
+        "REPEATED": "repeated_claim"
+      },
+      "evidence": [
+        {
+          "role": "candidate_file",
+          "path": "../four-mapping/arms/m3m4/q4-league.arms.json",
+          "sha256": "cfc80136ef09d1243e0d95554e3092f769f5f255c62f38a6868e45082cf1a3aa"
+        },
+        {
+          "role": "fixtures",
+          "path": "../four-mapping/fixtures/counterfactual-m3m4.json",
+          "sha256": "d60e7091b095eee76bd294133b6097f0b7ca49dea4b0f6abfe1d83f9e50fab2b"
+        },
+        {
+          "role": "frozen",
+          "path": "../four-mapping/frozen/frozen-m3m4.json",
+          "sha256": "7c1f1496ecc8deb307f8dcd7469164ac3206ea44f0e6c98e04fa753cfd148758"
+        }
+      ]
+    }
+  ],
+  "answer_only_sessions": [
+    {
+      "id": "claude-haiku-5-5/chat",
+      "session_dir": "../../runs/claude-haiku-5-5",
+      "model": {
+        "id": "claude-haiku-5-5",
+        "name": "Claude Haiku 5.5"
+      }
+    },
+    {
+      "id": "claude-sonnet-5-5/chat",
+      "session_dir": "../../runs/claude-sonnet-5-5",
+      "model": {
+        "id": "claude-sonnet-5-5",
+        "name": "Claude Sonnet 5.5"
+      }
+    },
+    {
+      "id": "gemini-3.8-flash/chat",
+      "session_dir": "../gemini-answer-only/flash",
+      "model": {
+        "id": "gemini-3.8-flash",
+        "name": "Gemini 3.8 Flash"
+      }
+    },
+    {
+      "id": "gemini-4-carbon/chat",
+      "session_dir": "../gemini-answer-only/carbon",
+      "model": {
+        "id": "gemini-4-carbon",
+        "name": "Gemini 4 Carbon"
+      }
+    },
+    {
+      "id": "gpt-4.1-mini/chat",
+      "session_dir": "../openai-answer-only/gpt41mini",
+      "model": {
+        "id": "gpt-4.1-mini",
+        "name": "GPT-4.1 mini"
+      }
+    }
+  ]
+}
