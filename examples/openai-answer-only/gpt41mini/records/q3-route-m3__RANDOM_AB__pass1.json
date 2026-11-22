@@ -1,0 +1,87 @@
+{
+ "schema": "bleediff.hosted-answer/1",
+ "measurement_type": "ANSWER_ONLY",
+ "provider": "openai",
+ "name": "q3-route-m3__RANDOM_AB__pass1",
+ "cell": "q3-route-m3",
+ "question": "q3-route",
+ "mapping": "m3",
+ "condition": "RANDOM_AB",
+ "pass": 1,
+ "prompt_sha256": "037605b9f6840571671633866680d199b7cc1c75dfac5d139c18581426993a3e",
+ "fragment_sha256": "ade09befa6f7d7de8e70ae73fb2f6c86f94dce4a30eea8d6fa8be9c43f5c434d",
+ "correct_letter": "C",
+ "competing_letter": "D",
+ "model": "gpt-4.1-mini",
+ "request": {
+  "endpoint": "https://api.openai.com/v1/chat/completions",
+  "parameters": {
+   "model": "gpt-4.1-mini",
+   "temperature": 1,
+   "top_p": 1,
+   "max_completion_tokens": 1,
+   "logprobs": true,
+   "top_logprobs": 20,
+   "seed": 0,
+   "n": 1
+  },
+  "messages_sha256": "e340daed4f7e62ac509b75856022ec600a68dd30c74d30244d903453cbce2bc0",
+  "credentials_recorded": false,
+  "original_pilot_requested_logprobs": true
+ },
+ "status": "ok",
+ "answer": "C",
+ "text": "C",
+ "finish_reason": "length",
+ "block_reason": null,
+ "model_version": "gpt-4.1-mini-2025-04-14",
+ "http_status": 200,
+ "attempts": 1,
+ "elapsed_s": 0.395,
+ "usage": {
+  "promptTokenCount": 158,
+  "candidatesTokenCount": 1,
+  "thoughtsTokenCount": 0,
+  "totalTokenCount": 159
+ },
+ "usage_complete": true,
+ "cost_usd": 6.48e-05,
+ "cost_basis": "recorded by the v0.7 pilot (prompt and completion tokens at list prices)",
+ "response": {
+  "id": "chatcmpl-EmopBLzpb6iM95QYvUw08z1y6vJb1",
+  "object": "chat.completion",
+  "created": 1795303821,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "choices": [
+   {
+    "index": 0,
+    "message": {
+     "role": "assistant",
+     "content": "C",
+     "refusal": null,
+     "annotations": []
+    },
+    "finish_reason": "length"
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 158,
+   "completion_tokens": 1,
+   "total_tokens": 159,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "audio_tokens": 0
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 0,
+    "audio_tokens": 0,
+    "accepted_prediction_tokens": 0,
+    "rejected_prediction_tokens": 0
+   }
+  },
+  "service_tier": "default",
+  "system_fingerprint": "fp_41a21608dc"
+ },
+ "error": null,
+ "converted_from_pilot": true
+}

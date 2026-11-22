@@ -6,6 +6,8 @@ control algorithms have their own identifiers (see `docs/TECHNICAL.md`).
 ## Next release candidates - hosted answer-only runner (feature branch, not yet released)
 
 ### Added
+- `bleediff openai` (`bleediff/openai_chat.py`): the same ANSWER_ONLY engine for the OpenAI Chat Completions API (`OPENAI_API_KEY`; model-family parameter rules; reasoning tokens counted once), and `examples/openai-answer-only/`, the saved GPT-4.1 mini v0.7 pilot as a replayable bundle (logprobs removed). The shared engine moved to `bleediff/hosted.py`; `bleediff/gemini.py` is now only the Gemini provider record.
+- Budget semantics reviewed for both hosted adapters: the cap applies to an estimate from your prices and reported usage (not a provider billing total); the per-request reserve covers the output-token limit and thinking/reasoning tokens; a response exceeding its admitted bound stops the run (`COST_BOUND_EXCEEDED`); non-retryable quota errors are not retried.
 - `bleediff gemini` (`bleediff/gemini.py`, `bleediff/answers.py`): ANSWER_ONLY measurements on the Gemini `generateContent` API with frozen prompt datasets, A-D answer
   parsing, answer-letter permutations (correct versus competing semantic answers), repeated passes, response validation, usage and cost recording, an enforced
   `--budget` with explicit list prices (fail closed on missing usage), bounded retries, request/response provenance, and `--replay` of saved evidence offline. The key is

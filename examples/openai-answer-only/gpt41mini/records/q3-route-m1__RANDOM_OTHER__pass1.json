@@ -1,0 +1,87 @@
+{
+ "schema": "bleediff.hosted-answer/1",
+ "measurement_type": "ANSWER_ONLY",
+ "provider": "openai",
+ "name": "q3-route-m1__RANDOM_OTHER__pass1",
+ "cell": "q3-route-m1",
+ "question": "q3-route",
+ "mapping": "m1",
+ "condition": "RANDOM_OTHER",
+ "pass": 1,
+ "prompt_sha256": "dbfb259b16564e29234784a2f15749dac863bd6c64888d70ea18e21e8234566d",
+ "fragment_sha256": "ccd4052137734b69e92989769465f2c343c28e2df9f017739c42d316eb37f90d",
+ "correct_letter": "A",
+ "competing_letter": "B",
+ "model": "gpt-4.1-mini",
+ "request": {
+  "endpoint": "https://api.openai.com/v1/chat/completions",
+  "parameters": {
+   "model": "gpt-4.1-mini",
+   "temperature": 1,
+   "top_p": 1,
+   "max_completion_tokens": 1,
+   "logprobs": true,
+   "top_logprobs": 20,
+   "seed": 0,
+   "n": 1
+  },
+  "messages_sha256": "a10ec706aa050c7fa8bd2eac21dc0f925d246f8a8b739e9fe36a70fc73fe2907",
+  "credentials_recorded": false,
+  "original_pilot_requested_logprobs": true
+ },
+ "status": "ok",
+ "answer": "A",
+ "text": "A",
+ "finish_reason": "length",
+ "block_reason": null,
+ "model_version": "gpt-4.1-mini-2025-04-14",
+ "http_status": 200,
+ "attempts": 1,
+ "elapsed_s": 0.541,
+ "usage": {
+  "promptTokenCount": 157,
+  "candidatesTokenCount": 1,
+  "thoughtsTokenCount": 0,
+  "totalTokenCount": 158
+ },
+ "usage_complete": true,
+ "cost_usd": 6.440000000000001e-05,
+ "cost_basis": "recorded by the v0.7 pilot (prompt and completion tokens at list prices)",
+ "response": {
+  "id": "chatcmpl-Emop42D3RRI0rY5Y0aPxlkxxoW6H6",
+  "object": "chat.completion",
+  "created": 1795303814,
+  "model": "gpt-4.1-mini-2025-04-14",
+  "choices": [
+   {
+    "index": 0,
+    "message": {
+     "role": "assistant",
+     "content": "A",
+     "refusal": null,
+     "annotations": []
+    },
+    "finish_reason": "length"
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 157,
+   "completion_tokens": 1,
+   "total_tokens": 158,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "audio_tokens": 0
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 0,
+    "audio_tokens": 0,
+    "accepted_prediction_tokens": 0,
+    "rejected_prediction_tokens": 0
+   }
+  },
+  "service_tier": "default",
+  "system_fingerprint": "fp_fefa4ad383"
+ },
+ "error": null,
+ "converted_from_pilot": true
+}

@@ -8,3 +8,4 @@ research/data/** -text
 examples/atlas/** -text
 examples/four-mapping/** -text
 examples/gemini-answer-only/** -text
+examples/openai-answer-only/** -text

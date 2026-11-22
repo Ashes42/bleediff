@@ -1,0 +1,40 @@
+{
+ "schema": "bleediff.hosted-session/1",
+ "measurement_type": "ANSWER_ONLY",
+ "provider": "openai",
+ "model": "gpt-4.1-mini",
+ "endpoint": "https://api.openai.com/v1/chat/completions",
+ "generation_config": {
+  "model": "gpt-4.1-mini",
+  "temperature": 1,
+  "top_p": 1,
+  "max_completion_tokens": 1,
+  "logprobs": true,
+  "top_logprobs": 20,
+  "seed": 0,
+  "n": 1
+ },
+ "logprobs_requested": true,
+ "logprobs_note": "the original v0.7 pilot also requested top-20 logprobs (all four answer letters were present in only 28 of 160 responses: partial exposure). This bundle keeps only the returned answers, usage and metadata; the logprobs were removed and are not used. New live runs of this adapter never request logprobs.",
+ "prompts": {
+  "file": "../prompts.json",
+  "source_name": "frozen-requests.json (v0.7 pilot)",
+  "sha256": "a8144a5a220dc11ef24f2a35e6822452a9c83d629d927494430fbddfa9ebeb35",
+  "items": 80
+ },
+ "passes": 2,
+ "budget": {
+  "cap_usd": 2.0,
+  "price_in_per_million_tokens": 0.4,
+  "price_out_per_million_tokens": 1.6,
+  "kind": "ESTIMATE from supplied prices and reported usage; not a provider billing total",
+  "rules": "v0.7 pilot: cap checked before each request"
+ },
+ "max_retries": 3,
+ "bleediff_version": "0.4.0 (pilot scripts; records converted to the bleediff.hosted-answer/1 format)",
+ "status": "complete",
+ "stop_reason": null,
+ "requests_attempted": 160,
+ "estimated_spend_usd": 0.01042240000000001,
+ "converted_from_pilot": "runs/v0.7-frontier-pilot (local, git-ignored); only records, request parameters, usage and the returned message were kept"
+}

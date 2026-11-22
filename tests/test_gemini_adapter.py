@@ -99,7 +99,8 @@ class FakeAPI:
         self.urls.append(url)
         self.bodies.append(body)
         self.keys.append(key)
-        status, payload = self.handler(body["contents"][0]["parts"][0]["text"], self.calls)
+        prompt = body["contents"][0]["parts"][0]["text"] if "contents" in body else body["messages"][0]["content"]          # Gemini or OpenAI request shape
+        status, payload = self.handler(prompt, self.calls)
         if isinstance(payload, Exception):
             raise payload
         raw = payload if isinstance(payload, bytes) else json.dumps(payload).encode("utf-8")
