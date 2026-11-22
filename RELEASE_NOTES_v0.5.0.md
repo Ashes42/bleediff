@@ -18,8 +18,8 @@ a jailbreak or a vulnerability.
 
 ## What the comparison shows (strict classification; 32 requests per condition)
 Under COMPETING evidence the models mostly followed the competing letter (correct/competing: Haiku 9/23, Carbon 4/28, GPT-4.1 mini 2/30, Flash 0/32; Sonnet had no valid answers). The more interesting differences are in
-**non-answers**: Haiku refused 12 RANDOM_OTHER requests (provider category `bio`, a provider label, not a finding about cause) that Sonnet answered; Sonnet broke the one-letter format in 60 of 160 requests (prose ending in a
-letter). A single-swap contrast in one question context did not reproduce in a second. See the case note for what remains unknown.
+**non-answers**: Haiku refused 12 RANDOM_OTHER requests (provider category `bio`, a provider label, not a finding about cause). On those same 12 prompts Sonnet had 10 strict valid answers and 2 invalid prose replies, with zero refusals. Sonnet broke the one-letter format in 60 of 160 requests overall (prose ending in a
+letter); any answers recovered from those 60 invalid replies come only from the post-hoc FLR-v1 rule, a secondary reading defined after the replies were read, not from the strict classification. A single-swap contrast in one question context did not reproduce in a second. See the case note for what remains unknown.
 
 ## Fixed
 * Live runs and the committed Gemini example records no longer hold opaque thinking signatures (`thoughtSignature` values in 320 example records are replaced by placeholders; provider response ids in the Gemini and OpenAI

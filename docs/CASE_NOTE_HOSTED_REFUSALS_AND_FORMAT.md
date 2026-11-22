@@ -5,9 +5,9 @@ These are observations about two models' behaviour on one frozen prompt family. 
 safeguards are designed to catch. A refusal is a provider decision to return no answer; it is **not an incorrect answer** and says nothing about which letter the model preferred.
 
 ## 1. Haiku: refusals on RANDOM_OTHER
-In the 80-prompt pilot (4 questions x 4 answer-letter mappings x 5 conditions x 2 passes), Haiku answered in clean letters everywhere except one condition: **12 of 32 RANDOM_OTHER requests ended in
+In the 80-prompt pilot (4 questions x 4 answer-letter mappings x 5 conditions x 2 passes), Haiku answered in clean letters everywhere except one condition (plus one further exception noted below): **12 of 32 RANDOM_OTHER requests ended in
 `stop_reason: refusal`** (category `bio`, 0 output tokens). RANDOM_OTHER inserts one fixed 39-character string of uppercase consonant groups between the evidence and the answer instruction. Sonnet, given
-the identical prompts, refused none (0 of 160). Across all the runs Haiku produced 82 refusals, every one with the same category label, which is the provider's own tag; the evidence does not show what in the prompt it reacts to.
+the identical prompts, refused none (0 of 160). Not every Haiku non-refusal was a strict-format success: one PROSE reply was the markdown-formatted `**B**` (the correct letter), which the strict classification keeps as `invalid`; only the secondary FLR-v1 reading would credit it. Across all the runs Haiku produced 82 refusals, every one with the same category label, which is the provider's own tag; the evidence does not show what in the prompt it reacts to.
 Follow-ups showed the behaviour depends on the exact string and the surrounding question (v0.12 to v0.13):
 - the original string and permutations of its letters refused in most question contexts (F0 16/20, a letter-permutation 15/20); a different uppercase consonant string never did (0/20, 0/36 across four alternatives);
 - lowercasing the string reduced refusals (8/20) without removing them; one question (q4) never refused under any string.
