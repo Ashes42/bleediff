@@ -1,0 +1,81 @@
+{
+ "schema": "bleediff.hosted-answer/1",
+ "measurement_type": "ANSWER_ONLY",
+ "provider": "anthropic",
+ "name": "q1-lab-ph-m4__COMPETING__pass2",
+ "cell": "q1-lab-ph-m4",
+ "question": "q1-lab-ph",
+ "mapping": "m4",
+ "condition": "COMPETING",
+ "pass": 2,
+ "prompt_sha256": "7b63b062c83fd1a0563dc41ec44f18ea1230973d54f52fd53daff5a220a21843",
+ "fragment_sha256": "81be0ca27740a466013c4d58279ad01713600ca2072cec0141f6f696d929d0c7",
+ "correct_letter": "D",
+ "competing_letter": "C",
+ "model": "claude-sonnet-5-5",
+ "request": {
+  "endpoint": "https://api.anthropic.com/v1/messages",
+  "parameters": {
+   "model": "claude-sonnet-5-5",
+   "max_tokens": 1024,
+   "output_config": {
+    "effort": "low"
+   }
+  },
+  "messages_sha256": "8c9ac429937b5d856dd9bd7e231e9cb5acae5a5462f28cf4e141c25d82bcc3d5",
+  "credentials_recorded": false
+ },
+ "status": "invalid",
+ "answer": null,
+ "text": "The evidence conflicts. Tenant 3 reports ammonia at 11.6 as the highest, with borax at 9.2. Tenant 4 reports borax at 12.1 in a repeat test and calls it the highest, but gives no readings for the othe",
+ "finish_reason": "end_turn",
+ "block_reason": null,
+ "model_version": "claude-sonnet-5-5",
+ "http_status": 200,
+ "attempts": 1,
+ "elapsed_s": 2.699,
+ "usage": {
+  "promptTokenCount": 296,
+  "candidatesTokenCount": 296,
+  "thoughtsTokenCount": 0,
+  "totalTokenCount": 592
+ },
+ "usage_complete": true,
+ "cost_usd": 0.0035520000000000005,
+ "cost_basis": "usage_metadata",
+ "cost_exceeded_preflight_bound": false,
+ "response": {
+  "model": "claude-sonnet-5-5",
+  "id": "msg-31ef9a9fa5862ee1",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+   {
+    "type": "text",
+    "text": "The evidence conflicts. Tenant 3 reports ammonia at 11.6 as the highest, with borax at 9.2. Tenant 4 reports borax at 12.1 in a repeat test and calls it the highest, but gives no readings for the other samples.\n\nThe rule is that the greatest meter reading has the highest pH. Across the two logs, borax's 12.1 is the greatest reading, higher than ammonia's 11.6. Tenant 4's test is described as a repeat, which suggests it supersedes the earlier one. However, the two tenants measured different sessions, and borax went from 9.2 to 12.1, which is a big discrepancy. Still, the only evidence-based way to apply the rule is to take the greatest reading, which is 12.1 for borax.\n\nTenant 4's note also states directly that borax gave the highest pH reading, and it is the later repeat test. So C.\n\n**C**"
+   }
+  ],
+  "container": null,
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "stop_details": null,
+  "usage": {
+   "input_tokens": 296,
+   "cache_creation_input_tokens": 0,
+   "cache_read_input_tokens": 0,
+   "cache_creation": {
+    "ephemeral_5m_input_tokens": 0,
+    "ephemeral_1h_input_tokens": 0
+   },
+   "output_tokens": 296,
+   "output_tokens_details": {
+    "thinking_tokens": 0
+   },
+   "service_tier": "standard",
+   "inference_geo": "global",
+   "speed": "standard"
+  },
+  "diagnostics": null
+ },
+ "error": null
+}

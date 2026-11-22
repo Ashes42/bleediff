@@ -53,7 +53,7 @@
      "parts": [
       {
        "text": "D",
-       "thoughtSignature": "EusJCugJAWkUfRNBbfMfcGXZGJjiyGxv7tFLbb6sQZmTZYMibE5IKji9k/MA+etleiKZ2zDaPy+AvOYX6w9jJiQFvRmbEb43hjDzGh4k+DmmzB2zHtD92B1ONbwA52Ghro2VfvmmuV+I+TdqKIbarmUnut/k8eOzhVn7sKIpqkgOebuxKNCpvVZU1kio7ADLm0eFDdOnsybTncBAg4lujd4s7ThQQDdnmOF2nDWiqbITHRtCiVpitGU33rBn0XqK4FekZNdm2Ys/iQoqmLxdptRnK1+pnId7pd9+fqKa9PpZlWTWqpbl5L/Q/SSQOxzhcysLFlaeq0T9hkyAFv9kd8TM8PKqKEWQx/VNm6hdvXE46JATTb7IHpzpAN0C6AcGYSUifu/bAxfwwHPTU3iiliNUjCtjG0sKTS+cQqURhro1/qmhlJt0JsTvHsP6UU/CDDPmxKTCQcl9Ljqd6LSYoTYuXZxZynDGaPy+E9LlkOBAxOvbhSUec7rKSeKyJbYNg+ldErXYA+Dq7i0aP2VBW3wlgTNaLcKDtIG/mInuKpumLP4wKZTFUKnyrAAR/YGkn4787BTL5bL7q1OgDD23fygbi36UQpWHG81Qck9hFvD1qLRvMFdFh3MY5ZFGA4clVwRXHEqWK9nTIxK6gPcn4GKDUemxeev2J+CYKNLmRDabahA4MJEnfejAcgR8gqJJJTPL1zN1qBeWmcVrtcpVlccxDAih2/GhoBCVn0/lXiomy2dBSr6NlJ/cG9TLshZFZKnR71tCqIaVg2x04R2usYDOHW154Vufgo5IoQcXRPKdUfjONCmTJ74YkM8QizAxmOPXPJy5TZ+73IitN57LecPO4WW1cFsAyfen55d5PRWfh5uC9VLe2Yy2vCIMxVzg+/H6oOGZFBIPpr35JHaP/Mt1/EwdySz0ijG7B862j5Y2VD5e+Wz1s6OIt1+HXipFTtZYZBCWd+2PNSy+TME+Ms9dqxf5w8qxSI9darnDrZYER0qahRKgkhmOpirtbnANiFS/NwlYGHQt4Zt7VjS5tPW5ZoeusOKfjuiIDgvCNs0zJvl2SCdc/Y9e7WMoMWWCnaqqVvMLacPA/z0FSiKkbSNK1xnI8ZPmUNcFjCSrddoFjkw2w4p+DBVhWpAdtB2YOsywyErbqAWNIeSiTlyiiTNUZa25sJLZfDvl4tseD9w0IaZilLoC4L48dZzci5nujP+p4B6TyrTzf92ESB/O0pbUMqIcttZ4bX40yxuK+IH6H9uQgRHj5+Cmg8Xzo05QCXYFCNY466fYwpU+7LJpbvz/9QDD/Pnqmipaq0Kt3P9Vo5UKBaOcZefi0H2q1lwLO9P3u1xcWF4cQjyojfpbj21YWLOgotT+tGcX2HkwHW7ZwDKsE7s94v4Nmq3OwmWk+eOw1pBw3iO5EZioQ0WeTaGf7JkobZzmCKNc4Zd6WDoT9/+mLwwJ0pU4cITEraNOHVFzJIUeGQfdTtH6VByefFqyWXW56TW8GkFMtw8tBtzp0lwkD1HW+9rVsjaaE2jtbj89gMGR1cITPHxvZKfvb2ksV+QsogvYrkRCQbemX/VeXN344OuAjXFuRzAWd+3TH8DVbNwzC7IIW7q1N4jPuj+p0nprw8+EoBJg2y5Ok679j5VvQV4RomC8QI5XNrwBpNn9I3SX8G7zh6EzDjQ="
+       "thoughtSignature": "[REDACTED:opaque-thinking-signature]"
       }
      ],
      "role": "model"
@@ -76,7 +76,7 @@
    "serviceTier": "standard"
   },
   "modelVersion": "gemini-3.8-flash",
-  "responseId": "fi4Ca4-uK-LdjMcPvq7AkQk"
+  "responseId": "resp-374028ef60d24a34"
  },
  "error": null,
  "converted_from_pilot": true

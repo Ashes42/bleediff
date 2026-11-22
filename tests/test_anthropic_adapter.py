@@ -197,6 +197,29 @@ class TestLiveRunWithMockHttp(unittest.TestCase):
         ses = AN.read_session(out)
         self.assertEqual((ses["problems"], ses["warnings"]), ([], []))
 
+    def test_saved_records_never_hold_thinking_signatures_or_reasoning_text(self):
+        sig, reasoning, gsig = "SIGNATURE-" + "x" * 40, "private chain of thought", "GEMINI-SIG-" + "y" * 20
+
+        def h(p, n):
+            r = claude("A", usage=(120, 9, 8), thinking_block=True)
+            r["content"][0].update({"thinking": reasoning, "signature": sig})
+            r["content"].append({"type": "redacted_thinking", "data": sig + "-red"})
+            r["candidates"] = [{"content": {"parts": [{"text": reasoning, "thought": True, "thoughtSignature": gsig}, {"text": "A", "thoughtSignature": gsig}]}}]
+            return 200, r
+
+        res, api, out, _ = run_live(h)
+        text = all_text(out)
+        for secret in (sig, reasoning, gsig):
+            self.assertNotIn(secret, text)
+        rec = read_json(sorted(glob.glob(os.path.join(out, "records", "*.json")))[0])
+        self.assertEqual(rec["response"]["content"][0]["signature"], H.SIGNATURE_PLACEHOLDER)
+        self.assertEqual(rec["response"]["content"][0]["thinking"], H.REASONING_PLACEHOLDER)
+        self.assertEqual(rec["response"]["candidates"][0]["content"]["parts"][1]["text"], "A")      # visible answer text is kept
+        self.assertEqual(H.scrub_private_reasoning(H.scrub_private_reasoning(rec["response"])), rec["response"])   # idempotent
+        ses = AN.read_session(out)
+        self.assertEqual(ses["problems"], [])
+        self.assertTrue(all(r["status"] == "ok" and r["answer"] == "A" for r in ses["records"]))
+
     def test_http_errors_follow_the_anthropic_error_shapes(self):
         cases = ((401, "authentication_error", "AUTH_FAILED"), (403, "permission_error", "AUTH_FAILED"), (404, "not_found_error", "MODEL_NOT_AVAILABLE"),
                  (400, "invalid_request_error", "BAD_REQUEST"), (413, "request_too_large", "HTTP_ERROR"))
@@ -402,17 +425,17 @@ class TestReplayAndAtlasSeparation(unittest.TestCase):
 
 class TestComparativePilotPreparation(unittest.TestCase):
     def test_template_manifest_lists_the_five_hosted_models_plus_the_local_sessions(self):
-        m = read_json(os.path.join(CMP, "atlas-input.template.json"))
+        m = read_json(os.path.join(CMP, "atlas-input.json"))
         self.assertEqual(m["schema"], "bleediff.atlas-input/1")
         ids = [s["model"]["id"] for s in m["answer_only_sessions"]]
         self.assertEqual(ids, ["claude-haiku-5-5", "claude-sonnet-5-5", "gemini-3.8-flash", "gemini-4-carbon", "gpt-4.1-mini"])
         self.assertEqual({s["model"]["id"] for s in m["sessions"]}, {"qwen1.5b", "llama3b"})
-        for s in m["answer_only_sessions"][2:]:                                        # the saved Gemini / OpenAI sessions exist in the repository
+        for s in m["answer_only_sessions"]:                                            # all five hosted sessions are saved in the repository
             self.assertTrue(os.path.isdir(os.path.normpath(os.path.join(CMP, s["session_dir"]))), s["session_dir"])
 
     def test_runbook_documents_commands_for_both_claude_models_and_the_estimate_caveat(self):
         t = " ".join(rt(os.path.join(CMP, "README.md")).split())
-        for needle in ("claude-haiku-5-5", "claude-sonnet-5-5", "--budget", "--price-in 0.10", "--price-in 2.00", "--effort low", "estimate_pilot_cost.py", "ESTIMATE", "not a provider billing total",
+        for needle in ("claude-haiku-5-5", "claude-sonnet-5-5", "--budget", "--price-in 0.10", "--price-in 2.00", "--effort low", "estimate_pilot_cost.py", "estimate", "not provider billing totals",
                        "gemini-3.8-flash", "gemini-4-carbon", "gpt-4.1-mini", "ANSWER_ONLY", "DIRECT_PROBABILITY", "adaptive thinking"):
             self.assertIn(needle, t, needle)
 
@@ -431,7 +454,7 @@ class TestHygiene(unittest.TestCase):
     def test_new_files_hold_no_secrets_or_local_paths(self):
         import re
         pat = re.compile(r"(sk-ant-[A-Za-z0-9_-]{10,}|sk-[A-Za-z0-9_-]{20,}|AIza[0-9A-Za-z_-]{10,}|/Users/|AppData|@[A-Za-z0-9-]+\.(com|org|net|io)|api[_-]?key\s*[:=])", re.I)
-        files = [os.path.join(ROOT, "bleediff", "anthropic_messages.py"), os.path.join(ROOT, "tests", "data", "anthropic-probe-haiku-5-5.json")] + glob.glob(os.path.join(CMP, "*"))
+        files = [os.path.join(ROOT, "bleediff", "anthropic_messages.py"), os.path.join(ROOT, "tests", "data", "anthropic-probe-haiku-5-5.json")] + [f for f in glob.glob(os.path.join(CMP, "*")) if os.path.isfile(f)]
         for p in files:
             self.assertIsNone(pat.search(rt(p)), p)
             if not p.endswith(".py"):               # data and docs are protected from line-ending conversion (.gitattributes); source files follow the checkout's autocrlf

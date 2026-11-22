@@ -53,7 +53,7 @@
      "parts": [
       {
        "text": "D",
-       "thoughtSignature": "EusJCugJAWkUfRNOrjNcso37Ou8b8ZInWJDymB/akJCJBpGddr8QPz8wKE7usPaVTvs33Z0L2ZtPYra6sFAzBH+wplF/J+lYIOEKERNIuodRS7Qz0RpVvLpcW5vuclMcBPvtpfzrD79l/CQdMhcW1kpoXEFayRoeqyeaX2wpzBaNULcxDHuSN/VEQ+E5vGUlvq6ayEJ4FUf4ouSvWuR6NIrglxoXBFjtpiXG3uQQIt/8lhu1J/G2IPk8BlzAoCjzOHS77miCkXiumFIzE+Fo5xdRRKDO7UtvpEkB5x4VXavbFDkof/d6gW1kmgFSnaupcgBoZ45nMBtL19AgJWBboMRLWioVwMzG+vZuYUmwjvM5SfXhWxFKTTWdu+ag/nPajIXXKVQqOcTPqpNy31/7qYdd77oyC0V26VMWoUt7zFqfLMQlb2dXxK2xY8FF6bjv+3iHqnJ0ybwMChfaMfJSqpPZqu4GhjvZsSkUpX93vHkvdprjA3TGYWQyoSYRsMcncx6GW0JoqsQ+QU57hsC7pEXqanzehLW1GFB/pL/0a5oyA9zNVUGswWWOaP+Dn3vQjMNfzQvY855l7TyCVuJ8lKkFjSGqF4WjzRuAbsGlyViS/nV6FP+vnnMz/k9XyiOiDTR1EzDVhGQIPAs5pjSJVbnJinMdUrrEvu/PrEO2Cqy/WjBf0QpFdCLni566+1O+J1unYoZu4vuRWU62CgZNSqnfAWINr4gBBHfF37yN4FvXcmc7wrGY9BbvQX9D4+py9MCHTOWs4u/F1ZqMnYPfeFMtfMV7SG2y9MehCL2BVHcc2cWZ9LzYnMDBbc4V+rEKyDqvvYRsq7rn2ZzR63foeDTWjg6objMOtrA+7utCKnfkYyXhKvBeGczF/ZBJSDrByDwkxCWH7eTitdYZN8rQw9GjAZeB0iNYxilD0IpAtq8DHLLB8eD/o0JqyOXVZN1l0l9vnt9pZq/FfMLbX13gN+eMD0ipaYBBzdmXGzNKfNJSb5VJSIw6yhJrr2wN20KUhFnq0ulPJ3SBJCZKiMKwPwC+ZcKwBTvIRuFr6oqxotexysvZLx9Nah3n/TPmTFXoqRILeQhuZCr/QVQfu7hBoZyfVhCJEXq6Bg95kCVSoT6quDgP5kfDwVfwbTU4fzATVxglGnWUhMWw7J7E09xJVZWyzfDa3ivure60hdtC91IP7ZOkxpQ904mnKXHBPJK5RciRBsVUO+u1jEwNEDzgY1MPLVJc6AgKWFWjwc6Tu46KSYa2T2A9I6JRHCPQl1lkp8r1R1jAQMh1eGkBTmMp3wNOwabPoNiPPnZx2TSk2iyRcRrkIJ81B3/s5/0LjG3H15VGTBLUBKJI6QswE5coa3fX1Ec9pr/4IbEDJd/yiHhVSf1PPSXD5sCvNgIzHwS8aGAgDn4F5uR1w2b+qqPxeSfFSbmBfB5dhd02cc5ikDIrjo27fbOSI4Kf2J/XQ0unghjfnkuIJS8gVU6tXhvnvpGTxgiO7O788Q6WJbJD22u2yTtQi+EFynXF9TA/aQREQVTfUzyvwSft53rGxq+VjChk5ZmCXmA/kvCeGLOXCNU8/OU5NIyaY+vqJJPIvAD3bWVFist/w3IuNk0KzZmKu8b+aNCVYsvih7VOXayajeDynOBjMm+FHQDgi7niN/QRWlDiTHIPdZPDERlNvs8="
+       "thoughtSignature": "[REDACTED:opaque-thinking-signature]"
       }
      ],
      "role": "model"
@@ -76,7 +76,7 @@
    "serviceTier": "standard"
   },
   "modelVersion": "gemini-3.8-flash",
-  "responseId": "lS8Ca4fTIaCwsOIP_o7bmAU"
+  "responseId": "resp-f0c8acda168966cb"
  },
  "error": null,
  "converted_from_pilot": true

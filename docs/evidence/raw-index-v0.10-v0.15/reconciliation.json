@@ -1,0 +1,3450 @@
+{
+ "unique_raw_records": 522,
+ "by_run": {
+  "v0.10": 161,
+  "v0.11": 161,
+  "v0.12": 80,
+  "v0.13": 72,
+  "v0.14": 44,
+  "v0.15": 4
+ },
+ "duplicate_message_ids": 0,
+ "groups": [
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q1-lab-ph-m1",
+   "prompt_sha256": "fea3a852a82a4f7b38ae050064984f20e8f2aaa97469cb73dfc71baa9fe341c2",
+   "records": 9,
+   "strict_outcomes": {
+    "refusal": 9
+   },
+   "by_run": {
+    "v0.10": 2,
+    "v0.12": 4,
+    "v0.13": 3
+   },
+   "condition_labels": [
+    "v0.10:RANDOM_OTHER",
+    "v0.12:F0",
+    "v0.13:F0"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q1-lab-ph-m1",
+   "prompt_sha256": "9897d0daae1adfc3ca7922b550335d427e71ebcb9f5cf8b1380b6ffaacd4993a",
+   "records": 7,
+   "strict_outcomes": {
+    "correct": 7
+   },
+   "by_run": {
+    "v0.12": 4,
+    "v0.13": 3
+   },
+   "condition_labels": [
+    "v0.12:F2",
+    "v0.13:F2"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q1-lab-ph-m1",
+   "prompt_sha256": "9ded5fe1b962051fa8a65e0f033b2bc15271cb4ebbe7267dde1e914a2dc9d743",
+   "records": 5,
+   "strict_outcomes": {
+    "correct": 5
+   },
+   "by_run": {
+    "v0.13": 3,
+    "v0.15": 2
+   },
+   "condition_labels": [
+    "v0.13:S1",
+    "v0.15:S1"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q1-lab-ph-m1",
+   "prompt_sha256": "e321ed7d9b0e9978dae58d5b2626ad01821966ce0c04ddf6e031cbdc2062d0c8",
+   "records": 4,
+   "strict_outcomes": {
+    "correct": 1,
+    "refusal": 3
+   },
+   "by_run": {
+    "v0.12": 4
+   },
+   "condition_labels": [
+    "v0.12:F1"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q1-lab-ph-m1",
+   "prompt_sha256": "907fa3cf00c48d9c33aca96ff35fba7650dc213b0060d86e4a846665efff9b83",
+   "records": 4,
+   "strict_outcomes": {
+    "correct": 4
+   },
+   "by_run": {
+    "v0.12": 4
+   },
+   "condition_labels": [
+    "v0.12:F3"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q1-lab-ph-m1",
+   "prompt_sha256": "0b7f9d663bb0d45f6612a466bfaebaea29f813e1841e26b0cb4975ccf7b75ad0",
+   "records": 3,
+   "strict_outcomes": {
+    "correct": 3
+   },
+   "by_run": {
+    "v0.10": 3
+   },
+   "condition_labels": [
+    "v0.10:BASELINE"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q1-lab-ph-m1",
+   "prompt_sha256": "2d1407f7ea50766419dcb2cd24a4f8b8e6c0a3dfa3117e1964fd6320c34dbb79",
+   "records": 3,
+   "strict_outcomes": {
+    "correct": 3
+   },
+   "by_run": {
+    "v0.13": 3
+   },
+   "condition_labels": [
+    "v0.13:C1"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q1-lab-ph-m1",
+   "prompt_sha256": "3a3329810df822ac2a97bf5933cd41aab56351b531bf06aea61b48d87616108f",
+   "records": 3,
+   "strict_outcomes": {
+    "correct": 3
+   },
+   "by_run": {
+    "v0.13": 3
+   },
+   "condition_labels": [
+    "v0.13:C2"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q1-lab-ph-m1",
+   "prompt_sha256": "e003230e438c01bf7823928d7ab8a6b0410b12d117120fcfa19e5eef638d2180",
+   "records": 3,
+   "strict_outcomes": {
+    "correct": 3
+   },
+   "by_run": {
+    "v0.13": 3
+   },
+   "condition_labels": [
+    "v0.13:C3"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q1-lab-ph-m1",
+   "prompt_sha256": "b54bed028c9ba2b2402d969025a32d14686014f1f44357d18602937d3aaffc6d",
+   "records": 3,
+   "strict_outcomes": {
+    "refusal": 3
+   },
+   "by_run": {
+    "v0.13": 3
+   },
+   "condition_labels": [
+    "v0.13:S2"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q1-lab-ph-m1",
+   "prompt_sha256": "c58ab007a91caa0bf3a29923591e7059da009c22f1366fc00a0ee0d907537713",
+   "records": 3,
+   "strict_outcomes": {
+    "refusal": 3
+   },
+   "by_run": {
+    "v0.13": 3
+   },
+   "condition_labels": [
+    "v0.13:S3"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q1-lab-ph-m1",
+   "prompt_sha256": "9d63c20077f29323ede83f5f7730f1179b4038b0148d0c29ac6be150500fdbf1",
+   "records": 2,
+   "strict_outcomes": {
+    "competing": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:COMPETING"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q1-lab-ph-m1",
+   "prompt_sha256": "11969dd3b1acd43eb2490e40d050724f42d5ec71b9e8ce8d15b533b86801ba23",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:PROSE"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q1-lab-ph-m1",
+   "prompt_sha256": "4ad60d04e30d18637955798248bb5efdafc285c1dd7771e2c0ee58de9a549e30",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:RANDOM_AB"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q1-lab-ph-m1",
+   "prompt_sha256": "3250ca410b2b11470bb0bef1b0373b7b25698aaf39433954bd38a3eb615aba27",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.15": 2
+   },
+   "condition_labels": [
+    "v0.15:S1g1"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q1-lab-ph-m2",
+   "prompt_sha256": "30df19d0698412e2adacafcada7cefd42eb79b5a05cbb47761960c356118a8c0",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:BASELINE"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q1-lab-ph-m2",
+   "prompt_sha256": "bc6db4954421820eac2340306ad01dc6f5105928ce8f53c456e92ba8310975d5",
+   "records": 2,
+   "strict_outcomes": {
+    "competing": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:COMPETING"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q1-lab-ph-m2",
+   "prompt_sha256": "293fa9609b20e139c070c171925782f28d8bb5c78b26375554d6b8486cdb6f4a",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:PROSE"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q1-lab-ph-m2",
+   "prompt_sha256": "790bb1f480a45fee88fb4e1a73c9bd863ac865366ea89afb0e22b31a9bd033b1",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:RANDOM_AB"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q1-lab-ph-m2",
+   "prompt_sha256": "325237c6a94f48800b96124c8de958965ea7dcbedcdbd34d85b2e20d0995f0b9",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:RANDOM_OTHER"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q1-lab-ph-m3",
+   "prompt_sha256": "5102a2fee8cf3c0755b29bfb2e1f0932ad1caa86a7d9cea0429bc28896c0a58c",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:BASELINE"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q1-lab-ph-m3",
+   "prompt_sha256": "8dec68bc6fbee00c8e9e1a04756659473b2a257d74638ba1cbe569c12ee2c070",
+   "records": 2,
+   "strict_outcomes": {
+    "competing": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:COMPETING"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q1-lab-ph-m3",
+   "prompt_sha256": "e707d4a4ca1cdd73cdf52d4fd8310b4b95c075896649f3d29a5880fe98c882a2",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:PROSE"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q1-lab-ph-m3",
+   "prompt_sha256": "c5f8164b1f9f075db6d9b0c605dc08f9c56466b38ffba56fe4d224cbe9b9b525",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:RANDOM_AB"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q1-lab-ph-m3",
+   "prompt_sha256": "39a85b4549dfa30a15f31c60927770549fd480e66a51fabab79ac7176c49ec3f",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 1,
+    "refusal": 1
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:RANDOM_OTHER"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q1-lab-ph-m4",
+   "prompt_sha256": "72e80c69b464bc849536668a375a4929abc51fa9a931ffc2a269ff3e9878b657",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:BASELINE"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q1-lab-ph-m4",
+   "prompt_sha256": "7b63b062c83fd1a0563dc41ec44f18ea1230973d54f52fd53daff5a220a21843",
+   "records": 2,
+   "strict_outcomes": {
+    "competing": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:COMPETING"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q1-lab-ph-m4",
+   "prompt_sha256": "5a707982d108f5c75fb5e822affb0340511f6a38dde82e7893439c9205bb6cd7",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:PROSE"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q1-lab-ph-m4",
+   "prompt_sha256": "8b14aaf0024f00a57b9af9f5df6adb0210bced9ab9af54975da60ab1dd421ccb",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:RANDOM_AB"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q1-lab-ph-m4",
+   "prompt_sha256": "ef165c35e96af65d8209458f09a561a5473e96f06737456c9d72cf816258856c",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 1,
+    "refusal": 1
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:RANDOM_OTHER"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q2-invoice-m1",
+   "prompt_sha256": "46f315e31a4ad5f5375e0f8b100311e0f64fc9cbbb4de8d6b984b04737e4268a",
+   "records": 10,
+   "strict_outcomes": {
+    "refusal": 10
+   },
+   "by_run": {
+    "v0.10": 2,
+    "v0.12": 4,
+    "v0.13": 3,
+    "v0.14": 1
+   },
+   "condition_labels": [
+    "v0.10:RANDOM_OTHER",
+    "v0.12:F0",
+    "v0.13:F0",
+    "v0.14:F0"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q2-invoice-m1",
+   "prompt_sha256": "10ce47c07f76e3ed37c2bb47b5a6419d929e073cf5fd88e60f60fe4bbde328c6",
+   "records": 7,
+   "strict_outcomes": {
+    "correct": 7
+   },
+   "by_run": {
+    "v0.12": 4,
+    "v0.13": 3
+   },
+   "condition_labels": [
+    "v0.12:F2",
+    "v0.13:F2"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q2-invoice-m1",
+   "prompt_sha256": "a60f9ede951f5621bfbd6409efe8c0ef6a70e8ffab4f95006cfce7709f2fb41a",
+   "records": 7,
+   "strict_outcomes": {
+    "correct": 7
+   },
+   "by_run": {
+    "v0.13": 3,
+    "v0.14": 4
+   },
+   "condition_labels": [
+    "v0.13:S1",
+    "v0.14:S1"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q2-invoice-m1",
+   "prompt_sha256": "cdad338dbc702c99f7d603a1fc71bce132a7aa6a318ae2d09ae529e4c593e5c4",
+   "records": 4,
+   "strict_outcomes": {
+    "refusal": 4
+   },
+   "by_run": {
+    "v0.12": 4
+   },
+   "condition_labels": [
+    "v0.12:F1"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q2-invoice-m1",
+   "prompt_sha256": "7624c99f48b4920986de4013371d8f185cb7d791be12ff18a89b87f918dc5a63",
+   "records": 4,
+   "strict_outcomes": {
+    "refusal": 4
+   },
+   "by_run": {
+    "v0.12": 4
+   },
+   "condition_labels": [
+    "v0.12:F3"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q2-invoice-m1",
+   "prompt_sha256": "03c354983a928711a32448f59984b4f7762aff54629127ce83f61e1574caf1a5",
+   "records": 4,
+   "strict_outcomes": {
+    "correct": 4
+   },
+   "by_run": {
+    "v0.13": 3,
+    "v0.14": 1
+   },
+   "condition_labels": [
+    "v0.13:C1",
+    "v0.14:C1"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q2-invoice-m1",
+   "prompt_sha256": "27d0813d51b76919c9bb3f30fc4c89c472cf8c501e743ebc566910296758a408",
+   "records": 4,
+   "strict_outcomes": {
+    "refusal": 4
+   },
+   "by_run": {
+    "v0.14": 4
+   },
+   "condition_labels": [
+    "v0.14:S1g1"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q2-invoice-m1",
+   "prompt_sha256": "ddb8c9eed2d9a514d0e9cc41417c2490e3283ddc594d3f58d4cb03fecb21f15f",
+   "records": 3,
+   "strict_outcomes": {
+    "correct": 3
+   },
+   "by_run": {
+    "v0.13": 3
+   },
+   "condition_labels": [
+    "v0.13:C2"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q2-invoice-m1",
+   "prompt_sha256": "2ad4ad0938f80b1af7c3c9e44d23baba9c2f7904b89fc66913305de627b87054",
+   "records": 3,
+   "strict_outcomes": {
+    "correct": 3
+   },
+   "by_run": {
+    "v0.13": 3
+   },
+   "condition_labels": [
+    "v0.13:C3"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q2-invoice-m1",
+   "prompt_sha256": "748689c3c388e53cbb377f50e66ead6c75b5ed3bbcaf7e7598d6308aec5d6b07",
+   "records": 3,
+   "strict_outcomes": {
+    "refusal": 3
+   },
+   "by_run": {
+    "v0.13": 3
+   },
+   "condition_labels": [
+    "v0.13:S2"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q2-invoice-m1",
+   "prompt_sha256": "e6e27b156d670cd1621cfea0474cc76f51a6db945b0c14982b7e95fb01662fcb",
+   "records": 3,
+   "strict_outcomes": {
+    "refusal": 3
+   },
+   "by_run": {
+    "v0.13": 3
+   },
+   "condition_labels": [
+    "v0.13:S3"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q2-invoice-m1",
+   "prompt_sha256": "4cd97dcd0b9bfa6d236b5c7b800cd1cb27a74dab46d552bf4cd470c28f2956f2",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:BASELINE"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q2-invoice-m1",
+   "prompt_sha256": "ecdb17ea5b97065a3f297da476b57cf9bf8f2734b6cc32577263eb215bbab1fe",
+   "records": 2,
+   "strict_outcomes": {
+    "competing": 1,
+    "correct": 1
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:COMPETING"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q2-invoice-m1",
+   "prompt_sha256": "864b85d1c81fb7332202e981182413243532f52cb16d0344f4b9203f740581e7",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:PROSE"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q2-invoice-m1",
+   "prompt_sha256": "5f9186bfea9595f02c6434ff5071e674909bea4e8ec327da0faf53a3b3b9069d",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:RANDOM_AB"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q2-invoice-m1",
+   "prompt_sha256": "9ea148bf5482060f42c00c896cd20dc2b6beb8154e7ba1a7f4ee9b8d1107bb0e",
+   "records": 1,
+   "strict_outcomes": {
+    "refusal": 1
+   },
+   "by_run": {
+    "v0.14": 1
+   },
+   "condition_labels": [
+    "v0.14:F0g1"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q2-invoice-m1",
+   "prompt_sha256": "0d261907ca24e7ec94dab9368f1f8fd47c227b696d7d7b0856c753d07338d7fc",
+   "records": 1,
+   "strict_outcomes": {
+    "refusal": 1
+   },
+   "by_run": {
+    "v0.14": 1
+   },
+   "condition_labels": [
+    "v0.14:F0g2"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q2-invoice-m1",
+   "prompt_sha256": "754147a739bc908c270dfff4d23258608585d36a53a9eb4715fd14f796e8f6ce",
+   "records": 1,
+   "strict_outcomes": {
+    "refusal": 1
+   },
+   "by_run": {
+    "v0.14": 1
+   },
+   "condition_labels": [
+    "v0.14:F0g3"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q2-invoice-m1",
+   "prompt_sha256": "b8f79bf38826201161e431935bc3565bb549d8998952885e5f7772adbc645d6d",
+   "records": 1,
+   "strict_outcomes": {
+    "refusal": 1
+   },
+   "by_run": {
+    "v0.14": 1
+   },
+   "condition_labels": [
+    "v0.14:F0g4"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q2-invoice-m1",
+   "prompt_sha256": "600d7e3eae0ce170a9dec337dbd556581b698e72fddb146c88763cc349e3a2b1",
+   "records": 1,
+   "strict_outcomes": {
+    "refusal": 1
+   },
+   "by_run": {
+    "v0.14": 1
+   },
+   "condition_labels": [
+    "v0.14:F0g5"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q2-invoice-m1",
+   "prompt_sha256": "ac4c86fd5d130153f5d27f0d5914f6160f06b92fa4f967de28c858e57828882b",
+   "records": 1,
+   "strict_outcomes": {
+    "refusal": 1
+   },
+   "by_run": {
+    "v0.14": 1
+   },
+   "condition_labels": [
+    "v0.14:F0g6"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q2-invoice-m1",
+   "prompt_sha256": "c7d613316dca309f14642068c6ba551128b2f04e66a2ebd9279c7a7785e1392a",
+   "records": 1,
+   "strict_outcomes": {
+    "refusal": 1
+   },
+   "by_run": {
+    "v0.14": 1
+   },
+   "condition_labels": [
+    "v0.14:F0g7"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q2-invoice-m1",
+   "prompt_sha256": "1059939749b1dc3314b707fd8dd293e1a146ef818205ee78a2a92ddc8e0ca89a",
+   "records": 1,
+   "strict_outcomes": {
+    "refusal": 1
+   },
+   "by_run": {
+    "v0.14": 1
+   },
+   "condition_labels": [
+    "v0.14:F0g8"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q2-invoice-m1",
+   "prompt_sha256": "e5495d72162aa68e303e215bfaca7b19c2e8f6ed91ecf8868952ccf78df4ccc2",
+   "records": 1,
+   "strict_outcomes": {
+    "correct": 1
+   },
+   "by_run": {
+    "v0.14": 1
+   },
+   "condition_labels": [
+    "v0.14:S1g2"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q2-invoice-m1",
+   "prompt_sha256": "13d98e47a2c79ddfda303f4c231774fa4802b71b46f39a014cb8e5d7470b498d",
+   "records": 1,
+   "strict_outcomes": {
+    "correct": 1
+   },
+   "by_run": {
+    "v0.14": 1
+   },
+   "condition_labels": [
+    "v0.14:S1g3"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q2-invoice-m1",
+   "prompt_sha256": "fad58520ab53ce5d80deaf9f412b291bae09e3bbda4e0a9f5f60b05ad5ab4cce",
+   "records": 1,
+   "strict_outcomes": {
+    "correct": 1
+   },
+   "by_run": {
+    "v0.14": 1
+   },
+   "condition_labels": [
+    "v0.14:S1g4"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q2-invoice-m1",
+   "prompt_sha256": "38d03e5142dcbc3df622905904bce21393bb11da53185501eec34d1ff62b8ca3",
+   "records": 1,
+   "strict_outcomes": {
+    "correct": 1
+   },
+   "by_run": {
+    "v0.14": 1
+   },
+   "condition_labels": [
+    "v0.14:S1g5"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q2-invoice-m1",
+   "prompt_sha256": "9208ab6f28b3d8180a310326728d104c60ad8e308749c3fbb6431eac2f2f9f9b",
+   "records": 1,
+   "strict_outcomes": {
+    "correct": 1
+   },
+   "by_run": {
+    "v0.14": 1
+   },
+   "condition_labels": [
+    "v0.14:S1g6"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q2-invoice-m1",
+   "prompt_sha256": "580a8086ed0274be3ee0790f33887d6de5b65d18e515a735fc5d5355d08c1e1e",
+   "records": 1,
+   "strict_outcomes": {
+    "correct": 1
+   },
+   "by_run": {
+    "v0.14": 1
+   },
+   "condition_labels": [
+    "v0.14:S1g7"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q2-invoice-m1",
+   "prompt_sha256": "797138fcdc9a42f80a88efd6432dcbe41ddc57148424985efcdc7dc03970f85e",
+   "records": 1,
+   "strict_outcomes": {
+    "correct": 1
+   },
+   "by_run": {
+    "v0.14": 1
+   },
+   "condition_labels": [
+    "v0.14:S1g8"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q2-invoice-m2",
+   "prompt_sha256": "b9b0a1fe1306a8a90b9ac3c54ce5b5d2a2078f15055682ca3aafe8a6bb0273bf",
+   "records": 6,
+   "strict_outcomes": {
+    "refusal": 6
+   },
+   "by_run": {
+    "v0.10": 2,
+    "v0.12": 4
+   },
+   "condition_labels": [
+    "v0.10:RANDOM_OTHER",
+    "v0.12:F0"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q2-invoice-m2",
+   "prompt_sha256": "5b6938d65227fc1c585ab8d4f5fd53a488d6057933a6f30c35fb7c6d623a8f33",
+   "records": 4,
+   "strict_outcomes": {
+    "refusal": 4
+   },
+   "by_run": {
+    "v0.12": 4
+   },
+   "condition_labels": [
+    "v0.12:F1"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q2-invoice-m2",
+   "prompt_sha256": "86f4ccc393973a96ad9c566dde711920d36984313df5132fee6b93459d7fdeb7",
+   "records": 4,
+   "strict_outcomes": {
+    "invalid": 1,
+    "correct": 3
+   },
+   "by_run": {
+    "v0.12": 4
+   },
+   "condition_labels": [
+    "v0.12:F2"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q2-invoice-m2",
+   "prompt_sha256": "c84b2d27abfc9b4cd56dbbf7d181881fa0bed662a96954a46b4780ca53d20a52",
+   "records": 4,
+   "strict_outcomes": {
+    "refusal": 4
+   },
+   "by_run": {
+    "v0.12": 4
+   },
+   "condition_labels": [
+    "v0.12:F3"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q2-invoice-m2",
+   "prompt_sha256": "1b78eba63341c8b5ac0b31afef2c12c9f984eeeee6a60e3eb338ea906cfc330b",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:BASELINE"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q2-invoice-m2",
+   "prompt_sha256": "fbbd3e93a2e494406718ce5735fe709960278694b7c57b375455212c444dec9d",
+   "records": 2,
+   "strict_outcomes": {
+    "competing": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:COMPETING"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q2-invoice-m2",
+   "prompt_sha256": "3883ca3f71a38369dcfad3598da6fbff6d28f343b1195f0afbb03cd823891d11",
+   "records": 2,
+   "strict_outcomes": {
+    "invalid": 1,
+    "correct": 1
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:PROSE"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q2-invoice-m2",
+   "prompt_sha256": "fd9b7cd603d1363b20a04ef943c742aaf9d75c569d04d0723888984795bc5428",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:RANDOM_AB"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q2-invoice-m3",
+   "prompt_sha256": "1dfc37b0df0989ce7a963182ea565d8f15a353d922256dfbdc3fc12608a19135",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:BASELINE"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q2-invoice-m3",
+   "prompt_sha256": "82d19f6d304046db309fe20ed70bb294cc42ed230b1315445645ae5d460fa88b",
+   "records": 2,
+   "strict_outcomes": {
+    "competing": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:COMPETING"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q2-invoice-m3",
+   "prompt_sha256": "891de59d45e8a1e4be035e400a7fbdd4376fbd513f8cc65cad742e2248c5c4c4",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:PROSE"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q2-invoice-m3",
+   "prompt_sha256": "7388dce90ab8931c3d63970c1b9369e77efe49abf2c9c7b688419ef8eee2d164",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:RANDOM_AB"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q2-invoice-m3",
+   "prompt_sha256": "ce004aa13c39c4ceb5a664f1da70231b165b252c69e54fdfc0ec5021e9a27240",
+   "records": 2,
+   "strict_outcomes": {
+    "refusal": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:RANDOM_OTHER"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q2-invoice-m4",
+   "prompt_sha256": "08cc1732fcf5f991436d77d793a625815f5c279e875abcb7a8f2ed07eb942f49",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:BASELINE"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q2-invoice-m4",
+   "prompt_sha256": "ea627ce3894789ce5e012686d8f44554efad8cc2d4250d0919ee1e3ba7aadc49",
+   "records": 2,
+   "strict_outcomes": {
+    "competing": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:COMPETING"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q2-invoice-m4",
+   "prompt_sha256": "e223b69db64b1bb9513177063ba95b543ba0718da35198c09c3b8a2ecbd2a56b",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:PROSE"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q2-invoice-m4",
+   "prompt_sha256": "0385b7e6821848ceeb5d40c8b3d298d73ad4ddb49f5e5ac815e56b208ed7d106",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:RANDOM_AB"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q2-invoice-m4",
+   "prompt_sha256": "fc3837b3b0be1f3819fb1c95a48b33edb18d995d0dbb53f0ac7c2c3eb75b437a",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:RANDOM_OTHER"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q3-route-m1",
+   "prompt_sha256": "3ce3500aca4a7e558d2d69c2d044b1dbe3e27c62848b4c47a302bd5e4f7d462a",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:BASELINE"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q3-route-m1",
+   "prompt_sha256": "946233e8d7eb8b4bf1f782a2348b67a25fcf28f462d8a9cd1a3176a89e298855",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:COMPETING"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q3-route-m1",
+   "prompt_sha256": "af8644c18ded8648b6604275fa71e6ea05fc0d166ef7297de3594a4816f7d247",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:PROSE"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q3-route-m1",
+   "prompt_sha256": "92dc8158d3e423c12fe39998921058b81327278af6f7ea654bd323064515683f",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:RANDOM_AB"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q3-route-m1",
+   "prompt_sha256": "dbfb259b16564e29234784a2f15749dac863bd6c64888d70ea18e21e8234566d",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:RANDOM_OTHER"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q3-route-m2",
+   "prompt_sha256": "35b6a45021987571ffddfbb4f709e2b43c3cdd95483c0ece71aa7b04139365f9",
+   "records": 6,
+   "strict_outcomes": {
+    "refusal": 6
+   },
+   "by_run": {
+    "v0.10": 2,
+    "v0.12": 4
+   },
+   "condition_labels": [
+    "v0.10:RANDOM_OTHER",
+    "v0.12:F0"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q3-route-m2",
+   "prompt_sha256": "9e90d3740645d2a57b091e157180dccb40c995d8caabbdd83bdff2f86633dde6",
+   "records": 4,
+   "strict_outcomes": {
+    "refusal": 4
+   },
+   "by_run": {
+    "v0.12": 4
+   },
+   "condition_labels": [
+    "v0.12:F1"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q3-route-m2",
+   "prompt_sha256": "aa3b8f78d87ad16169219ddffc35c01c927cec8c4bc6099e888ba5ad665e7a95",
+   "records": 4,
+   "strict_outcomes": {
+    "correct": 4
+   },
+   "by_run": {
+    "v0.12": 4
+   },
+   "condition_labels": [
+    "v0.12:F2"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q3-route-m2",
+   "prompt_sha256": "cb18ce72ba3375383baa6e9925c05a338d5742ea098f8800f1a5e9b45ab78022",
+   "records": 4,
+   "strict_outcomes": {
+    "correct": 4
+   },
+   "by_run": {
+    "v0.12": 4
+   },
+   "condition_labels": [
+    "v0.12:F3"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q3-route-m2",
+   "prompt_sha256": "37d3f2620f0dae87c694f9eba706108781402a10567887291d7c6af00a8beaff",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:BASELINE"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q3-route-m2",
+   "prompt_sha256": "46efbf60fe47b205284f73e33b055f2bba073589e9cae0cdb75ae8be67ff7e94",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:COMPETING"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q3-route-m2",
+   "prompt_sha256": "4d12e3fdf4d19b0887f18098d8cdbda15ed568e4f3877513066748c96cdd78cf",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:PROSE"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q3-route-m2",
+   "prompt_sha256": "bb2f8007dab14535230ca8cde09aa06f972b3f2918190dd296a57fdae6034369",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:RANDOM_AB"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q3-route-m3",
+   "prompt_sha256": "ce11c48e70da301cbb6de4b8afa12fd4dddca2b9edd4a84ba77cc12370ad08c0",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:BASELINE"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q3-route-m3",
+   "prompt_sha256": "7858cd8b3d47425a0c8ff83cb919b094351f751e115bf8324a2647fbd5eb4cb1",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 1,
+    "competing": 1
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:COMPETING"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q3-route-m3",
+   "prompt_sha256": "15c50bdce665d9fbb96eee560b07a64c66549c360f05b0d45a9a32a7b177cf95",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:PROSE"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q3-route-m3",
+   "prompt_sha256": "037605b9f6840571671633866680d199b7cc1c75dfac5d139c18581426993a3e",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:RANDOM_AB"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q3-route-m3",
+   "prompt_sha256": "6998ccc210b80ecc1cf6e386d99e63d14bc2d502ff11117865b3c7b2d9ee6afd",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:RANDOM_OTHER"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q3-route-m4",
+   "prompt_sha256": "845dc705a47d3043c0248849b127e48557590f7a62df361b94b6507ac41b38a1",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:BASELINE"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q3-route-m4",
+   "prompt_sha256": "891eb6293fb98b79e9b55906baee537dc3d68684379988d55b7ab0978ba19123",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:COMPETING"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q3-route-m4",
+   "prompt_sha256": "1165aca4c32c51f267d0b2ad2ee1c85123c54d87e4688b092733fcbef2fbef28",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:PROSE"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q3-route-m4",
+   "prompt_sha256": "77261d033f965a4cf3643e4f377aedde1b9bd53c623f67f78c43b7240972bb65",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:RANDOM_AB"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q3-route-m4",
+   "prompt_sha256": "1ec74acd59bd16d857d7a09846d651b295f8485726624a0b4b4777811215274f",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:RANDOM_OTHER"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q4-league-m1",
+   "prompt_sha256": "52c88eb1b4b127bb0dc6652be176fddf7e33b0663569a30b021a43ab21155886",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:BASELINE"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q4-league-m1",
+   "prompt_sha256": "430077f7c4940081b23af56cb9120c94426551bc93957ade7ff1a61d2fce5153",
+   "records": 2,
+   "strict_outcomes": {
+    "competing": 1,
+    "correct": 1
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:COMPETING"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q4-league-m1",
+   "prompt_sha256": "ad3653a7263052975acc40c18b8024744a12cb3347017bd73ed3aab9988fdd52",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:PROSE"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q4-league-m1",
+   "prompt_sha256": "68cc44a448304fe6f442aa37a1b1fc980c48a966a72c51ce449d96fa4786e38b",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:RANDOM_AB"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q4-league-m1",
+   "prompt_sha256": "fa81079aa8d88562a207671edc42033231c7ba28c91e11632ed4c4de3b15e572",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:RANDOM_OTHER"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q4-league-m2",
+   "prompt_sha256": "3639b06b62f5c583f4a52a21f36fc49287e5c530a4a7688c191af193aea3fcfe",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:BASELINE"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q4-league-m2",
+   "prompt_sha256": "f22cd36d23ba20bef160279528cedd62ff2f2736be1166cc07982771bfb76658",
+   "records": 2,
+   "strict_outcomes": {
+    "competing": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:COMPETING"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q4-league-m2",
+   "prompt_sha256": "f184d8b9d28e82769efa3675b022e053742832b28cd1aa020dd550e38e23819c",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:PROSE"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q4-league-m2",
+   "prompt_sha256": "9df0298d94e9675b36017a7cbec4e37e02e5aea46478d1ca4f075126c31d8f59",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:RANDOM_AB"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q4-league-m2",
+   "prompt_sha256": "38c34a8ee63b2f40ec904ca433614f52c6cfe141543b555c7a64d0d3379e011e",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:RANDOM_OTHER"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q4-league-m3",
+   "prompt_sha256": "a1ffffb510118df30f48ca8cdc427e89cb83f9dd104c27cd369ab785cede97c4",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:BASELINE"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q4-league-m3",
+   "prompt_sha256": "79b20b23a623352e146095fb4766a349bb492a59b324c94c264bc5da96c9df39",
+   "records": 2,
+   "strict_outcomes": {
+    "competing": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:COMPETING"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q4-league-m3",
+   "prompt_sha256": "3b16f2ba459e73a24b55292ddfde11b798bb01f0328be1ae9343285d4879eb63",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:PROSE"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q4-league-m3",
+   "prompt_sha256": "dc751a490aaaf316c71a1d899a45745bd0f5e814c4030eeddb2f4263b86a4d58",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:RANDOM_AB"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q4-league-m3",
+   "prompt_sha256": "e271b0453eaf6707e80163b75b22d14ddeeb7fa5ffb7b666d832c373768e5159",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:RANDOM_OTHER"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q4-league-m4",
+   "prompt_sha256": "bd9ecb25a1223742d3c2bb1113cf381480c0f409120b388d4d75af6469ea1d4d",
+   "records": 10,
+   "strict_outcomes": {
+    "correct": 10
+   },
+   "by_run": {
+    "v0.10": 2,
+    "v0.12": 4,
+    "v0.13": 3,
+    "v0.14": 1
+   },
+   "condition_labels": [
+    "v0.10:RANDOM_OTHER",
+    "v0.12:F0",
+    "v0.13:F0",
+    "v0.14:F0"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q4-league-m4",
+   "prompt_sha256": "2b7c22acc39aff2144955c0ec75b64348ee62a3ca8dc15fbe3358fb31ebb5210",
+   "records": 7,
+   "strict_outcomes": {
+    "correct": 7
+   },
+   "by_run": {
+    "v0.12": 4,
+    "v0.13": 3
+   },
+   "condition_labels": [
+    "v0.12:F2",
+    "v0.13:F2"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q4-league-m4",
+   "prompt_sha256": "59a61cc81a760b6a456d54228e890d5d19c3c256ef644170a92888cec494ea6a",
+   "records": 4,
+   "strict_outcomes": {
+    "correct": 4
+   },
+   "by_run": {
+    "v0.12": 4
+   },
+   "condition_labels": [
+    "v0.12:F1"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q4-league-m4",
+   "prompt_sha256": "8f12c596909ce808b02120cc5a66d0e1086c67d1ec6b47269f43a339ca07542b",
+   "records": 4,
+   "strict_outcomes": {
+    "correct": 4
+   },
+   "by_run": {
+    "v0.12": 4
+   },
+   "condition_labels": [
+    "v0.12:F3"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q4-league-m4",
+   "prompt_sha256": "b29d6ce1b0868f0dbaa4809141f0069cb39cf0b1607e35d93b184917933ac835",
+   "records": 4,
+   "strict_outcomes": {
+    "correct": 4
+   },
+   "by_run": {
+    "v0.13": 3,
+    "v0.14": 1
+   },
+   "condition_labels": [
+    "v0.13:C1",
+    "v0.14:C1"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q4-league-m4",
+   "prompt_sha256": "30b5e29cb5913c7985221ba466255b4fefba01b0f368c21d9d40175346fcb35d",
+   "records": 4,
+   "strict_outcomes": {
+    "correct": 4
+   },
+   "by_run": {
+    "v0.13": 3,
+    "v0.14": 1
+   },
+   "condition_labels": [
+    "v0.13:S1",
+    "v0.14:S1"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q4-league-m4",
+   "prompt_sha256": "c0f3de0c3f5d005f66091c2df8895b44960ce5dc0ccb6a02c151eb2323ea56db",
+   "records": 3,
+   "strict_outcomes": {
+    "correct": 3
+   },
+   "by_run": {
+    "v0.13": 3
+   },
+   "condition_labels": [
+    "v0.13:C2"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q4-league-m4",
+   "prompt_sha256": "e430f19e429476473dfafeb2836e47ffa0d44e6a319c3c49fbe5944bfcf203dc",
+   "records": 3,
+   "strict_outcomes": {
+    "correct": 3
+   },
+   "by_run": {
+    "v0.13": 3
+   },
+   "condition_labels": [
+    "v0.13:C3"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q4-league-m4",
+   "prompt_sha256": "70e71916be8588979657e87e3d78a5b8dee6d05eb2b103672b3da240f9d16a5c",
+   "records": 3,
+   "strict_outcomes": {
+    "correct": 3
+   },
+   "by_run": {
+    "v0.13": 3
+   },
+   "condition_labels": [
+    "v0.13:S2"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q4-league-m4",
+   "prompt_sha256": "53ba0c5cf81bb13d32b4138fa8902902b3dd2878edd45c981407b12911a52de1",
+   "records": 3,
+   "strict_outcomes": {
+    "correct": 3
+   },
+   "by_run": {
+    "v0.13": 3
+   },
+   "condition_labels": [
+    "v0.13:S3"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q4-league-m4",
+   "prompt_sha256": "50fcc398b045e9c6132b48ddc388a52801336a37af7e1ad4bfc42b9cc09af4ad",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:BASELINE"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q4-league-m4",
+   "prompt_sha256": "29628bed8592e1f23e08258d930024a49cf2690a31f38650c81e4100d960cf61",
+   "records": 2,
+   "strict_outcomes": {
+    "competing": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:COMPETING"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q4-league-m4",
+   "prompt_sha256": "7e2c987148ce90fa6315c52225ff6f89c02b131a36fecd442d06af403b3bfb2b",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:PROSE"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q4-league-m4",
+   "prompt_sha256": "5179b7fc004f8c3018d1dc8206bb46b3b27ced36635a204ec7fed37ced49dbbf",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.10": 2
+   },
+   "condition_labels": [
+    "v0.10:RANDOM_AB"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q4-league-m4",
+   "prompt_sha256": "1c90a8ad9cb705a6a825e90fd4f0cb192bb9eefe4f3ef2f28b039737cf030879",
+   "records": 1,
+   "strict_outcomes": {
+    "correct": 1
+   },
+   "by_run": {
+    "v0.14": 1
+   },
+   "condition_labels": [
+    "v0.14:F0g1"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q4-league-m4",
+   "prompt_sha256": "9129d9b8e2b8fc278dd3bb992b7112624f8892669959898179541a5fc3cbe782",
+   "records": 1,
+   "strict_outcomes": {
+    "correct": 1
+   },
+   "by_run": {
+    "v0.14": 1
+   },
+   "condition_labels": [
+    "v0.14:F0g2"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q4-league-m4",
+   "prompt_sha256": "ad13fb49e350444d5141d293a185c7a09914675bf9a24eb03b99068b8a6e449d",
+   "records": 1,
+   "strict_outcomes": {
+    "correct": 1
+   },
+   "by_run": {
+    "v0.14": 1
+   },
+   "condition_labels": [
+    "v0.14:F0g3"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q4-league-m4",
+   "prompt_sha256": "25c8a3a78bfa7575ef10601abc2e50431ab541ad89b9ff9ffc6894e05202a541",
+   "records": 1,
+   "strict_outcomes": {
+    "correct": 1
+   },
+   "by_run": {
+    "v0.14": 1
+   },
+   "condition_labels": [
+    "v0.14:F0g4"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q4-league-m4",
+   "prompt_sha256": "79cc9a52a20388f2cb58fab5b2fe326ae4e335eeae1468ffbec08517de454958",
+   "records": 1,
+   "strict_outcomes": {
+    "correct": 1
+   },
+   "by_run": {
+    "v0.14": 1
+   },
+   "condition_labels": [
+    "v0.14:F0g5"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q4-league-m4",
+   "prompt_sha256": "7a4ffc33659f23b87a77935350a9f11255cb9d8e5b08fa5d6b249068b024839d",
+   "records": 1,
+   "strict_outcomes": {
+    "correct": 1
+   },
+   "by_run": {
+    "v0.14": 1
+   },
+   "condition_labels": [
+    "v0.14:F0g6"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q4-league-m4",
+   "prompt_sha256": "43e5e69445f4c0bd6226596455d8119ba84d78f799d3eff6f77c912524c6bfa6",
+   "records": 1,
+   "strict_outcomes": {
+    "correct": 1
+   },
+   "by_run": {
+    "v0.14": 1
+   },
+   "condition_labels": [
+    "v0.14:F0g7"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q4-league-m4",
+   "prompt_sha256": "d0ef0faa22a230fdd4563f18e1d15c4d027e77f6d0f26f0dc837c97ba7134f5e",
+   "records": 1,
+   "strict_outcomes": {
+    "correct": 1
+   },
+   "by_run": {
+    "v0.14": 1
+   },
+   "condition_labels": [
+    "v0.14:F0g8"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q4-league-m4",
+   "prompt_sha256": "0c26ce3a8760ab4d0144ff94306d37bef1c7aab922e77f7ec036043912a5b623",
+   "records": 1,
+   "strict_outcomes": {
+    "correct": 1
+   },
+   "by_run": {
+    "v0.14": 1
+   },
+   "condition_labels": [
+    "v0.14:S1g1"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q4-league-m4",
+   "prompt_sha256": "fee1d551bb5c5e3b768601d1ad5eb1cb702227eba75f1b687b7129741e7477a1",
+   "records": 1,
+   "strict_outcomes": {
+    "correct": 1
+   },
+   "by_run": {
+    "v0.14": 1
+   },
+   "condition_labels": [
+    "v0.14:S1g2"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q4-league-m4",
+   "prompt_sha256": "e105e09d926ac635e60f7eaebd82bdd9b1685fff8cda6d965b04cad2b216c2ee",
+   "records": 1,
+   "strict_outcomes": {
+    "correct": 1
+   },
+   "by_run": {
+    "v0.14": 1
+   },
+   "condition_labels": [
+    "v0.14:S1g3"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q4-league-m4",
+   "prompt_sha256": "71d460e597a7a775b4630d8c64490254ee76e12ac7b20989faeb4e804c350800",
+   "records": 1,
+   "strict_outcomes": {
+    "correct": 1
+   },
+   "by_run": {
+    "v0.14": 1
+   },
+   "condition_labels": [
+    "v0.14:S1g4"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q4-league-m4",
+   "prompt_sha256": "7605808257a7d30d30a3b24948133faade564c86394e73075f1ea4a4e93b2863",
+   "records": 1,
+   "strict_outcomes": {
+    "correct": 1
+   },
+   "by_run": {
+    "v0.14": 1
+   },
+   "condition_labels": [
+    "v0.14:S1g5"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q4-league-m4",
+   "prompt_sha256": "7540066121292850f70d694b615f8bacc6a803fa6cbd917c7623e17fc340dfd6",
+   "records": 1,
+   "strict_outcomes": {
+    "correct": 1
+   },
+   "by_run": {
+    "v0.14": 1
+   },
+   "condition_labels": [
+    "v0.14:S1g6"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q4-league-m4",
+   "prompt_sha256": "36ec9bb1fbe56fa569a5dac0ba9e08dae1ca47a61e58f909ebd37dbbcbc94679",
+   "records": 1,
+   "strict_outcomes": {
+    "correct": 1
+   },
+   "by_run": {
+    "v0.14": 1
+   },
+   "condition_labels": [
+    "v0.14:S1g7"
+   ]
+  },
+  {
+   "model": "claude-haiku-5-5",
+   "cell": "q4-league-m4",
+   "prompt_sha256": "6e9263d9422d0483a663e12739a62ab31eab29d84c01ae5f9a1d0c0b6a654bf7",
+   "records": 1,
+   "strict_outcomes": {
+    "correct": 1
+   },
+   "by_run": {
+    "v0.14": 1
+   },
+   "condition_labels": [
+    "v0.14:S1g8"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q1-lab-ph-m1",
+   "prompt_sha256": "0b7f9d663bb0d45f6612a466bfaebaea29f813e1841e26b0cb4975ccf7b75ad0",
+   "records": 3,
+   "strict_outcomes": {
+    "correct": 3
+   },
+   "by_run": {
+    "v0.11": 3
+   },
+   "condition_labels": [
+    "v0.11:BASELINE"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q1-lab-ph-m1",
+   "prompt_sha256": "9d63c20077f29323ede83f5f7730f1179b4038b0148d0c29ac6be150500fdbf1",
+   "records": 2,
+   "strict_outcomes": {
+    "invalid": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:COMPETING"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q1-lab-ph-m1",
+   "prompt_sha256": "11969dd3b1acd43eb2490e40d050724f42d5ec71b9e8ce8d15b533b86801ba23",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:PROSE"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q1-lab-ph-m1",
+   "prompt_sha256": "4ad60d04e30d18637955798248bb5efdafc285c1dd7771e2c0ee58de9a549e30",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:RANDOM_AB"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q1-lab-ph-m1",
+   "prompt_sha256": "fea3a852a82a4f7b38ae050064984f20e8f2aaa97469cb73dfc71baa9fe341c2",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:RANDOM_OTHER"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q1-lab-ph-m2",
+   "prompt_sha256": "30df19d0698412e2adacafcada7cefd42eb79b5a05cbb47761960c356118a8c0",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:BASELINE"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q1-lab-ph-m2",
+   "prompt_sha256": "bc6db4954421820eac2340306ad01dc6f5105928ce8f53c456e92ba8310975d5",
+   "records": 2,
+   "strict_outcomes": {
+    "invalid": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:COMPETING"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q1-lab-ph-m2",
+   "prompt_sha256": "293fa9609b20e139c070c171925782f28d8bb5c78b26375554d6b8486cdb6f4a",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:PROSE"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q1-lab-ph-m2",
+   "prompt_sha256": "790bb1f480a45fee88fb4e1a73c9bd863ac865366ea89afb0e22b31a9bd033b1",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:RANDOM_AB"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q1-lab-ph-m2",
+   "prompt_sha256": "325237c6a94f48800b96124c8de958965ea7dcbedcdbd34d85b2e20d0995f0b9",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:RANDOM_OTHER"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q1-lab-ph-m3",
+   "prompt_sha256": "5102a2fee8cf3c0755b29bfb2e1f0932ad1caa86a7d9cea0429bc28896c0a58c",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:BASELINE"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q1-lab-ph-m3",
+   "prompt_sha256": "8dec68bc6fbee00c8e9e1a04756659473b2a257d74638ba1cbe569c12ee2c070",
+   "records": 2,
+   "strict_outcomes": {
+    "invalid": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:COMPETING"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q1-lab-ph-m3",
+   "prompt_sha256": "e707d4a4ca1cdd73cdf52d4fd8310b4b95c075896649f3d29a5880fe98c882a2",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:PROSE"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q1-lab-ph-m3",
+   "prompt_sha256": "c5f8164b1f9f075db6d9b0c605dc08f9c56466b38ffba56fe4d224cbe9b9b525",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:RANDOM_AB"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q1-lab-ph-m3",
+   "prompt_sha256": "39a85b4549dfa30a15f31c60927770549fd480e66a51fabab79ac7176c49ec3f",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:RANDOM_OTHER"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q1-lab-ph-m4",
+   "prompt_sha256": "72e80c69b464bc849536668a375a4929abc51fa9a931ffc2a269ff3e9878b657",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:BASELINE"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q1-lab-ph-m4",
+   "prompt_sha256": "7b63b062c83fd1a0563dc41ec44f18ea1230973d54f52fd53daff5a220a21843",
+   "records": 2,
+   "strict_outcomes": {
+    "invalid": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:COMPETING"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q1-lab-ph-m4",
+   "prompt_sha256": "5a707982d108f5c75fb5e822affb0340511f6a38dde82e7893439c9205bb6cd7",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:PROSE"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q1-lab-ph-m4",
+   "prompt_sha256": "8b14aaf0024f00a57b9af9f5df6adb0210bced9ab9af54975da60ab1dd421ccb",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:RANDOM_AB"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q1-lab-ph-m4",
+   "prompt_sha256": "ef165c35e96af65d8209458f09a561a5473e96f06737456c9d72cf816258856c",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:RANDOM_OTHER"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q2-invoice-m1",
+   "prompt_sha256": "4cd97dcd0b9bfa6d236b5c7b800cd1cb27a74dab46d552bf4cd470c28f2956f2",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:BASELINE"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q2-invoice-m1",
+   "prompt_sha256": "ecdb17ea5b97065a3f297da476b57cf9bf8f2734b6cc32577263eb215bbab1fe",
+   "records": 2,
+   "strict_outcomes": {
+    "invalid": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:COMPETING"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q2-invoice-m1",
+   "prompt_sha256": "864b85d1c81fb7332202e981182413243532f52cb16d0344f4b9203f740581e7",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:PROSE"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q2-invoice-m1",
+   "prompt_sha256": "5f9186bfea9595f02c6434ff5071e674909bea4e8ec327da0faf53a3b3b9069d",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:RANDOM_AB"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q2-invoice-m1",
+   "prompt_sha256": "46f315e31a4ad5f5375e0f8b100311e0f64fc9cbbb4de8d6b984b04737e4268a",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:RANDOM_OTHER"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q2-invoice-m2",
+   "prompt_sha256": "1b78eba63341c8b5ac0b31afef2c12c9f984eeeee6a60e3eb338ea906cfc330b",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:BASELINE"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q2-invoice-m2",
+   "prompt_sha256": "fbbd3e93a2e494406718ce5735fe709960278694b7c57b375455212c444dec9d",
+   "records": 2,
+   "strict_outcomes": {
+    "invalid": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:COMPETING"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q2-invoice-m2",
+   "prompt_sha256": "3883ca3f71a38369dcfad3598da6fbff6d28f343b1195f0afbb03cd823891d11",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:PROSE"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q2-invoice-m2",
+   "prompt_sha256": "fd9b7cd603d1363b20a04ef943c742aaf9d75c569d04d0723888984795bc5428",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 1,
+    "invalid": 1
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:RANDOM_AB"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q2-invoice-m2",
+   "prompt_sha256": "b9b0a1fe1306a8a90b9ac3c54ce5b5d2a2078f15055682ca3aafe8a6bb0273bf",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:RANDOM_OTHER"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q2-invoice-m3",
+   "prompt_sha256": "1dfc37b0df0989ce7a963182ea565d8f15a353d922256dfbdc3fc12608a19135",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:BASELINE"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q2-invoice-m3",
+   "prompt_sha256": "82d19f6d304046db309fe20ed70bb294cc42ed230b1315445645ae5d460fa88b",
+   "records": 2,
+   "strict_outcomes": {
+    "invalid": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:COMPETING"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q2-invoice-m3",
+   "prompt_sha256": "891de59d45e8a1e4be035e400a7fbdd4376fbd513f8cc65cad742e2248c5c4c4",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:PROSE"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q2-invoice-m3",
+   "prompt_sha256": "7388dce90ab8931c3d63970c1b9369e77efe49abf2c9c7b688419ef8eee2d164",
+   "records": 2,
+   "strict_outcomes": {
+    "invalid": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:RANDOM_AB"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q2-invoice-m3",
+   "prompt_sha256": "ce004aa13c39c4ceb5a664f1da70231b165b252c69e54fdfc0ec5021e9a27240",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:RANDOM_OTHER"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q2-invoice-m4",
+   "prompt_sha256": "08cc1732fcf5f991436d77d793a625815f5c279e875abcb7a8f2ed07eb942f49",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:BASELINE"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q2-invoice-m4",
+   "prompt_sha256": "ea627ce3894789ce5e012686d8f44554efad8cc2d4250d0919ee1e3ba7aadc49",
+   "records": 2,
+   "strict_outcomes": {
+    "invalid": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:COMPETING"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q2-invoice-m4",
+   "prompt_sha256": "e223b69db64b1bb9513177063ba95b543ba0718da35198c09c3b8a2ecbd2a56b",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:PROSE"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q2-invoice-m4",
+   "prompt_sha256": "0385b7e6821848ceeb5d40c8b3d298d73ad4ddb49f5e5ac815e56b208ed7d106",
+   "records": 2,
+   "strict_outcomes": {
+    "invalid": 1,
+    "correct": 1
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:RANDOM_AB"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q2-invoice-m4",
+   "prompt_sha256": "fc3837b3b0be1f3819fb1c95a48b33edb18d995d0dbb53f0ac7c2c3eb75b437a",
+   "records": 2,
+   "strict_outcomes": {
+    "invalid": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:RANDOM_OTHER"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q3-route-m1",
+   "prompt_sha256": "3ce3500aca4a7e558d2d69c2d044b1dbe3e27c62848b4c47a302bd5e4f7d462a",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:BASELINE"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q3-route-m1",
+   "prompt_sha256": "946233e8d7eb8b4bf1f782a2348b67a25fcf28f462d8a9cd1a3176a89e298855",
+   "records": 2,
+   "strict_outcomes": {
+    "invalid": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:COMPETING"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q3-route-m1",
+   "prompt_sha256": "af8644c18ded8648b6604275fa71e6ea05fc0d166ef7297de3594a4816f7d247",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:PROSE"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q3-route-m1",
+   "prompt_sha256": "92dc8158d3e423c12fe39998921058b81327278af6f7ea654bd323064515683f",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:RANDOM_AB"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q3-route-m1",
+   "prompt_sha256": "dbfb259b16564e29234784a2f15749dac863bd6c64888d70ea18e21e8234566d",
+   "records": 2,
+   "strict_outcomes": {
+    "invalid": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:RANDOM_OTHER"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q3-route-m2",
+   "prompt_sha256": "37d3f2620f0dae87c694f9eba706108781402a10567887291d7c6af00a8beaff",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:BASELINE"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q3-route-m2",
+   "prompt_sha256": "46efbf60fe47b205284f73e33b055f2bba073589e9cae0cdb75ae8be67ff7e94",
+   "records": 2,
+   "strict_outcomes": {
+    "invalid": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:COMPETING"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q3-route-m2",
+   "prompt_sha256": "4d12e3fdf4d19b0887f18098d8cdbda15ed568e4f3877513066748c96cdd78cf",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:PROSE"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q3-route-m2",
+   "prompt_sha256": "bb2f8007dab14535230ca8cde09aa06f972b3f2918190dd296a57fdae6034369",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:RANDOM_AB"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q3-route-m2",
+   "prompt_sha256": "35b6a45021987571ffddfbb4f709e2b43c3cdd95483c0ece71aa7b04139365f9",
+   "records": 2,
+   "strict_outcomes": {
+    "invalid": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:RANDOM_OTHER"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q3-route-m3",
+   "prompt_sha256": "ce11c48e70da301cbb6de4b8afa12fd4dddca2b9edd4a84ba77cc12370ad08c0",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:BASELINE"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q3-route-m3",
+   "prompt_sha256": "7858cd8b3d47425a0c8ff83cb919b094351f751e115bf8324a2647fbd5eb4cb1",
+   "records": 2,
+   "strict_outcomes": {
+    "invalid": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:COMPETING"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q3-route-m3",
+   "prompt_sha256": "15c50bdce665d9fbb96eee560b07a64c66549c360f05b0d45a9a32a7b177cf95",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:PROSE"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q3-route-m3",
+   "prompt_sha256": "037605b9f6840571671633866680d199b7cc1c75dfac5d139c18581426993a3e",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:RANDOM_AB"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q3-route-m3",
+   "prompt_sha256": "6998ccc210b80ecc1cf6e386d99e63d14bc2d502ff11117865b3c7b2d9ee6afd",
+   "records": 2,
+   "strict_outcomes": {
+    "invalid": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:RANDOM_OTHER"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q3-route-m4",
+   "prompt_sha256": "845dc705a47d3043c0248849b127e48557590f7a62df361b94b6507ac41b38a1",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:BASELINE"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q3-route-m4",
+   "prompt_sha256": "891eb6293fb98b79e9b55906baee537dc3d68684379988d55b7ab0978ba19123",
+   "records": 2,
+   "strict_outcomes": {
+    "invalid": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:COMPETING"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q3-route-m4",
+   "prompt_sha256": "1165aca4c32c51f267d0b2ad2ee1c85123c54d87e4688b092733fcbef2fbef28",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:PROSE"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q3-route-m4",
+   "prompt_sha256": "77261d033f965a4cf3643e4f377aedde1b9bd53c623f67f78c43b7240972bb65",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:RANDOM_AB"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q3-route-m4",
+   "prompt_sha256": "1ec74acd59bd16d857d7a09846d651b295f8485726624a0b4b4777811215274f",
+   "records": 2,
+   "strict_outcomes": {
+    "invalid": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:RANDOM_OTHER"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q4-league-m1",
+   "prompt_sha256": "52c88eb1b4b127bb0dc6652be176fddf7e33b0663569a30b021a43ab21155886",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:BASELINE"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q4-league-m1",
+   "prompt_sha256": "430077f7c4940081b23af56cb9120c94426551bc93957ade7ff1a61d2fce5153",
+   "records": 2,
+   "strict_outcomes": {
+    "invalid": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:COMPETING"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q4-league-m1",
+   "prompt_sha256": "ad3653a7263052975acc40c18b8024744a12cb3347017bd73ed3aab9988fdd52",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:PROSE"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q4-league-m1",
+   "prompt_sha256": "68cc44a448304fe6f442aa37a1b1fc980c48a966a72c51ce449d96fa4786e38b",
+   "records": 2,
+   "strict_outcomes": {
+    "invalid": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:RANDOM_AB"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q4-league-m1",
+   "prompt_sha256": "fa81079aa8d88562a207671edc42033231c7ba28c91e11632ed4c4de3b15e572",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:RANDOM_OTHER"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q4-league-m2",
+   "prompt_sha256": "3639b06b62f5c583f4a52a21f36fc49287e5c530a4a7688c191af193aea3fcfe",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:BASELINE"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q4-league-m2",
+   "prompt_sha256": "f22cd36d23ba20bef160279528cedd62ff2f2736be1166cc07982771bfb76658",
+   "records": 2,
+   "strict_outcomes": {
+    "invalid": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:COMPETING"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q4-league-m2",
+   "prompt_sha256": "f184d8b9d28e82769efa3675b022e053742832b28cd1aa020dd550e38e23819c",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:PROSE"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q4-league-m2",
+   "prompt_sha256": "9df0298d94e9675b36017a7cbec4e37e02e5aea46478d1ca4f075126c31d8f59",
+   "records": 2,
+   "strict_outcomes": {
+    "invalid": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:RANDOM_AB"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q4-league-m2",
+   "prompt_sha256": "38c34a8ee63b2f40ec904ca433614f52c6cfe141543b555c7a64d0d3379e011e",
+   "records": 2,
+   "strict_outcomes": {
+    "invalid": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:RANDOM_OTHER"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q4-league-m3",
+   "prompt_sha256": "a1ffffb510118df30f48ca8cdc427e89cb83f9dd104c27cd369ab785cede97c4",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:BASELINE"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q4-league-m3",
+   "prompt_sha256": "79b20b23a623352e146095fb4766a349bb492a59b324c94c264bc5da96c9df39",
+   "records": 2,
+   "strict_outcomes": {
+    "invalid": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:COMPETING"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q4-league-m3",
+   "prompt_sha256": "3b16f2ba459e73a24b55292ddfde11b798bb01f0328be1ae9343285d4879eb63",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:PROSE"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q4-league-m3",
+   "prompt_sha256": "dc751a490aaaf316c71a1d899a45745bd0f5e814c4030eeddb2f4263b86a4d58",
+   "records": 2,
+   "strict_outcomes": {
+    "invalid": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:RANDOM_AB"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q4-league-m3",
+   "prompt_sha256": "e271b0453eaf6707e80163b75b22d14ddeeb7fa5ffb7b666d832c373768e5159",
+   "records": 2,
+   "strict_outcomes": {
+    "invalid": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:RANDOM_OTHER"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q4-league-m4",
+   "prompt_sha256": "50fcc398b045e9c6132b48ddc388a52801336a37af7e1ad4bfc42b9cc09af4ad",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:BASELINE"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q4-league-m4",
+   "prompt_sha256": "29628bed8592e1f23e08258d930024a49cf2690a31f38650c81e4100d960cf61",
+   "records": 2,
+   "strict_outcomes": {
+    "invalid": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:COMPETING"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q4-league-m4",
+   "prompt_sha256": "7e2c987148ce90fa6315c52225ff6f89c02b131a36fecd442d06af403b3bfb2b",
+   "records": 2,
+   "strict_outcomes": {
+    "correct": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:PROSE"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q4-league-m4",
+   "prompt_sha256": "5179b7fc004f8c3018d1dc8206bb46b3b27ced36635a204ec7fed37ced49dbbf",
+   "records": 2,
+   "strict_outcomes": {
+    "invalid": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:RANDOM_AB"
+   ]
+  },
+  {
+   "model": "claude-sonnet-5-5",
+   "cell": "q4-league-m4",
+   "prompt_sha256": "bd9ecb25a1223742d3c2bb1113cf381480c0f409120b388d4d75af6469ea1d4d",
+   "records": 2,
+   "strict_outcomes": {
+    "invalid": 2
+   },
+   "by_run": {
+    "v0.11": 2
+   },
+   "condition_labels": [
+    "v0.11:RANDOM_OTHER"
+   ]
+  }
+ ]
+}

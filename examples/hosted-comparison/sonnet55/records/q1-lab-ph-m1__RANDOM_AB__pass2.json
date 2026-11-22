@@ -1,0 +1,81 @@
+{
+ "schema": "bleediff.hosted-answer/1",
+ "measurement_type": "ANSWER_ONLY",
+ "provider": "anthropic",
+ "name": "q1-lab-ph-m1__RANDOM_AB__pass2",
+ "cell": "q1-lab-ph-m1",
+ "question": "q1-lab-ph",
+ "mapping": "m1",
+ "condition": "RANDOM_AB",
+ "pass": 2,
+ "prompt_sha256": "4ad60d04e30d18637955798248bb5efdafc285c1dd7771e2c0ee58de9a549e30",
+ "fragment_sha256": "ade09befa6f7d7de8e70ae73fb2f6c86f94dce4a30eea8d6fa8be9c43f5c434d",
+ "correct_letter": "A",
+ "competing_letter": "B",
+ "model": "claude-sonnet-5-5",
+ "request": {
+  "endpoint": "https://api.anthropic.com/v1/messages",
+  "parameters": {
+   "model": "claude-sonnet-5-5",
+   "max_tokens": 1024,
+   "output_config": {
+    "effort": "low"
+   }
+  },
+  "messages_sha256": "ce46b4ebb22d3533a32a193d5ebdc264a0aacd13c3f1506fa2ed0c4578999050",
+  "credentials_recorded": false
+ },
+ "status": "ok",
+ "answer": "A",
+ "text": "A",
+ "finish_reason": "end_turn",
+ "block_reason": null,
+ "model_version": "claude-sonnet-5-5",
+ "http_status": 200,
+ "attempts": 1,
+ "elapsed_s": 1.741,
+ "usage": {
+  "promptTokenCount": 272,
+  "candidatesTokenCount": 3,
+  "thoughtsTokenCount": 0,
+  "totalTokenCount": 275
+ },
+ "usage_complete": true,
+ "cost_usd": 0.000574,
+ "cost_basis": "usage_metadata",
+ "cost_exceeded_preflight_bound": false,
+ "response": {
+  "model": "claude-sonnet-5-5",
+  "id": "msg-e84517526654b1b6",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+   {
+    "type": "text",
+    "text": "A"
+   }
+  ],
+  "container": null,
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "stop_details": null,
+  "usage": {
+   "input_tokens": 272,
+   "cache_creation_input_tokens": 0,
+   "cache_read_input_tokens": 0,
+   "cache_creation": {
+    "ephemeral_5m_input_tokens": 0,
+    "ephemeral_1h_input_tokens": 0
+   },
+   "output_tokens": 3,
+   "output_tokens_details": {
+    "thinking_tokens": 0
+   },
+   "service_tier": "standard",
+   "inference_geo": "global",
+   "speed": "standard"
+  },
+  "diagnostics": null
+ },
+ "error": null
+}

@@ -3,7 +3,23 @@
 All notable changes. Versions identify the software that wrote a file, not an experiment or an algorithm; protocols and
 control algorithms have their own identifiers (see `docs/TECHNICAL.md`).
 
-## Next release candidates - hosted answer-only runner (feature branch, not yet released)
+## [0.5.0] - hosted answer-only support and the five-model comparison (exploratory)
+
+### Added
+- `docs/HOSTED_MODELS.md` (usage guide: DIRECT_PROBABILITY vs ANSWER_ONLY, strict parsing vs secondary diagnostics, provider refusals vs incorrect answers, estimated budget vs provider billing, replay, redaction).
+- `examples/hosted-comparison/`: the five-model comparison as a replayable offline bundle (sanitized Claude Haiku 5.5 and Sonnet 5.5 sessions, atlas manifest, `verify_comparison.py`, `SHA256SUMS.txt`, results table and interpretation limits).
+- `docs/EVIDENCE_RECONCILIATION.md`, `docs/CASE_NOTE_HOSTED_REFUSALS_AND_FORMAT.md`, `docs/evidence/` (per-request index of 522 raw records, pseudonymous ids) and `research/reconcile_evidence.py`: reconciliation of the exploratory Claude runs v0.10-v0.15 (raw runs stay git-ignored); the post-hoc final-line extraction is documented as a separately labelled secondary rule (S1).
+- `tests/test_v050_release.py`.
+
+### Fixed
+- Saved hosted records no longer contain opaque thinking signatures or reasoning text: every live run scrubs them (`hosted.scrub_private_reasoning`) before writing. The committed Gemini example records had carried `thoughtSignature` values; they are replaced by placeholders, and provider response ids in the Gemini and OpenAI example records are pseudonymized (answers, statuses and usage unchanged; both `SHA256SUMS.txt` files regenerated).
+- `bleediff anthropic --help` showed Gemini/OpenAI model examples; each provider now shows its own.
+- `examples/hosted-comparison/README.md` no longer says the Claude runs have not been performed.
+
+### Changed
+- Version 0.5.0. The atlas manifest `atlas-input.template.json` became `atlas-input.json` now that the Claude sessions exist in the repository.
+
+## Hosted answer-only runner (included in 0.5.0)
 
 ### Added
 - `bleediff anthropic` (`bleediff/anthropic_messages.py`): the same ANSWER_ONLY engine for the Anthropic Messages API (`ANTHROPIC_API_KEY`, `x-api-key` + `anthropic-version`; `--effort`, `--thinking`, `--thinking-budget`; thinking blocks never count as the answer; thinking tokens counted once from `output_tokens`; 529 overload is retried within bounds). A real `claude-haiku-5-5` probe with `max_tokens` 8 returned only an empty thinking block, recorded as an empty non-answer. `examples/hosted-comparison/` prepares the five-model comparison (runbook, Atlas manifest template, offline `estimate_pilot_cost.py`); the Claude runs themselves are not part of this change.

@@ -1,0 +1,81 @@
+{
+ "schema": "bleediff.hosted-answer/1",
+ "measurement_type": "ANSWER_ONLY",
+ "provider": "anthropic",
+ "name": "q2-invoice-m3__BASELINE__pass1",
+ "cell": "q2-invoice-m3",
+ "question": "q2-invoice",
+ "mapping": "m3",
+ "condition": "BASELINE",
+ "pass": 1,
+ "prompt_sha256": "1dfc37b0df0989ce7a963182ea565d8f15a353d922256dfbdc3fc12608a19135",
+ "fragment_sha256": null,
+ "correct_letter": "C",
+ "competing_letter": "D",
+ "model": "claude-haiku-5-5",
+ "request": {
+  "endpoint": "https://api.anthropic.com/v1/messages",
+  "parameters": {
+   "model": "claude-haiku-5-5",
+   "max_tokens": 1024,
+   "output_config": {
+    "effort": "low"
+   }
+  },
+  "messages_sha256": "74b68d7d7839366c12b1490d010b515b4af8dd254890c6be04ce1cdc7b1f48fc",
+  "credentials_recorded": false
+ },
+ "status": "ok",
+ "answer": "C",
+ "text": "C",
+ "finish_reason": "end_turn",
+ "block_reason": null,
+ "model_version": "claude-haiku-5-5",
+ "http_status": 200,
+ "attempts": 1,
+ "elapsed_s": 0.891,
+ "usage": {
+  "promptTokenCount": 246,
+  "candidatesTokenCount": 3,
+  "thoughtsTokenCount": 0,
+  "totalTokenCount": 249
+ },
+ "usage_complete": true,
+ "cost_usd": 2.61e-05,
+ "cost_basis": "usage_metadata",
+ "cost_exceeded_preflight_bound": false,
+ "response": {
+  "model": "claude-haiku-5-5",
+  "id": "msg-2298f2e93f85c105",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+   {
+    "type": "text",
+    "text": "C"
+   }
+  ],
+  "container": null,
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "stop_details": null,
+  "usage": {
+   "input_tokens": 246,
+   "cache_creation_input_tokens": 0,
+   "cache_read_input_tokens": 0,
+   "cache_creation": {
+    "ephemeral_5m_input_tokens": 0,
+    "ephemeral_1h_input_tokens": 0
+   },
+   "output_tokens": 3,
+   "output_tokens_details": {
+    "thinking_tokens": 0
+   },
+   "service_tier": "standard",
+   "inference_geo": "global",
+   "speed": "standard"
+  },
+  "diagnostics": null
+ },
+ "error": null
+}

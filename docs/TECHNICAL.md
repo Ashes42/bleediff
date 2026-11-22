@@ -403,6 +403,18 @@ of a frozen scenario, clean or with a fragment appended after its authorized con
 * Flags are descriptive, never thresholds of significance: saturated baseline (highest probability at least 0.995), low
   answer-letter coverage (below 0.90), token mismatch, incorrect baseline, invalid score.
 
+## v0.5.0 hosted answer-only measurements (gemini, openai, anthropic)
+
+Added after the sections above; nothing in them changes. A hosted model that exposes no usable A-D probabilities is measured as `ANSWER_ONLY` (`measurement_type`): the frozen prompt is sent as one user message and the reply is
+classified; no probability, margin, confidence or rank is ever derived. Usage guide: [`HOSTED_MODELS.md`](HOSTED_MODELS.md).
+
+* `bleediff.hosted-prompts/1` (input dataset: items with cell, question, mapping, condition, prompt, prompt hash, correct and competing letter), `bleediff.hosted-session/1` (`session.json`) and `bleediff.hosted-answer/1`
+  (`records/<cell>__<condition>__pass<k>.json`: request parameters without credentials, strict `status` in {ok, invalid, blocked, empty, malformed, error}, `answer`, response, usage, estimated cost).
+* Strict primary parse: a reply is an answer only if it is exactly one of A-D after trimming. Provider refusals are `blocked` and are non-answers, never incorrect answers. Secondary diagnostics (for example the post-hoc
+  "last line is one letter" rule S1) are outside the engine, labelled, and never replace the strict result (`research/reconcile_evidence.py`, `EVIDENCE_RECONCILIATION.md`).
+* Spending guard: an enforced cap on an ESTIMATE (supplied list prices x reported usage), checked before every request against the worst case of the next request; it is not a provider billing total.
+* Saved responses are scrubbed of opaque thinking signatures and reasoning text (`hosted.scrub_private_reasoning`) before they are written. `--replay` re-validates and re-analyses a saved session offline.
+
 ## Tests
 
 `tests/test_bleediff.py`, `tests/test_v011_validity.py`, `tests/test_v012_control.py` and

@@ -48,7 +48,7 @@
  "cost_usd": 5.8e-05,
  "cost_basis": "recorded by the v0.7 pilot (prompt and completion tokens at list prices)",
  "response": {
-  "id": "chatcmpl-EmoptJ2nmL1DTHtCoRMHaqNvuwHu5",
+  "id": "resp-84dcf5bae1f89045",
   "object": "chat.completion",
   "created": 1795303865,
   "model": "gpt-4.1-mini-2025-04-14",

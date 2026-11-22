@@ -53,7 +53,7 @@
      "parts": [
       {
        "text": "D",
-       "thoughtSignature": "EoMLCoALAWkUfRPhcY2xNvmOIHQ/zxUtRQjpbTZCDolwhjWirJwISQWBO4AuxnzPt3G4eMA3LyON3l4+OEE81Fok6Kec6QgwiVPynnFvMhJemmjdM/heQAg+0r/nH+TmcDb/xzqR1ZcvMJC0n6dMcH/K3YosyX3sTyusxdO1IEW1r39eT8SW2cpaOQF5D6XavpjDUDxInp7kB21osCr9oAwOxVsDk0HNpaDuYePObGXgSksEyKOjIla5nJ90Sux4o0RzVhR/VxJ73kkl6YBzRGGu5p6Nh5Yex+l30J0kjX3pxnNZ1+D3VEHXFTqdud5YAJkjo9WSPr9jGXEwMb95Op84yjqTjxbo9c6LvW5+Qu6bB/dvxM7eDSLnoxgDufcLPMhgNmA9E0CiCREnq7w1yOJ1N3G7+G3XlTrPxSYaZAZbbEFRJPxZ0WfYDyANq/dbtVwPCpfspIySZRYTdBvOpwwC4fjQPpndMzY70dqligeQJdUZPdZO8H8EOAeTYZQ/8/A52tacZ9xjlq0rb9joOCkTaGUgAXI2McpH81j2XHSgNLwtWh9DyQ3sXUYvDEj8lWLl/CgXsUTYmeTsmo5f/tbDL0DCIw44jNqBNy22U1mR9O4zWU7E1W6VfeFStOtEc1/5zZrUeXmhqfxN5IAjYoda2tn+7oI0n6u0wGc/NGVzteuz3KxXUKUkWN7yWXT1oHGeYpRvFa6do3KQRZe3Zoe41NeH5A62H1F2phhJDfvplDrX/i2Pz3JSF7FyLX0ZOAEScBTJn9jzrPBRwDVIrfJvgKr1fmOu84wRYJAiy+tidAzk8P79vlRC6Ea7UrsEhBeWHtJmhg1YF4K71U6DtJWYJ+BlTzxAjWPdT/gi6o2eQMgCkCfk6TgusROgLVbk9L9cKqFDtruhaeOYsDFvCsAuBqXi4BNxd/6u2/oieZDA1OMg+lS2O5oe6ecWD74JgJq4Dm6GtQx2o4IUDQTcPBvUf9P1iDK/kVGMGxRhiAL7R0x07dgG/fwYivmfwcWVGJmFT71LR/k29YxVI2k2Zh39qJRvamsf8FnvcrNb+OivqXvIofktjQkGWOtEjwfIBokPdBE3SjeOfEMr5f4dZSm4hRhUjcRgiFWLM8vSitdpD1bwW0RQu6FbZz8Ct5mzSky9ylMRr9IU8U8EyBf8NaTy9l8N+cIS2/sZeXe+X6HomJXEKqkyyaNQ/CxyQpybnZwLqrDJPrOnKzbqeuHwL7J2SoBUOEocAMsotlawgafQ/EjXwTyCJpNux7bSaR5qJ5kh0PxMtA2rVDHwzqhQLMlyaVKP8cilwkDy/Q5yXGsaoA8VPe4eXsdfb02JbD90IbeTItgcYFYGSi0eGhohQajpTQuKt/pSPwqTHfDH/IlLzJl5R98sIKPFyr/rQPdS+KTtyEO1d7LZq4fAV9U9PhjlpBK7rBtmoXw3whyi59COIHEp7NSF947h2x5YKPyjS3PikBxHZ8HaYnA3mEoCI8QNlPqW8XuEFJTTglGydlXbOT8oh2HIBXmB0t/ZChvz5kJ9j7l9fmsRph7n9Ds65RcL9qzXWeEb71gaehKWPmqbSyrNqkUjuFs10yJFa99tJECgJHYydp5JYJqzZ9/aKBOjp4q+yvM5zL8svFg9ejVXJeBVprZTpngmOtYDBY9BUBtivDmrZ3K6RUMKPrFYB0eh/T2jwOYecL3snz7vlKZGwFzoUUL+ffpfeghV20GZCUXLOCKoDBO41QEg6e++MsqVaLfb3uFKujDqumpv7q4MsjVjAlNF3Rm4iyJL5lp89kgMGdb/BDbTsML6Xs45kiXsVciHtJEPlDGTkWROjjTpgX/nS37+xoYhEVSgfBYUQR7hTl6W12cds9MXG9yzBoTjg2l8GQ=="
+       "thoughtSignature": "[REDACTED:opaque-thinking-signature]"
       }
      ],
      "role": "model"
@@ -76,7 +76,7 @@
    "serviceTier": "standard"
   },
   "modelVersion": "gemini-3.8-flash",
-  "responseId": "3i0Ca6eeBcz4-sAPrOGe4QM"
+  "responseId": "resp-357a8b880f6dcc5b"
  },
  "error": null,
  "converted_from_pilot": true

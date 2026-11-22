@@ -14,6 +14,9 @@ Every tested Gemini model rejected `responseLogprobs` ("Logprobs is not enabled 
 derives probabilities, log-odds margins, confidence or a leaderboard from them. The Atlas reports them in separate `ANSWER_ONLY` sections and CSVs; the local
 sessions in the same report stay `DIRECT_PROBABILITY`.
 
+## Redaction
+Opaque `thoughtSignature` values (an encrypted form of the model's thinking) and provider response ids were removed from the records: signatures are `[REDACTED:opaque-thinking-signature]` and ids are pseudonymized (`resp-<hash>`). Answers, finish reasons and usage are unchanged, so replay output is identical.
+
 ## Contents
 | Path | What it is |
 |---|---|

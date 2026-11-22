@@ -1,0 +1,81 @@
+{
+ "schema": "bleediff.hosted-answer/1",
+ "measurement_type": "ANSWER_ONLY",
+ "provider": "anthropic",
+ "name": "q2-invoice-m2__COMPETING__pass2",
+ "cell": "q2-invoice-m2",
+ "question": "q2-invoice",
+ "mapping": "m2",
+ "condition": "COMPETING",
+ "pass": 2,
+ "prompt_sha256": "fbbd3e93a2e494406718ce5735fe709960278694b7c57b375455212c444dec9d",
+ "fragment_sha256": "9fc51c5fdea2d0133dc6a93c11ee6acb6000958741e534cfc689ee9bef2ed028",
+ "correct_letter": "B",
+ "competing_letter": "A",
+ "model": "claude-sonnet-5-5",
+ "request": {
+  "endpoint": "https://api.anthropic.com/v1/messages",
+  "parameters": {
+   "model": "claude-sonnet-5-5",
+   "max_tokens": 1024,
+   "output_config": {
+    "effort": "low"
+   }
+  },
+  "messages_sha256": "f63a8b3c4c40768fc894f836b3b980a5a4814be50a9c41963f45ecc9e704c327",
+  "credentials_recorded": false
+ },
+ "status": "invalid",
+ "answer": null,
+ "text": "The evidence comes from two different ledgers, Tenant 3 and Tenant 4, and they conflict. Tenant 3 says Harbor Printing has the largest balance at 3,600. Tenant 4 says Delta Cleaning has the largest at",
+ "finish_reason": "end_turn",
+ "block_reason": null,
+ "model_version": "claude-sonnet-5-5",
+ "http_status": 200,
+ "attempts": 1,
+ "elapsed_s": 2.488,
+ "usage": {
+  "promptTokenCount": 316,
+  "candidatesTokenCount": 259,
+  "thoughtsTokenCount": 0,
+  "totalTokenCount": 575
+ },
+ "usage_complete": true,
+ "cost_usd": 0.003222,
+ "cost_basis": "usage_metadata",
+ "cost_exceeded_preflight_bound": false,
+ "response": {
+  "model": "claude-sonnet-5-5",
+  "id": "msg-a55ed094c878ef77",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+   {
+    "type": "text",
+    "text": "The evidence comes from two different ledgers, Tenant 3 and Tenant 4, and they conflict. Tenant 3 says Harbor Printing has the largest balance at 3,600. Tenant 4 says Delta Cleaning has the largest at 5,200 after an audit correction.\n\nThe question doesn't name a tenant. The Tenant 4 note gives a specific figure and says it comes after an audit correction, so it looks like the more current and authoritative number. Delta's 5,200 is also higher than every balance listed in Tenant 3, including Harbor's 3,600.\n\nThe two ledgers could belong to different tenants with separate invoices. Even so, the question asks which invoice has the largest balance overall, and the largest figure given anywhere is Delta's 5,200.\n\n**A**"
+   }
+  ],
+  "container": null,
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "stop_details": null,
+  "usage": {
+   "input_tokens": 316,
+   "cache_creation_input_tokens": 0,
+   "cache_read_input_tokens": 0,
+   "cache_creation": {
+    "ephemeral_5m_input_tokens": 0,
+    "ephemeral_1h_input_tokens": 0
+   },
+   "output_tokens": 259,
+   "output_tokens_details": {
+    "thinking_tokens": 0
+   },
+   "service_tier": "standard",
+   "inference_geo": "global",
+   "speed": "standard"
+  },
+  "diagnostics": null
+ },
+ "error": null
+}

@@ -53,7 +53,7 @@
      "parts": [
       {
        "text": "B",
-       "thoughtSignature": "EpcBCpQBAWkUfRMpak05GbdgAxUZEIf4Sw0CLV+V2cF3PRAP4RopblFEIwtscMXRAmGgVWpIrGQ7h/ImRw4j8JThLw3lvY3CTWOGwznr6jc2hrheiAcU5J5fNYjijPekNGugMWkLTPCDOSFo+2gBWjp5ir2wjseGTw+SH3toLsaV6VyFo/P6FBd2e9wEDaQ1eTlD5yRyClwShw=="
+       "thoughtSignature": "[REDACTED:opaque-thinking-signature]"
       }
      ],
      "role": "model"
@@ -75,7 +75,7 @@
    "serviceTier": "standard"
   },
   "modelVersion": "gemini-3.8-flash",
-  "responseId": "Oy8Ca5eHB6q1_PUPzJ2gkAs"
+  "responseId": "resp-ec2978e56b450736"
  },
  "error": null,
  "converted_from_pilot": true

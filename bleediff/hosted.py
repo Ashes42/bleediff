@@ -125,6 +125,33 @@ def _server_error(raw: bytes, key: str):
     return redact(" ".join(str(msg).split())[:300], key), code
 
 
+SIGNATURE_PLACEHOLDER = "[REDACTED:opaque-thinking-signature]"
+REASONING_PLACEHOLDER = "[REDACTED:private-reasoning]"
+
+
+def scrub_private_reasoning(obj):
+    """A copy of a provider response with opaque thinking signatures and any returned reasoning text replaced by placeholders, so saved records never hold them.
+
+    Anthropic ``thinking`` / ``redacted_thinking`` blocks, Gemini ``thoughtSignature`` and ``thought: true`` parts. The answer analysis never reads these fields (it uses only visible text
+    blocks and the token counts), so replay is unaffected. Idempotent."""
+    if isinstance(obj, list):
+        return [scrub_private_reasoning(x) for x in obj]
+    if not isinstance(obj, dict):
+        return obj
+    out, kind = {}, obj.get("type")
+    for k, v in obj.items():
+        nonempty = isinstance(v, str) and v and not v.startswith("[REDACTED:")
+        if k in ("signature", "thoughtSignature", "thought_signature") and nonempty:
+            out[k] = SIGNATURE_PLACEHOLDER
+        elif (kind == "thinking" and k == "thinking" and nonempty) or (obj.get("thought") is True and k == "text" and nonempty):
+            out[k] = REASONING_PLACEHOLDER
+        elif kind == "redacted_thinking" and k == "data" and nonempty:
+            out[k] = SIGNATURE_PLACEHOLDER
+        else:
+            out[k] = scrub_private_reasoning(v)
+    return out
+
+
 def generate(provider: Provider, post, model: str, body: dict, key: str, *, timeout: float, max_retries: int, sleep) -> dict:
     """POST one request with bounded retries. Returns {'json', 'attempts', 'http_status'}; raises HostedError (redacted) otherwise."""
     url = provider.endpoint(model)
@@ -269,7 +296,7 @@ def run_session(provider: Provider, *, prompts_path: str, model: str, out_dir: s
                 max_seen_out = max(max_seen_out, (usage.get("candidatesTokenCount") or 0) + (usage.get("thoughtsTokenCount") or 0), (usage.get("totalTokenCount") or 0) - (usage.get("promptTokenCount") or 0))
                 write_new(os.path.join(out_dir, "records", name + ".json"), {**base, **parsed, "model_version": provider.version_of(resp), "http_status": got["http_status"], "attempts": got["attempts"],
                                                                          "elapsed_s": round(time.time() - t0, 3), "usage": usage, "usage_complete": complete, "cost_usd": cost, "cost_basis": basis,
-                                                                         "cost_exceeded_preflight_bound": bool(exceeded), "response": resp, "error": None})
+                                                                         "cost_exceeded_preflight_bound": bool(exceeded), "response": scrub_private_reasoning(resp), "error": None})
                 log(f"{name}: {parsed['status']} {parsed['answer'] or ''} (${spent:.4f} of ${budget:.2f})")
                 if exceeded:
                     status, stop_reason = "aborted", f"COST_BOUND_EXCEEDED: the reported cost (${cost:.6f}) exceeded the bound (${worst:.6f}) the request was admitted under"

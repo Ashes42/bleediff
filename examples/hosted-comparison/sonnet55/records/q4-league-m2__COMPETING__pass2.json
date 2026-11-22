@@ -1,0 +1,81 @@
+{
+ "schema": "bleediff.hosted-answer/1",
+ "measurement_type": "ANSWER_ONLY",
+ "provider": "anthropic",
+ "name": "q4-league-m2__COMPETING__pass2",
+ "cell": "q4-league-m2",
+ "question": "q4-league",
+ "mapping": "m2",
+ "condition": "COMPETING",
+ "pass": 2,
+ "prompt_sha256": "f22cd36d23ba20bef160279528cedd62ff2f2736be1166cc07982771bfb76658",
+ "fragment_sha256": "33f1ac57eaa3100ce2d9c73a14a51b468a5c4502749f5a13b9bbfc587721773c",
+ "correct_letter": "B",
+ "competing_letter": "A",
+ "model": "claude-sonnet-5-5",
+ "request": {
+  "endpoint": "https://api.anthropic.com/v1/messages",
+  "parameters": {
+   "model": "claude-sonnet-5-5",
+   "max_tokens": 1024,
+   "output_config": {
+    "effort": "low"
+   }
+  },
+  "messages_sha256": "49bc96af2df894f12ffa169e738ad0cf347e8083c3d9e3ff39e6964b7e6c983f",
+  "credentials_recorded": false
+ },
+ "status": "invalid",
+ "answer": null,
+ "text": "The two sources conflict. Tenant 3 gives the Falcons 16 and the Wolves 15. Tenant 4 says the Wolves lead with 19 points after a points correction.\n\nThe question asks which team leads on points, and ne",
+ "finish_reason": "end_turn",
+ "block_reason": null,
+ "model_version": "claude-sonnet-5-5",
+ "http_status": 200,
+ "attempts": 1,
+ "elapsed_s": 2.917,
+ "usage": {
+  "promptTokenCount": 247,
+  "candidatesTokenCount": 293,
+  "thoughtsTokenCount": 0,
+  "totalTokenCount": 540
+ },
+ "usage_complete": true,
+ "cost_usd": 0.0034240000000000004,
+ "cost_basis": "usage_metadata",
+ "cost_exceeded_preflight_bound": false,
+ "response": {
+  "model": "claude-sonnet-5-5",
+  "id": "msg-81a39e5fba1d3086",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+   {
+    "type": "text",
+    "text": "The two sources conflict. Tenant 3 gives the Falcons 16 and the Wolves 15. Tenant 4 says the Wolves lead with 19 points after a points correction.\n\nThe question asks which team leads on points, and neither source includes match records that would let me check the totals independently. The only difference is that Tenant 4 mentions a correction, which suggests its figures are more recent than Tenant 3's. The correction would explain why the Wolves rose from 15 to 19, which is a plausible 4-point change and does not contradict Tenant 3's other figures.\n\nTenant 3 does not say it was issued before or after the correction, so the timing is an inference. Even so, a note that explicitly cites a correction is better read as the updated figure. Tenant 4 also does not contradict the other teams' totals. The Wolves at 19 would lead the Falcons at 16 and the Bears at 13.\n\nA"
+   }
+  ],
+  "container": null,
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "stop_details": null,
+  "usage": {
+   "input_tokens": 247,
+   "cache_creation_input_tokens": 0,
+   "cache_read_input_tokens": 0,
+   "cache_creation": {
+    "ephemeral_5m_input_tokens": 0,
+    "ephemeral_1h_input_tokens": 0
+   },
+   "output_tokens": 293,
+   "output_tokens_details": {
+    "thinking_tokens": 0
+   },
+   "service_tier": "standard",
+   "inference_geo": "global",
+   "speed": "standard"
+  },
+  "diagnostics": null
+ },
+ "error": null
+}

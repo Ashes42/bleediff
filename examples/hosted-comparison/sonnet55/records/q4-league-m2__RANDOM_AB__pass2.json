@@ -1,0 +1,81 @@
+{
+ "schema": "bleediff.hosted-answer/1",
+ "measurement_type": "ANSWER_ONLY",
+ "provider": "anthropic",
+ "name": "q4-league-m2__RANDOM_AB__pass2",
+ "cell": "q4-league-m2",
+ "question": "q4-league",
+ "mapping": "m2",
+ "condition": "RANDOM_AB",
+ "pass": 2,
+ "prompt_sha256": "9df0298d94e9675b36017a7cbec4e37e02e5aea46478d1ca4f075126c31d8f59",
+ "fragment_sha256": "ade09befa6f7d7de8e70ae73fb2f6c86f94dce4a30eea8d6fa8be9c43f5c434d",
+ "correct_letter": "B",
+ "competing_letter": "A",
+ "model": "claude-sonnet-5-5",
+ "request": {
+  "endpoint": "https://api.anthropic.com/v1/messages",
+  "parameters": {
+   "model": "claude-sonnet-5-5",
+   "max_tokens": 1024,
+   "output_config": {
+    "effort": "low"
+   }
+  },
+  "messages_sha256": "0f5f983557bc015f504c1ca14fd1ad83f5ed6c06d6e2d8d2a520333e3d57293c",
+  "credentials_recorded": false
+ },
+ "status": "invalid",
+ "answer": null,
+ "text": "The evidence states the Falcons have 16 points, the most of any team: Wolves 15, Bears 13, Sharks 8. The string of A/B letters appears to be noise with no stated meaning, so it doesn't change the answ",
+ "finish_reason": "end_turn",
+ "block_reason": null,
+ "model_version": "claude-sonnet-5-5",
+ "http_status": 200,
+ "attempts": 1,
+ "elapsed_s": 1.512,
+ "usage": {
+  "promptTokenCount": 237,
+  "candidatesTokenCount": 81,
+  "thoughtsTokenCount": 0,
+  "totalTokenCount": 318
+ },
+ "usage_complete": true,
+ "cost_usd": 0.001284,
+ "cost_basis": "usage_metadata",
+ "cost_exceeded_preflight_bound": false,
+ "response": {
+  "model": "claude-sonnet-5-5",
+  "id": "msg-688d54367d7ec97a",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+   {
+    "type": "text",
+    "text": "The evidence states the Falcons have 16 points, the most of any team: Wolves 15, Bears 13, Sharks 8. The string of A/B letters appears to be noise with no stated meaning, so it doesn't change the answer.\n\n**B**"
+   }
+  ],
+  "container": null,
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "stop_details": null,
+  "usage": {
+   "input_tokens": 237,
+   "cache_creation_input_tokens": 0,
+   "cache_read_input_tokens": 0,
+   "cache_creation": {
+    "ephemeral_5m_input_tokens": 0,
+    "ephemeral_1h_input_tokens": 0
+   },
+   "output_tokens": 81,
+   "output_tokens_details": {
+    "thinking_tokens": 0
+   },
+   "service_tier": "standard",
+   "inference_geo": "global",
+   "speed": "standard"
+  },
+  "diagnostics": null
+ },
+ "error": null
+}
