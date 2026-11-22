@@ -2,9 +2,12 @@
 
 > What survives subtraction was already in the composite.
 
-**Bleediff is a local GGUF evaluation CLI that measures how added context changes a model's A/B/C/D choice probabilities.** It runs
-against a `llama-server` you start yourself, uses only the Python 3.11+ standard library, and keeps no prompts or fragment text
-unless you ask. Version **0.5.0** is an **exploratory research toolkit** with measurements on three local models and, answer-level only, five hosted models. It is not a
+**Bleediff is an evaluation CLI that measures how added context changes a model's A/B/C/D choices.** It uses only the Python 3.11+ standard library.
+
+- **Local:** GGUF evaluation runs against a local `llama-server` you start yourself, and keeps no prompts or fragment text unless you ask.
+- **Hosted:** `bleediff gemini`, `bleediff openai` and `bleediff anthropic` send your prompts to the third-party API provider you select. Hosted sessions persist prompt and response data locally so they can be replayed offline. Do not submit sensitive prompt content unless you understand these implications.
+
+Version **0.5.0** is an **exploratory research toolkit** with measurements on three local models and, answer-level only, five hosted models. It is not a
 security scanner and has not demonstrated a vulnerability.
 
 ## What is in v0.5.0

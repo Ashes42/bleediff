@@ -31,8 +31,11 @@ def read(path):
 
 
 def example_files():
-    for r, _d, fs in os.walk(EX):
+    for r, ds, fs in os.walk(EX):
+        ds[:] = [d for d in ds if d != "__pycache__"]
         for f in fs:
+            if f.endswith((".pyc", ".pyo")):
+                continue
             yield os.path.join(r, f)
 
 
