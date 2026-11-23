@@ -7,7 +7,8 @@ was a way to *write* one: the bundled datasets are 80 hand-frozen prompts with n
 
 It adds no measurement of its own. The prompts it writes are loaded back through ``answers.load_prompts`` (the very loader the live run uses), so a
 dataset that passes ``validate`` is accepted by the runners. A spec lists questions, a clean BASELINE, named context fragments (conditions) and
-explicit answer-letter mappings (letter -> semantic role). Prompts follow the layout of the frozen pilot prompts: fragment text goes on the line after the evidence.
+explicit answer-letter mappings (letter -> semantic role). Conditions are either one global {NAME: fragment} object or, per question, a list of names
+plus each question's own ``condition_fragments``. Prompts follow the layout of the frozen pilot prompts: fragment text goes on the line after the evidence.
 """
 
 from __future__ import annotations
@@ -90,6 +91,32 @@ def check_spec(doc) -> list[str]:
         p.append(f"schema must be {SPEC_SCHEMA!r}")
     if not (isinstance(doc.get("id"), str) and _ID.match(doc["id"])):
         p.append("id must be lowercase letters, digits and hyphens (for example 'my-first-experiment')")
+    conds = doc.get("conditions")
+    per_q = isinstance(conds, list)
+    names: list = []
+    if per_q:
+        if not conds:
+            p.append("conditions must list at least one condition name (the clean BASELINE is implicit and must not be listed)")
+        for name in conds:
+            if not (isinstance(name, str) and _NAME.match(name)):
+                p.append(f"condition name {name!r} must be UPPER_SNAKE_CASE text")
+            elif name == DEFAULT_BASELINE:
+                p.append(f"{DEFAULT_BASELINE} is the implicit clean baseline; do not list it as a condition")
+            elif name in names:
+                p.append(f"condition name {name!r} is listed twice")
+            else:
+                names.append(name)
+    elif isinstance(conds, dict) and conds:
+        for name, frag in conds.items():
+            if not _NAME.match(name):
+                p.append(f"condition name {name!r} must be UPPER_SNAKE_CASE")
+            elif name == DEFAULT_BASELINE:
+                p.append(f"{DEFAULT_BASELINE} is the implicit clean baseline; do not list it as a condition")
+            if not _nonempty(frag):
+                p.append(f"condition {name!r}: the fragment must be non-empty text without leading or trailing whitespace")
+    else:
+        p.append("conditions must be either an object {NAME: fragment text} (the same fragments for every question) or, for per-question fragments, a list of condition names "
+                 "with a 'condition_fragments' object in every question (the clean BASELINE is implicit and must not be listed)")
     qs = doc.get("questions")
     seen = set()
     if not isinstance(qs, list) or not qs:
@@ -117,17 +144,22 @@ def check_spec(doc) -> list[str]:
                 p.append(f"{w}: every option text must be non-empty")
             elif len({o[r].casefold() for r in ROLES}) != 4:
                 p.append(f"{w}: the four option texts must be different from one another")
-    conds = doc.get("conditions")
-    if not isinstance(conds, dict) or not conds:
-        p.append("conditions must be a non-empty object {NAME: fragment text} (the clean BASELINE is implicit and must not be listed)")
-        conds = {}
-    for name, frag in conds.items():
-        if not _NAME.match(name):
-            p.append(f"condition name {name!r} must be UPPER_SNAKE_CASE")
-        elif name == DEFAULT_BASELINE:
-            p.append(f"{DEFAULT_BASELINE} is the implicit clean baseline; do not list it as a condition")
-        if not _nonempty(frag):
-            p.append(f"condition {name!r}: the fragment must be non-empty text without leading or trailing whitespace")
+        cf = q.get("condition_fragments")
+        if per_q:
+            if not isinstance(cf, dict):
+                p.append(f"{w} ({q.get('id')}): per-question mode needs a 'condition_fragments' object defining every listed condition; there is no fallback to a global fragment")
+            else:
+                missing = [n for n in names if n not in cf]
+                extra = [n for n in cf if n not in conds]
+                if missing:
+                    p.append(f"{w} ({q.get('id')}): condition_fragments is missing {missing}")
+                if extra:
+                    p.append(f"{w} ({q.get('id')}): condition_fragments defines {extra}, which are not listed in conditions")
+                for n in names:
+                    if n in cf and not _nonempty(cf[n]):
+                        p.append(f"{w} ({q.get('id')}): condition {n!r}: the fragment must be non-empty text without leading or trailing whitespace")
+        elif cf is not None:
+            p.append(f"{w} ({q.get('id')}): 'condition_fragments' is only valid when 'conditions' is a list of names; with a {{NAME: fragment}} object the fragments are global, so the spec is ambiguous")
     maps = doc.get("mappings")
     if not isinstance(maps, dict) or not maps:
         p.append("mappings must be a non-empty object {NAME: {letter: role}}")
@@ -140,6 +172,18 @@ def check_spec(doc) -> list[str]:
     if isinstance(maps, dict) and len({json.dumps(m, sort_keys=True) for m in maps.values()}) != len(maps):
         p.append("two mappings are identical")
     return p
+
+
+def per_question_mode(spec: dict) -> bool:
+    """True when ``conditions`` is a list of names and every question carries its own ``condition_fragments`` (otherwise one global {NAME: fragment} object)."""
+    return isinstance(spec["conditions"], list)
+
+
+def resolve_fragments(spec: dict, q: dict) -> dict:
+    """The fragments question ``q`` actually receives, {NAME: text}. Per-question mode never falls back to a global fragment (a missing one is a KeyError that validation prevents)."""
+    if per_question_mode(spec):
+        return {name: q["condition_fragments"][name] for name in spec["conditions"]}
+    return dict(spec["conditions"])
 
 
 def _letters(mapping: dict) -> dict:
@@ -158,7 +202,7 @@ def build_prompts(spec: dict) -> dict:
     for q in spec["questions"]:
         for mname, m in spec["mappings"].items():
             lt = _letters(m)
-            for cond, frag in [(DEFAULT_BASELINE, None), *spec["conditions"].items()]:
+            for cond, frag in [(DEFAULT_BASELINE, None), *resolve_fragments(spec, q).items()]:
                 prompt = render_prompt(spec, q, m, frag)
                 items.append({"cell": f"{q['id']}-{mname}", "question": q["id"], "mapping": mname, "condition": cond,
                               "fragment_sha256": None if frag is None else sha256_bytes(frag.encode("utf-8")),
@@ -182,23 +226,43 @@ def classification(spec: dict) -> str:
             f"and the design should be written down before any replies are read. A valid spec still shows only that the prompts are well-formed, not that any context caused any change.")
 
 
+def standalone_match(term: str, text: str) -> bool:
+    """True when ``term`` occurs in ``text`` as a whole word or phrase, ignoring case: 'K' matches 'K is' but not the k of 'bakery'. A text heuristic only."""
+    return re.search(r"(?<!\w)" + re.escape(term) + r"(?!\w)", text, re.IGNORECASE) is not None
+
+
+def _length_warning(lens: dict, who: str) -> str | None:
+    if len(lens) >= 2 and max(lens.values()) > 1.5 * min(lens.values()):
+        return (f"{who}fragment character counts differ by more than 1.5x ({lens}); length can confound the comparison. "
+                "Aim for similar character length (token counts may still differ).")
+    return None
+
+
 def warnings(spec: dict) -> list[str]:
+    """Heuristic warnings about the RESOLVED question x condition fragments. They cannot establish neutrality or relevance."""
     w = []
-    frags = spec["conditions"]
-    if not any("CONTROL" in c for c in frags):
-        w.append("no condition name contains CONTROL (a name heuristic only). Without a neutral control of similar character length, a change could come from extra text of any kind. A name such as CONTROL_NEUTRAL does not make a fragment neutral.")
-    if len(frags) >= 2:
-        lens = {k: len(v) for k, v in frags.items()}
-        lo, hi = min(lens.values()), max(lens.values())
-        if hi > 1.5 * lo:
-            w.append(f"fragment character counts differ by more than 1.5x ({lens}); length can confound the comparison. Aim for similar character length (token counts may still differ).")
+    names = list(spec["conditions"])
+    per_q = per_question_mode(spec)
+    if not any("CONTROL" in c for c in names):
+        w.append("no condition name contains CONTROL (a name heuristic only). Without a neutral control of similar character length, a change could come from extra text of any kind. "
+                 "A name such as CONTROL_NEUTRAL does not make a fragment neutral. (Missing controls are warnings, not errors, because exploratory specs are allowed.)")
+    if not per_q and len(spec["questions"]) > 1:
+        w.append(f"the {{NAME: fragment}} conditions are sent unchanged to ALL {len(spec['questions'])} questions, so a fragment that names one question's answer is irrelevant text for the others. "
+                 "For per-question treatments and controls use per-question mode (see docs/FIRST_EXPERIMENT.md).")
     for q in spec["questions"]:
+        frags = resolve_fragments(spec, q)
+        who = f"{q['id']}: " if per_q else ""
+        if per_q or q is spec["questions"][0]:
+            lw = _length_warning({k: len(v) for k, v in frags.items()}, who)
+            if lw:
+                w.append(lw)
         for cond, frag in frags.items():
             if "CONTROL" not in cond:
                 continue
             for r in ("correct", "competing"):
-                if q["options"][r].casefold() in frag.casefold():
-                    w.append(f"{q['id']}/{cond}: a control fragment contains the {r} option's text, so it is probably not neutral (text match only).")
+                term = q["options"][r]
+                if standalone_match(term, frag):
+                    w.append(f"{q['id']}/{cond}: a control fragment contains the {r} option's text {term!r} as a standalone term, so it is probably not neutral (text match only).")
     if len({m["A"] for m in spec["mappings"].values()}) == 1 and len(spec["mappings"]) > 1:
         w.append("every mapping puts the same role at letter A; vary the letters so letter preference cannot masquerade as an effect.")
     roles_at = {(role, letter) for m in spec["mappings"].values() for letter, role in m.items() if role in ("correct", "competing")}
@@ -308,9 +372,16 @@ def cmd_validate(a) -> int:
     print("\nAnswer-letter mappings (letter = role); the correct and competing letters are what strict scoring compares against:")
     for n, m in spec["mappings"].items():
         print(f"  {n}: " + "  ".join(f"{letter}={role}" for letter, role in m.items()))
+    if per_question_mode(spec):
+        print("\nPer-question conditions (each question receives only its own fragments; BASELINE has none):")
+        for q in spec["questions"]:
+            for cond, frag in resolve_fragments(spec, q).items():
+                print(f"  {q['id']} / {cond} ({len(frag)} chars): {frag}")
+        print()
     for line in warnings(spec):
         print(f"WARNING: {line}")
-    print("These checks are heuristics: condition names are matched by text, and lengths are compared in characters (similar character length; token counts may differ, so this is not tokenizer parity). "
+    print("These checks are heuristics: condition names are matched by text, option texts are matched as standalone words or phrases, and lengths are compared in characters "
+          "(similar character length; token counts may differ, so this is not tokenizer parity). They cannot judge meaning or relevance. "
           "No warning does not prove that a control is neutral or that the design is sound.")
     if a.write_prompts:
         if os.path.exists(a.write_prompts):

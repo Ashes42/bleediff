@@ -8,6 +8,10 @@ control algorithms have their own identifiers (see `docs/TECHNICAL.md`).
 ### Added
 - `bleediff experiment init|validate` (`bleediff/experiment.py`): an offline authoring step for answer-only experiments. A short spec (questions, named context fragments, explicit letter mappings) is validated and turned into a `bleediff.hosted-prompts/1` dataset that the existing `anthropic`/`openai`/`gemini` commands run unchanged, with an estimated worst-case budget and a demonstration-versus-evidence label. No measurement, schema or existing command changed.
 - `docs/FIRST_EXPERIMENT.md` and `tests/test_experiment.py`.
+- Per-question conditions for `bleediff.experiment/1`: `conditions` may be a list of names with each question supplying its own `condition_fragments` (every name exactly once, no fallback to a global fragment; mixing it with a `{NAME: fragment}` object is rejected). Global specs and the starter generate byte-identical prompt datasets. `examples/experiment-multi-question/` is a three-question example.
+
+### Fixed
+- `experiment validate` applied one global fragment set to every question without saying so; it now warns about that, and its control and length warnings are computed on the fragments each question actually receives and name the question, condition and matched term. The control option-text check matches standalone words or phrases (the `K` of an answer no longer matches the `k` in `bakery`).
 
 ## [0.5.0] - hosted answer-only support and the five-model comparison (exploratory)
 

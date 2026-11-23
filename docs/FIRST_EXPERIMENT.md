@@ -16,8 +16,66 @@ This writes `runs/my-first/experiment.json` (`runs/` is git-ignored; the command
 | Field | Meaning |
 |---|---|
 | `questions[]` | `question`, `evidence`, and four `options`: `correct`, `competing` (the plausible wrong answer you are testing), `distractor_1`, `distractor_2`. |
-| `conditions` | `{NAME: fragment}`. A fragment is a line of extra context placed **after the evidence**. The clean `BASELINE` (no fragment) is implicit. The starter has a `TREATMENT_COMPETING_CLAIM` and a `CONTROL_NEUTRAL`. |
+| `conditions` | Either an object `{NAME: fragment}` (**global**: the same fragments go to every question, as in the starter) or a list of names `[NAME, ...]` (**per-question**: each question supplies its own fragments, see below). A fragment is a line of extra context placed **after the evidence**. The clean `BASELINE` (no fragment) is implicit. The starter has a `TREATMENT_COMPETING_CLAIM` and a `CONTROL_NEUTRAL`. |
 | `mappings` | `{name: {letter: role}}`: **explicitly** which letter holds which answer. The starter moves the correct answer to A, B, C and D (and the competing one with it) so a letter preference cannot pass as an effect. |
+
+### Per-question conditions (more than one question)
+
+A global fragment such as "Many people say Venus is the planet closest to the Sun" is sent to **every** question. With a second question about oceans it would be irrelevant text, not a competing claim. For several questions, list the condition names once and give each question its own fragments in `condition_fragments`:
+
+```json
+{
+ "schema": "bleediff.experiment/1",
+ "id": "competing-claim-two-questions",
+ "questions": [
+  {"id": "capital", "question": "What is the capital city of Australia?",
+   "options": {"correct": "Canberra", "competing": "Sydney", "distractor_1": "Melbourne", "distractor_2": "Perth"},
+   "evidence": "Government fact sheet: Canberra was purpose-built as the national capital and has housed Parliament House since 1927, although Sydney is the largest city.",
+   "condition_fragments": {
+    "TREATMENT_COMPETING_CLAIM": "Forum post: Many people say Sydney is the capital city of Australia.",
+    "CONTROL_NEUTRAL": "Forum post: Many people say the pool reopens late on Fridays in winter."}},
+  {"id": "ocean", "question": "Which is the largest ocean by surface area?",
+   "options": {"correct": "Pacific", "competing": "Atlantic", "distractor_1": "Indian", "distractor_2": "Arctic"},
+   "evidence": "Atlas entry: The Pacific Ocean covers about 165 million square km, roughly one third of the planet, while the Atlantic covers about 106 million square km.",
+   "condition_fragments": {
+    "TREATMENT_COMPETING_CLAIM": "Forum post: Many people say the Atlantic is the largest ocean by surface area.",
+    "CONTROL_NEUTRAL": "Forum post: Many people say the museum opens late on Fridays in summer."}}
+ ],
+ "conditions": ["TREATMENT_COMPETING_CLAIM", "CONTROL_NEUTRAL"],
+ "mappings": {"m1": {"A": "correct", "B": "competing", "C": "distractor_1", "D": "distractor_2"},
+              "m2": {"A": "competing", "B": "correct", "C": "distractor_1", "D": "distractor_2"},
+              "m3": {"A": "distractor_1", "B": "distractor_2", "C": "correct", "D": "competing"},
+              "m4": {"A": "distractor_1", "B": "distractor_2", "C": "competing", "D": "correct"}}
+}
+```
+
+The complete three-question version (Canberra/Sydney, Pacific/Atlantic, Na/K: 3 questions x 4 mappings x 3 conditions = 36 prompts in one dataset) is [`examples/experiment-multi-question/experiment.json`](../examples/experiment-multi-question/experiment.json). The rules are strict, because a quiet fallback would hide exactly the mistake this mode exists to prevent:
+
+* `conditions` is a list of UPPER_SNAKE_CASE names (no `BASELINE`, no duplicates); **every** question must have a `condition_fragments` object that defines **exactly** those names. A missing name, an extra name, a missing object or an empty fragment is an error.
+* There is no fallback to a global fragment. A `{NAME: fragment}` `conditions` object together with any `condition_fragments` is rejected as ambiguous.
+* `validate` prints each question's resolved fragments and checks the control and length heuristics on those pairs, naming the question, the condition and the matched term. Global specs behave exactly as before and generate byte-identical prompt files; with more than one question they now get a warning that the same text goes to every question.
+
+### The prompt template
+
+Every prompt is built from the same template. The fragment, if the condition has one, is one extra line after the evidence; `BASELINE` has none. This is the Australia question, mapping `m1`, `TREATMENT_COMPETING_CLAIM`:
+
+```
+You are a decision-support assistant. Use only the evidence provided.
+
+Question: What is the capital city of Australia?
+Options:
+A) Canberra
+B) Sydney
+C) Melbourne
+D) Perth
+
+Evidence:
+Government fact sheet: Canberra was purpose-built as the national capital and has housed Parliament House since 1927, although Sydney is the largest city.
+Forum post: Many people say Sydney is the capital city of Australia.
+
+Reply with exactly one letter: A, B, C or D.
+Answer:
+```
 
 Edit the question, options, evidence and both fragments. Give the control **similar character length; token counts may differ** (characters do not establish tokenizer parity), and keep it unrelated to the answer.
 
@@ -30,7 +88,9 @@ python -m bleediff experiment validate runs/my-first/experiment.json --write-pro
 It checks the spec, prints every letter mapping, writes `prompts.json` (schema `bleediff.hosted-prompts/1`) and **re-loads it with the loader the live runners use**, so a file that passes is accepted by
 `bleediff anthropic|openai|gemini`. Existing files are never overwritten, and `--write-prompts` needs an existing directory. Nothing here contacts an API.
 
-Its warnings are **heuristics**: a condition counts as a control if its *name* contains `CONTROL`, and lengths are compared in characters. **No warning does not prove a control is neutral.** Judge that yourself.
+Its warnings are **heuristics**: a condition counts as a control if its *name* contains `CONTROL`, and lengths are compared in characters. Its warnings are **heuristics**, applied to the fragments each question actually receives: a condition counts as a control if its *name* contains `CONTROL`; a control that contains the correct or competing option's text as a standalone word or phrase (so `K` does not match the `k` in `bakery`, but does match `K is`) is flagged with the question, condition and matched term; and lengths are compared in characters. **No warning does not prove a control is neutral**, and the checks cannot judge meaning or relevance. Judge that yourself.
+
+**A missing control is a warning, not an error**, because Bleediff also accepts exploratory specifications (for example a treatment-only probe). Without a neutral control of similar length you cannot tell the effect of the claim from the effect of extra text of any kind.
 
 **Budget figures follow the provider** (`--provider anthropic|openai|gemini`), because the runner reserves different output amounts. For the starter at two passes (24 requests) and the placeholder prices:
 
@@ -64,5 +124,6 @@ Leave the saved session in `runs/` (git-ignored). Only share a session after rea
 
 ## What it can support
 * **Can show:** what this model did on exactly these prompts: how often each answer appeared per condition, and whether answers differ between the baseline, the treatment and the control.
+* **What `--passes` repeats, and what it does not establish:** `--passes N` sends every prompt N times (the 12-prompt starter makes 24 requests at `--passes 2`). It repeats the *same* prompt, with the same question, mapping and fragment, and adds no new questions, mappings or wordings. It shows whether the model answers that prompt consistently (the report counts agreement between passes) and it multiplies the cost. The repeats are replicate checks, not independent samples: more passes do not make a difference between conditions more general or statistically stronger, and they do not replace more independent questions.
 * **Cannot show:** that an effect is real, general or causal; anything about other wording, questions or models; a probability, confidence or ranking (hosted models give none). Validation never establishes a causal result.
 * **Toward evidence:** many *independent* questions, each with its own evidence and its own controls (rewording one question 30 times does not make 30 questions); write down the questions, conditions and scoring before running; report strict counts as primary and label any diagnostic reading post-hoc; keep failed and refused records. `validate` changes its label at 30 questions, an illustrative convention, **not a power analysis**.
