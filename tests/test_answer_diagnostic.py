@@ -1,9 +1,11 @@
-"""Optional final-letter diagnostic (FLR-v1) and the five-way answer-only reporting split. Offline; reads only the saved bundles; never changes strict classifications."""
+"""Optional final-letter diagnostic (FLR-v2) and the five-way answer-only reporting split. Offline; reads only the saved bundles; never changes strict classifications."""
 import copy
 import os
 import unittest
 
+
 from bleediff import answers as A
+from research import reconcile_evidence as RE
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BUNDLE = os.path.join(ROOT, "examples", "hosted-comparison")
@@ -39,7 +41,19 @@ class ExtractFinalLetter(unittest.TestCase):
 
     def test_deterministic_and_labelled(self):
         self.assertEqual(self.letter("x\n**C**"), self.letter("x\n**C**"))
-        self.assertEqual(self.letter("x\n**C**")["rule"], "FLR-v1")
+        self.assertEqual(self.letter("x\n**C**")["rule"], "FLR-v2")
+
+
+class RuleVersioning(unittest.TestCase):
+    def test_v2_differs_from_historical_v1_only_on_conflicts(self):
+        def resp(t):
+            return {"type": "message", "stop_reason": "end_turn", "content": [{"type": "text", "text": t}]}
+        for t in ("**B**", "prose\n\nB", "A\nprose\nA", "A or B", "", "B."):      # no conflicting standalone letter: identical
+            self.assertEqual(RE.flr_v1_letter(resp(t)), A.extract_final_letter(t)["letter"], repr(t))
+        for t in ("A\nB", "**A**\nprose\n**B**"):      # historical FLR-v1 silently takes the last line; FLR-v2 refuses
+            self.assertEqual(RE.flr_v1_letter(resp(t)), "B")
+            r = A.extract_final_letter(t)
+            self.assertEqual((r["letter"], r["status"], r["rule"]), (None, "conflict", "FLR-v2"))
 
 
 class DiagnosticClass(unittest.TestCase):
@@ -115,7 +129,7 @@ class SavedPilots(unittest.TestCase):
     def test_reports_show_the_split(self):
         ses, a = self.an["sonnet55"]
         text = "\n".join(A.report_lines(a, "x"))
-        self.assertIn("FLR-v1", text)
+        self.assertIn("FLR-v2", text)
         self.assertIn("correct 2 / competing 30 / other 0", text)
         block = {"measurement_type": A.ANSWER_ONLY, "note": A.NOTE, "excluded": [], "comparison": [], "comparison_note": "",
                  "sessions": [{"id": "s", "model": {"id": "m"}, "provider": "anthropic", "session_dir": "d", "kind": "session", "warnings": [], "analysis": a}]}
@@ -124,7 +138,7 @@ class SavedPilots(unittest.TestCase):
         self.assertIn("| COMPETING | 32 | 0 | 32 | 0 | 2 | 30 | 0 |", md)
         rows = A.answer_only_rows(block["sessions"] and [{"id": "s", "model": {"id": "m"}, "analysis": a}])
         comp = [r for r in rows if r["condition"] == "COMPETING" and r["mapping"] == "all"][0]
-        self.assertEqual((comp["non_answers"], comp["flr_v1_correct"], comp["flr_v1_competing"]), (32, 2, 30))
+        self.assertEqual((comp["non_answers"], comp["flr_v2_correct"], comp["flr_v2_competing"]), (32, 2, 30))
 
 
 if __name__ == "__main__":

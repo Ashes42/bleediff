@@ -288,10 +288,11 @@ def role_of(answer, item) -> str | None:
 
 
 # --------------------------------------------------------------------------------------
-# SECONDARY DIAGNOSTIC: final-letter recovery (FLR-v1). Never the primary metric.
+# SECONDARY DIAGNOSTIC: final-letter recovery (FLR-v2). Never the primary metric.
 # --------------------------------------------------------------------------------------
-FLR_RULE = "FLR-v1"
-FLR_NOTE = ("DIAGNOSTIC (post-hoc, FLR-v1): the last non-empty line of a format-invalid reply, with markdown emphasis stripped, is exactly one letter A-D. It credits replies "
+FLR_RULE = "FLR-v2"
+# FLR-v2 = the historical FLR-v1 (research/reconcile_evidence.py, unchanged) plus a conflict check; it differs from FLR-v1 on replies whose earlier lines hold a different standalone letter.
+FLR_NOTE = ("DIAGNOSTIC (post-hoc, FLR-v2): the last non-empty line of a format-invalid reply, with markdown emphasis stripped, is exactly one letter A-D. It credits replies "
             "the prompt forbade, never changes a strict status, never applies to refusals, and is not a probability or a confidence.")
 _FLR_STRIP = re.compile(r"[\s*_`~]+")
 
@@ -315,7 +316,7 @@ def visible_text(response, provider: str | None = None) -> str:
 
 
 def extract_final_letter(text) -> dict:
-    """Deterministic, text-only final-letter extraction (FLR-v1). Returns {"status": "extracted" | "conflict" | "none", "letter": A-D or None, "rule": FLR_RULE}.
+    """Deterministic, text-only final-letter extraction (FLR-v2). Returns {"status": "extracted" | "conflict" | "none", "letter": A-D or None, "rule": FLR_RULE}.
     extracted: the last non-empty line is, once whitespace and markdown emphasis (``*``, ``_``, backticks, ``~``) are removed, exactly one letter A-D, and no other line is a
     standalone letter that differs from it. conflict: standalone letters on different lines disagree (nothing is picked). none: anything else (no letter, a letter inside prose,
     'A or B', empty). It knows nothing about statuses: callers must not apply it to refusals (see ``diagnostic_class``)."""
@@ -334,7 +335,7 @@ def extract_final_letter(text) -> dict:
 def diagnostic_class(rec: dict) -> dict:
     """Five-way reporting split of one normalised record, kept beside (never instead of) its strict status.
     strict_valid (status ok; the strict answer is untouched) | refusal (status blocked: an explicit provider refusal or block, never reinterpreted) |
-    format_recovered (status invalid and FLR-v1 extracted one letter; ``flr_letter`` holds it) | ambiguous (invalid with conflicting standalone letters) |
+    format_recovered (status invalid and FLR-v2 extracted one letter; ``flr_letter`` holds it) | ambiguous (invalid with conflicting standalone letters) |
     missing (empty, malformed, error, or invalid with no standalone final letter)."""
     st = rec.get("status")
     if st == "ok":
@@ -685,7 +686,7 @@ def comparison_rows(hosted: list, local_cells: list) -> list:
 COMPARISON_COLUMNS = ["measurement_type", "source", "label", "n", "correct", "competing", "other_incorrect", "no_answer", "changed_vs_baseline", "induced_incorrect", "answer_basis"]
 ANSWER_ONLY_COLUMNS = ["measurement_type", "session_id", "model_id", "condition", "mapping", "records", "valid", "correct", "competing", "other_incorrect", "non_answers", "pairs", "pairs_unscored",
                        "answer_changed", "induced_incorrect", "induced_to_competing", "induced_to_other", "recovered_to_correct", "baseline_incorrect_pairs",
-                       "refusals", "format_invalid_recoverable", "ambiguous_or_missing", "flr_v1_correct", "flr_v1_competing", "flr_v1_other_incorrect"]
+                       "refusals", "format_invalid_recoverable", "ambiguous_or_missing", "flr_v2_correct", "flr_v2_competing", "flr_v2_other_incorrect"]
 
 
 def answer_only_rows(hosted: list) -> list:
@@ -704,7 +705,7 @@ def answer_only_rows(hosted: list) -> list:
                          "induced_to_competing": v.get("induced_to_competing", ""), "induced_to_other": v.get("induced_to_other", ""), "recovered_to_correct": v.get("recovered_to_correct", ""),
                          "baseline_incorrect_pairs": v.get("baseline_incorrect_pairs", ""),
                          "refusals": t["refusals"], "format_invalid_recoverable": t["format_invalid_recoverable"], "ambiguous_or_missing": t["ambiguous_or_missing"],
-                         "flr_v1_correct": t["flr_correct"], "flr_v1_competing": t["flr_competing"], "flr_v1_other_incorrect": t["flr_other_incorrect"]})
+                         "flr_v2_correct": t["flr_correct"], "flr_v2_competing": t["flr_competing"], "flr_v2_other_incorrect": t["flr_other_incorrect"]})
     return rows
 
 
