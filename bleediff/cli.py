@@ -33,6 +33,8 @@ from .protocol import (
 )
 from .client import DEFAULT_N_PROBS, LlamaClient
 from .errors import Inconclusive, TraceError
+from .experiment import add_parser as _add_experiment_parser
+from .hosted import DEFAULT_MAX_OUTPUT_TOKENS, DEFAULT_MAX_RETRIES
 from .fold import TRACE_SCHEMA, check_record, gate, read_traces, write_traces
 from .meta import (
     baseline_infos_from_baseline,
@@ -456,7 +458,7 @@ def build_parser() -> argparse.ArgumentParser:
                                                                  "the run stops before a request could exceed it")
         g.add_argument("--price-in", type=float, default=None, help="REQUIRED for live runs: input price in USD per 1M tokens (list price; there are no built-in prices)")
         g.add_argument("--price-out", type=float, default=None, help="REQUIRED for live runs: output price in USD per 1M tokens (thinking/reasoning tokens are billed as output)")
-        g.add_argument("--max-output-tokens", type=int, default=1024 if prov == "anthropic" else 512,
+        g.add_argument("--max-output-tokens", type=int, default=DEFAULT_MAX_OUTPUT_TOKENS[prov],
                        help="cap on output tokens per request (for Claude and OpenAI reasoning models it also bounds thinking); also the basis of the per-request spending reserve")
         g.add_argument("--temperature", type=float, default=defaults["temperature"], help="sampling temperature" + {"gemini": "", "openai": " (only for gpt-4* models; refused for others)", "anthropic": " (omit to use the API default)"}[prov])
         g.add_argument("--top-p", type=float, default=defaults["top_p"], help="nucleus sampling" + {"gemini": "", "openai": " (only for gpt-4* models; refused for others)", "anthropic": " (not together with --temperature)"}[prov])
@@ -471,7 +473,7 @@ def build_parser() -> argparse.ArgumentParser:
             g.add_argument("--thinking-budget", type=int, default=None, help="legacy manual thinking budget (budget_tokens >= 1024) for models that still support it; Claude 4.7+ and 5.x reject it")
         else:
             g.add_argument("--reasoning-effort", choices=list(REASONING_EFFORTS), default=None, help="only for reasoning models (o1, o3, o4, gpt-5, gpt-6); refused for others")
-        g.add_argument("--max-retries", type=int, default=2, help="retries per request for rate limits and transient errors (default 2, at most 5)")
+        g.add_argument("--max-retries", type=int, default=DEFAULT_MAX_RETRIES, help="retries per request for rate limits and transient errors (default 2, at most 5)")
         g.add_argument("--timeout", type=float, default=120.0)
         g.add_argument("--json-out", default=None, help="also write the analysis to a NEW json file")
         g.set_defaults(fn=fn)
@@ -488,6 +490,7 @@ def build_parser() -> argparse.ArgumentParser:
     a.add_argument("--effect-marker", type=float, default=0.25, help="descriptive size in nats used for the 'at least' counts (default 0.25)")
     a.add_argument("--keep-going", action="store_true", help="exclude sources that fail validation and report them instead of stopping")
     a.set_defaults(fn=cmd_atlas)
+    _add_experiment_parser(sub)
     return p
 
 

@@ -3,6 +3,12 @@
 All notable changes. Versions identify the software that wrote a file, not an experiment or an algorithm; protocols and
 control algorithms have their own identifiers (see `docs/TECHNICAL.md`).
 
+## Experiment authoring (after 0.5.0; no version bump)
+
+### Added
+- `bleediff experiment init|validate` (`bleediff/experiment.py`): an offline authoring step for answer-only experiments. A short spec (questions, named context fragments, explicit letter mappings) is validated and turned into a `bleediff.hosted-prompts/1` dataset that the existing `anthropic`/`openai`/`gemini` commands run unchanged, with an estimated worst-case budget and a demonstration-versus-evidence label. No measurement, schema or existing command changed.
+- `docs/FIRST_EXPERIMENT.md` and `tests/test_experiment.py`.
+
 ## [0.5.0] - hosted answer-only support and the five-model comparison (exploratory)
 
 ### Added

@@ -25,6 +25,7 @@ permutation support and clearer labels) and a sanitized, offline-reproducible **
 | `bleediff atlas` | Cross-task, cross-model report over saved batch sessions: validated sources, paired category effects, correctness outcomes, filters. | **no** (reads saved results) |
 | `bleediff gemini`, `bleediff openai`, `bleediff anthropic` | ANSWER_ONLY runs on the Gemini / OpenAI / Anthropic APIs (hosted models without usable A-D probabilities), or `--replay` of saved evidence. | live: API key and budget; replay: **no** |
 | `calibrate`, `bounce`, `diff`, `inspect` | The v0.2.0 three-request fold research CLI (unchanged). | yes |
+| `bleediff experiment init / validate` | Author your own small answer-only experiment: a starter spec, offline validation, a prompt dataset the hosted commands accept, and an estimated budget. Guide: [`docs/FIRST_EXPERIMENT.md`](docs/FIRST_EXPERIMENT.md). | **no** |
 | `bleed` | v0.2.0 helper: offline preview of the exact arena boundary displacement against the matched control (see `bleediff bleed --help`). | **no** |
 
 The v0.2.0 research fold (`M = (p1 + p2 + p3) / 3` against a clean baseline, `delta_contrast = R_B - R_A`), its equations, thresholds,
