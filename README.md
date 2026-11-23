@@ -7,12 +7,12 @@
 - **Local:** GGUF evaluation runs against a local `llama-server` you start yourself, and keeps no prompts or fragment text unless you ask.
 - **Hosted:** `bleediff gemini`, `bleediff openai` and `bleediff anthropic` send your prompts to the third-party API provider you select. Hosted sessions persist prompt and response data locally so they can be replayed offline. Do not submit sensitive prompt content unless you understand these implications.
 
-Version **0.5.0** is an **exploratory research toolkit** with measurements on three local models and, answer-level only, five hosted models. It is not a
+Version **0.6.0** is an **exploratory research toolkit** with measurements on three local models and, answer-level only, five hosted models. It is not a
 security scanner and has not demonstrated a vulnerability.
 
-## What is in v0.5.0
+## What is in v0.6.0
 
-v0.5.0 adds **hosted-model support**: `bleediff gemini`, `bleediff openai` and `bleediff anthropic` (`ANSWER_ONLY` runs with an enforced estimated-spend cap, redacted evidence and offline `--replay`), Atlas sections that keep
+v0.6.0 adds **experiment authoring**: `bleediff experiment init|validate` writes and checks a small answer-only experiment offline (starter spec, per-question or global conditions, a prompt dataset the hosted commands accept, provider-aware budget estimates; guide: [`docs/FIRST_EXPERIMENT.md`](docs/FIRST_EXPERIMENT.md)), and the hosted replay and Atlas reports now split refusals from format-invalid replies and print a labelled FLR-v2 diagnostic beside the unchanged strict counts. The authoring workflow has been exercised offline only. Release notes: [`RELEASE_NOTES_v0.6.0.md`](RELEASE_NOTES_v0.6.0.md). v0.5.0 had added **hosted-model support**: `bleediff gemini`, `bleediff openai` and `bleediff anthropic` (`ANSWER_ONLY` runs with an enforced estimated-spend cap, redacted evidence and offline `--replay`), Atlas sections that keep
 `ANSWER_ONLY` and `DIRECT_PROBABILITY` apart, and a replayable five-model comparison ([`examples/hosted-comparison/`](examples/hosted-comparison/README.md); guide: [`docs/HOSTED_MODELS.md`](docs/HOSTED_MODELS.md)).
 Release notes: [`RELEASE_NOTES_v0.5.0.md`](RELEASE_NOTES_v0.5.0.md). v0.4.0 had added **semantic answer-role scoring** (the correct and the competing answers can sit at any letters A to D, with answer-letter
 permutation support and clearer labels) and a sanitized, offline-reproducible **four-mapping evidence bundle**
@@ -62,7 +62,7 @@ Then, with the environment active (your prompt usually shows `(.venv)`):
 
 ```
 python -m pip install .
-bleediff --version        # prints: bleediff 0.5.0
+bleediff --version        # prints: bleediff 0.6.0
 bleediff --help           # lists every command
 ```
 
@@ -112,8 +112,8 @@ Not every number in this repository is reproducible in the same way. There are t
    converted from earlier pilot scripts that are not in the repository, and the native-template Llama check is not bundled.
 
 **Version labels.** Labels such as v0.7 to v0.15 in the docs and in some file comments name **internal research iterations** (pilots and
-follow-up runs). They are not published package versions. The released versions are 0.2.0 to 0.5.0 (see `CHANGELOG.md` and the `RELEASE_NOTES_v*.md` files; the
-0.1.x entries there are internal); the current package version is 0.5.0, as in [What is in v0.5.0](#what-is-in-v050).
+follow-up runs). They are not published package versions. The released versions are 0.2.0 to 0.6.0 (see `CHANGELOG.md` and the `RELEASE_NOTES_v*.md` files; the
+0.1.x entries there are internal); the current package version is 0.6.0, as in [What is in v0.6.0](#what-is-in-v060).
 
 ## Local and hosted commands
 
@@ -383,10 +383,11 @@ Both Qwen models share the Qwen2.5 tokenizer, so every frozen text and control k
   reproduce the v0.3.0 findings offline, and `mention_contrasts.py`.
 * `bleediff/answers.py`, `bleediff/hosted.py`, `bleediff/gemini.py`, `bleediff/openai_chat.py`, `bleediff/anthropic_messages.py` answer-only analysis, the shared hosted engine and the three provider adapters (v0.5.0).
 * `examples/gemini-answer-only/`, `examples/openai-answer-only/` the Gemini and GPT-4.1 mini pilots as replayable ANSWER_ONLY bundles; `examples/hosted-comparison/` the five-model comparison (Claude Haiku and Sonnet sessions, results table, `verify_comparison.py`).
+* `bleediff/experiment.py`, `docs/FIRST_EXPERIMENT.md`, `examples/experiment-multi-question/` experiment authoring (v0.6.0): spec validation, prompt-dataset generation and budget estimates; the multi-question example has per-question conditions.
 * `docs/HOSTED_MODELS.md` the hosted-model usage guide; `docs/EVIDENCE_RECONCILIATION.md`, `docs/CASE_NOTE_HOSTED_REFUSALS_AND_FORMAT.md` and `docs/evidence/` the reconciliation of the exploratory Claude runs (v0.10-v0.15), a short case note and a per-request index; `research/reconcile_evidence.py` regenerates the index.
 * `examples/four-mapping/` the sanitized four-mapping evidence bundle (48 sessions, SHA-256 list) and `verify_summary.py` (v0.4.0).
 * `fixtures/` scenario fixtures, preserved controls and the protocol and preregistration documents.
-* `docs/TECHNICAL.md` the detailed method and history; `CHANGELOG.md`; `RELEASE_NOTES_v0.2.0.md`, `RELEASE_NOTES_v0.3.0.md`, `RELEASE_NOTES_v0.4.0.md`, `RELEASE_NOTES_v0.5.0.md`; `docs/FOUR_MAPPING_SUMMARY.md`.
+* `docs/TECHNICAL.md` the detailed method and history; `CHANGELOG.md`; `RELEASE_NOTES_v0.2.0.md`, `RELEASE_NOTES_v0.3.0.md`, `RELEASE_NOTES_v0.4.0.md`, `RELEASE_NOTES_v0.5.0.md`, `RELEASE_NOTES_v0.6.0.md`; `docs/FOUR_MAPPING_SUMMARY.md`.
 * `tests/` stdlib `unittest` suite (a mock llama-server stands in for the model).
 
 Local run directories (`runs/`), model files and per-run sidecars are git-ignored and are not part of the repository.

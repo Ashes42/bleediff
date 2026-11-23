@@ -394,7 +394,7 @@ class TestReleaseHygiene(unittest.TestCase):
 
         with open(os.path.join(ROOT, "pyproject.toml"), "rb") as fh:
             self.assertEqual(tomllib.load(fh)["project"]["version"], __version__)
-        self.assertEqual(__version__, "0.5.0")                                  # the package version moved on; the v0.2.0 evidence did not
+        self.assertEqual(__version__, "0.6.0")                                  # the package version moved on; the v0.2.0 evidence did not
         self.assertEqual(_json(RESULTS)["bleediff_release"], "0.2.0")
         self.assertIn("## [0.2.0]", _read(os.path.join(ROOT, "CHANGELOG.md")))
         self.assertIn("## [0.3.0]", _read(os.path.join(ROOT, "CHANGELOG.md")))

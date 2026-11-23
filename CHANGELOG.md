@@ -3,12 +3,22 @@
 All notable changes. Versions identify the software that wrote a file, not an experiment or an algorithm; protocols and
 control algorithms have their own identifiers (see `docs/TECHNICAL.md`).
 
-## Experiment authoring (after 0.5.0; no version bump)
+## [0.6.0] - experiment authoring, per-question conditions and hosted answer diagnostics (exploratory)
+
+Release notes: `RELEASE_NOTES_v0.6.0.md`. The authoring workflow has been exercised offline only (tests with mocked providers); no new measurements or live provider results are published, and historical research results are unchanged.
 
 ### Added
-- `bleediff experiment init|validate` (`bleediff/experiment.py`): an offline authoring step for answer-only experiments. A short spec (questions, named context fragments, explicit letter mappings) is validated and turned into a `bleediff.hosted-prompts/1` dataset that the existing `anthropic`/`openai`/`gemini` commands run unchanged, with an estimated worst-case budget and a demonstration-versus-evidence label. No measurement, schema or existing command changed.
-- `docs/FIRST_EXPERIMENT.md` and `tests/test_experiment.py`.
-- Per-question conditions for `bleediff.experiment/1`: `conditions` may be a list of names with each question supplying its own `condition_fragments` (every name exactly once, no fallback to a global fragment; mixing it with a `{NAME: fragment}` object is rejected). Global specs and the starter generate byte-identical prompt datasets. `examples/experiment-multi-question/` is a three-question example.
+- `bleediff experiment init|validate` (`bleediff/experiment.py`): an offline authoring step for answer-only experiments. A short spec (questions, named context fragments, explicit letter mappings) is validated and turned into a `bleediff.hosted-prompts/1` dataset that the existing `anthropic`/`openai`/`gemini` commands run unchanged (the dataset is re-loaded with the runners' own loader), with a demonstration-versus-evidence label. No measurement, schema or existing command changed.
+- Provider-aware estimated budget figures in `experiment validate` (`--provider`, `--price-in`, `--price-out`, `--passes`, `--max-output-tokens`, `--max-retries`), computed with the hosted engine's own reserve and admission rules. Estimates, not provider billing.
+- Per-question conditions for `bleediff.experiment/1`: `conditions` may be a list of names with each question supplying its own `condition_fragments` (every name exactly once, no fallback to a global fragment; mixing it with a `{NAME: fragment}` object is rejected). Global specs and the starter generate byte-identical prompt datasets. `examples/experiment-multi-question/` is a three-question example (36 prompts).
+- Hosted answer diagnostics: strict non-answers are split into explicit refusals, format-invalid replies with one final letter, and ambiguous or missing replies, with an optional labelled FLR-v2 (conflict-aware final-letter recovery) diagnostic in `--replay`, `answers.analyze` and the Atlas answer-only tables/CSV/report. Strict classification is unchanged and primary. FLR-v1 in `research/reconcile_evidence.py` is unchanged.
+- `docs/FIRST_EXPERIMENT.md`, `tests/test_experiment.py`, `tests/test_answer_diagnostic.py`, `tests/test_v060_release.py`, `RELEASE_NOTES_v0.6.0.md`.
+- A GitHub Actions workflow (`.github/workflows/ci.yml`) that runs the unittest suite on Ubuntu/Python 3.11 and Windows/Python 3.14.
+
+### Changed
+- README: install section with per-platform virtual-environment commands, reproducibility tiers, a strict-versus-FLR worked example and the measured FLR-v1/FLR-v2 agreement on the saved Claude replies.
+- `bleediff/hosted.py`: the output-reserve and worst-case admission arithmetic and the parameter ranges are named helpers/constants shared with `experiment validate`; behaviour is unchanged.
+- The answer-only Atlas CSV and `report.md` gain no-answer-split and FLR-v2 columns/sections.
 
 ### Fixed
 - `experiment validate` applied one global fragment set to every question without saying so; it now warns about that, and its control and length warnings are computed on the fragments each question actually receives and name the question, condition and matched term. The control option-text check matches standalone words or phrases (the `K` of an answer no longer matches the `k` in `bakery`).
