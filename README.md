@@ -41,7 +41,25 @@ Requires **Python 3.11 or newer** and `git`. There are no third-party dependenci
 git clone https://github.com/Ashes42/bleediff.git
 cd bleediff
 python -m venv .venv
-# activate it: Windows PowerShell  .venv\Scripts\Activate.ps1   |   macOS/Linux  source .venv/bin/activate
+```
+
+Activate the virtual environment (run **one** of these, for your platform, before installing, so Bleediff does not go into your system Python):
+
+Windows PowerShell:
+
+```
+.venv\Scripts\Activate.ps1
+```
+
+macOS/Linux:
+
+```
+source .venv/bin/activate
+```
+
+Then, with the environment active (your prompt usually shows `(.venv)`):
+
+```
 python -m pip install .
 bleediff --version        # prints: bleediff 0.5.0
 bleediff --help           # lists every command
