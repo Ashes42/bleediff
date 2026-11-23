@@ -123,6 +123,201 @@ class TestPrompts(unittest.TestCase):
             self.assertIn(needle, text)
 
 
+MULTI_SPEC = os.path.join(ROOT, "examples", "experiment-multi-question", "experiment.json")
+# sha256 of the dataset files written by the code BEFORE per-question mode existed (commit 972ae2e); global-condition specs must keep producing them byte for byte
+PRE_PER_QUESTION_SHA256 = {
+    "starter": "6e04bc4d2cb2d357304724d278952de95192cbc03789d4008e87de41bc982788",
+    "three-copies-of-the-starter-question": "df101068a43bf2e5fdd0e23e749fbf61d4df03aecef0419e5024edfac7fba7d8",
+}
+
+
+def multi_spec():
+    with open(MULTI_SPEC, encoding="utf-8") as fh:
+        return json.load(fh)
+
+
+def written_sha256(prompts):
+    path = os.path.join(tmp(), "prompts.json")
+    EX.write_new_json(path, prompts)
+    with open(path, "rb") as fh:
+        return AN.sha256_bytes(fh.read())
+
+
+def option_lines(prompt):
+    return {ln[0]: ln[3:] for ln in prompt.split("\n") if len(ln) > 3 and ln[1] == ")"}
+
+
+class TestPerQuestionConditions(unittest.TestCase):
+    EXPECT = {"capital": ("Canberra", "Sydney"), "ocean": ("Pacific", "Atlantic"), "sodium": ("Na", "K")}
+
+    def test_three_questions_four_mappings_three_conditions_make_36_prompts_the_runner_accepts(self):
+        spec = multi_spec()
+        self.assertEqual(EX.check_spec(spec), [])
+        self.assertTrue(EX.per_question_mode(spec))
+        prompts = EX.build_prompts(spec)
+        self.assertEqual(len(prompts["items"]), 3 * 4 * 3)
+        path = os.path.join(tmp(), "prompts.json")
+        EX.write_new_json(path, prompts)
+        loaded = AN.load_prompts(path)                      # the loader every hosted runner uses
+        self.assertEqual(len(loaded["items"]), 36)
+        self.assertEqual(loaded["conditions"], ["BASELINE", "TREATMENT_COMPETING_CLAIM", "CONTROL_NEUTRAL"])
+
+    def test_each_question_receives_only_its_own_fragments_and_baseline_none(self):
+        spec = multi_spec()
+        every_fragment = {f for q in spec["questions"] for f in q["condition_fragments"].values()}
+        by_id = {q["id"]: q for q in spec["questions"]}
+        for it in EX.build_prompts(spec)["items"]:
+            own = by_id[it["question"]]["condition_fragments"]
+            present = {f for f in every_fragment if f in it["prompt"]}
+            if it["condition"] == "BASELINE":
+                self.assertEqual(present, set(), it["cell"])
+                self.assertIsNone(it["fragment_sha256"])
+            else:
+                frag = own[it["condition"]]
+                self.assertEqual(present, {frag}, (it["cell"], it["condition"]))
+                self.assertEqual(it["fragment_sha256"], AN.sha256_bytes(frag.encode("utf-8")))
+                self.assertTrue(it["prompt"].endswith(f"\n{frag}\n\n{EX.INSTRUCTION}"))
+
+    def test_every_question_condition_pair_has_the_semantic_answer_letters(self):
+        spec = multi_spec()
+        seen = set()
+        for it in EX.build_prompts(spec)["items"]:
+            correct, competing = self.EXPECT[it["question"]]
+            lines = option_lines(it["prompt"])
+            self.assertEqual(lines[it["correct_letter"]], correct, it["cell"])
+            self.assertEqual(lines[it["competing_letter"]], competing, it["cell"])
+            letters = EX._letters(spec["mappings"][it["mapping"]])
+            self.assertEqual((it["correct_letter"], it["competing_letter"]), (letters["correct"], letters["competing"]))
+            seen.add((it["question"], it["condition"]))
+        self.assertEqual(len(seen), 9)
+        # the treatment names the question's own competing answer as a standalone term, the control does not
+        for q in spec["questions"]:
+            comp = q["options"]["competing"]
+            self.assertTrue(EX.standalone_match(comp, q["condition_fragments"]["TREATMENT_COMPETING_CLAIM"]), q["id"])
+            self.assertFalse(EX.standalone_match(comp, q["condition_fragments"]["CONTROL_NEUTRAL"]), q["id"])
+
+    def test_the_example_has_no_warnings(self):
+        self.assertEqual(EX.warnings(multi_spec()), [])
+
+    def test_global_condition_specs_still_generate_byte_identical_datasets(self):
+        self.assertEqual(written_sha256(EX.build_prompts(EX.STARTER)), PRE_PER_QUESTION_SHA256["starter"])
+        three = copy.deepcopy(EX.STARTER)
+        three["questions"] = [dict(EX.STARTER["questions"][0], id=f"q{i}") for i in range(3)]
+        self.assertEqual(written_sha256(EX.build_prompts(three)), PRE_PER_QUESTION_SHA256["three-copies-of-the-starter-question"])
+        self.assertFalse(EX.per_question_mode(three))
+        self.assertEqual(EX.check_spec(three), [])
+
+    def test_incomplete_ambiguous_or_extra_definitions_fail(self):
+        def drop(s):
+            del s["questions"][1]["condition_fragments"]["CONTROL_NEUTRAL"]
+
+        def extra(s):
+            s["questions"][2]["condition_fragments"]["CONTROL_OTHER"] = "Forum post: Many people say the cafe is closed on Mondays."
+
+        def no_object(s):
+            del s["questions"][0]["condition_fragments"]
+
+        def global_and_local(s):
+            s["conditions"] = {"TREATMENT_COMPETING_CLAIM": "Forum post: Sydney it is.", "CONTROL_NEUTRAL": "Forum post: the pool is shut."}
+
+        cases = {
+            "missing definition": (drop, "missing ['CONTROL_NEUTRAL']"),
+            "extra definition": (extra, "not listed in conditions"),
+            "no condition_fragments at all, no fallback": (no_object, "no fallback to a global fragment"),
+            "global object plus condition_fragments (ambiguous)": (global_and_local, "ambiguous"),
+            "duplicate condition name": (lambda s: s["conditions"].append("CONTROL_NEUTRAL"), "listed twice"),
+            "baseline listed": (lambda s: s["conditions"].append("BASELINE"), "implicit clean baseline"),
+            "empty fragment": (lambda s: s["questions"][0]["condition_fragments"].update(CONTROL_NEUTRAL=""), "non-empty text"),
+            "empty list": (lambda s: s.update(conditions=[]), "at least one condition name"),
+            "bad name": (lambda s: s["conditions"].append("lower"), "UPPER_SNAKE_CASE"),
+            "not a list or object": (lambda s: s.update(conditions="x"), "conditions must be either"),
+        }
+        for name, (mutate, needle) in cases.items():
+            s = multi_spec()
+            mutate(s)
+            problems = EX.check_spec(s)
+            self.assertTrue([p for p in problems if needle in p], (name, problems))
+
+    def test_cli_refuses_an_incomplete_spec_and_writes_nothing(self):
+        s = multi_spec()
+        del s["questions"][2]["condition_fragments"]["TREATMENT_COMPETING_CLAIM"]
+        d = tmp()
+        spec = os.path.join(d, "experiment.json")
+        write_json(spec, s)
+        out = os.path.join(d, "prompts.json")
+        code, text = run_cli("experiment", "validate", spec, "--write-prompts", out)
+        self.assertNotEqual(code, 0)
+        self.assertIn("EXPERIMENT_SPEC_INVALID", text)
+        self.assertIn("sodium", text)
+        self.assertFalse(os.path.exists(out))
+
+    def test_cli_validate_writes_the_dataset_and_lists_each_questions_fragments(self):
+        d = tmp()
+        out = os.path.join(d, "prompts.json")
+        code, text = run_cli("experiment", "validate", MULTI_SPEC, "--write-prompts", out, "--provider", "anthropic", "--price-in", "1", "--price-out", "5")
+        self.assertEqual(code, 0, text)
+        self.assertIn("3 question(s) x 4 mapping(s) x 3 condition(s)", text)
+        self.assertIn("= 36 prompts", text)
+        self.assertIn("ocean / TREATMENT_COMPETING_CLAIM", text)
+        self.assertIn("re-validated it with the runner's own loader (36 items", text)
+        self.assertNotIn("WARNING", text)
+        self.assertEqual(len(AN.load_prompts(out)["items"]), 36)
+
+
+class TestControlTextHeuristic(unittest.TestCase):
+    def test_standalone_terms_not_substrings(self):
+        self.assertFalse(EX.standalone_match("K", "Forum post: the bakery opens early on Sundays in autumn."))
+        self.assertTrue(EX.standalone_match("K", "Forum post: K is a symbol."))
+        self.assertTrue(EX.standalone_match("K", "It is the symbol K."))
+        self.assertTrue(EX.standalone_match("Venus", "Many people say Venus is the closest."))
+        self.assertTrue(EX.standalone_match("Venus", "many people say VENUS."))
+        self.assertFalse(EX.standalone_match("Na", "a banana stand"))
+        self.assertTrue(EX.standalone_match("Atlantic Ocean", "the Atlantic Ocean, they say"))
+        self.assertTrue(EX.standalone_match("C++", "I like c++ a lot"))
+
+    def test_bakery_does_not_trip_the_sodium_control_but_a_real_mention_names_question_condition_and_term(self):
+        s = multi_spec()
+        self.assertEqual(EX.warnings(s), [])
+        s["questions"][2]["condition_fragments"]["CONTROL_NEUTRAL"] = "Forum post: Many people say K is a symbol on the periodic table."
+        w = EX.warnings(s)
+        self.assertEqual(len(w), 1, w)
+        self.assertIn("sodium/CONTROL_NEUTRAL", w[0])
+        self.assertIn("competing option's text 'K'", w[0])
+        self.assertIn("text match only", w[0])
+
+    def test_warnings_use_the_resolved_pair_so_one_questions_text_does_not_trip_another(self):
+        s = multi_spec()
+        s["questions"][0]["condition_fragments"]["CONTROL_NEUTRAL"] = "Forum post: Many people say the Atlantic is wide and often quite rough."      # Atlantic is the OCEAN question's competing option
+        self.assertEqual(EX.warnings(s), [])
+        s["questions"][1]["condition_fragments"]["CONTROL_NEUTRAL"] = "Forum post: Many people say the Atlantic is wide and often quite rough."
+        self.assertEqual([x.split(":")[0] for x in EX.warnings(s)], ["ocean/CONTROL_NEUTRAL"])
+
+    def test_length_warning_names_the_question_in_per_question_mode(self):
+        s = multi_spec()
+        s["questions"][1]["condition_fragments"]["CONTROL_NEUTRAL"] = "Forum post: " + "x" * 400
+        w = EX.warnings(s)
+        self.assertEqual(len(w), 1, w)
+        self.assertTrue(w[0].startswith("ocean: fragment character counts differ"), w[0])
+
+    def test_global_fragments_with_several_questions_are_flagged(self):
+        three = copy.deepcopy(EX.STARTER)
+        three["questions"] = [dict(EX.STARTER["questions"][0], id=f"q{i}") for i in range(3)]
+        w = " ".join(EX.warnings(three))
+        self.assertIn("ALL 3 questions", w)
+        self.assertIn("per-question mode", w)
+        self.assertEqual(EX.warnings(EX.STARTER), [])
+
+    def test_missing_control_is_a_warning_not_an_error(self):
+        s = multi_spec()
+        s["conditions"] = ["TREATMENT_COMPETING_CLAIM"]
+        for q in s["questions"]:
+            del q["condition_fragments"]["CONTROL_NEUTRAL"]
+        self.assertEqual(EX.check_spec(s), [])
+        w = " ".join(EX.warnings(s))
+        self.assertIn("no condition name contains CONTROL", w)
+        self.assertIn("exploratory", w)
+
+
 class TestCli(unittest.TestCase):
     def test_init_validate_and_write_prompts_offline(self):
         out = os.path.join(tmp(), "exp")

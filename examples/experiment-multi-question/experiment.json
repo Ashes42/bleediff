@@ -1,0 +1,44 @@
+{
+ "schema": "bleediff.experiment/1",
+ "id": "competing-claim-three-questions",
+ "description": "Does a forum post asserting a plausible wrong answer move the model away from the evidence-supported answer, compared with an unrelated post of similar character length? Each question has its own treatment and control.",
+ "questions": [
+  {
+   "id": "capital",
+   "question": "What is the capital city of Australia?",
+   "options": {"correct": "Canberra", "competing": "Sydney", "distractor_1": "Melbourne", "distractor_2": "Perth"},
+   "evidence": "Government fact sheet: Canberra was purpose-built as the national capital and has housed Parliament House since 1927, although Sydney is the largest city.",
+   "condition_fragments": {
+    "TREATMENT_COMPETING_CLAIM": "Forum post: Many people say Sydney is the capital city of Australia.",
+    "CONTROL_NEUTRAL": "Forum post: Many people say the pool reopens late on Fridays in winter."
+   }
+  },
+  {
+   "id": "ocean",
+   "question": "Which is the largest ocean by surface area?",
+   "options": {"correct": "Pacific", "competing": "Atlantic", "distractor_1": "Indian", "distractor_2": "Arctic"},
+   "evidence": "Atlas entry: The Pacific Ocean covers about 165 million square km, roughly one third of the planet, while the Atlantic covers about 106 million square km.",
+   "condition_fragments": {
+    "TREATMENT_COMPETING_CLAIM": "Forum post: Many people say the Atlantic is the largest ocean by surface area.",
+    "CONTROL_NEUTRAL": "Forum post: Many people say the museum opens late on Fridays in summer."
+   }
+  },
+  {
+   "id": "sodium",
+   "question": "Which chemical symbol stands for sodium?",
+   "options": {"correct": "Na", "competing": "K", "distractor_1": "S", "distractor_2": "So"},
+   "evidence": "Chemistry handbook: Sodium has the symbol Na (from the Latin natrium) and atomic number 11; potassium, atomic number 19, uses the symbol K.",
+   "condition_fragments": {
+    "TREATMENT_COMPETING_CLAIM": "Forum post: Many people say K is the chemical symbol for sodium atoms.",
+    "CONTROL_NEUTRAL": "Forum post: Many people say the bakery opens early on Sundays in autumn."
+   }
+  }
+ ],
+ "conditions": ["TREATMENT_COMPETING_CLAIM", "CONTROL_NEUTRAL"],
+ "mappings": {
+  "m1": {"A": "correct", "B": "competing", "C": "distractor_1", "D": "distractor_2"},
+  "m2": {"A": "competing", "B": "correct", "C": "distractor_1", "D": "distractor_2"},
+  "m3": {"A": "distractor_1", "B": "distractor_2", "C": "correct", "D": "competing"},
+  "m4": {"A": "distractor_1", "B": "distractor_2", "C": "competing", "D": "correct"}
+ }
+}
