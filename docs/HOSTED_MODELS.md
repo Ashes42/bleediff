@@ -23,7 +23,9 @@ is never added to "incorrect" or "competing", and a category label is provider m
 `max_tokens` on thinking) are non-answers too.
 
 **Secondary diagnostics are separate and labelled.** Lenient readings, for example rule FLR-v1 (Final-Line Recovery: the last non-empty line is one letter) or unwrapping `**B**`, are never mixed into the strict columns. They were defined after
-replies were read, can credit replies the prompt forbade, and live only in analysis notes (`docs/EVIDENCE_RECONCILIATION.md`, `research/reconcile_evidence.py`), not in `bleediff anthropic --replay` output.
+replies were read, can credit replies the prompt forbade, and are reported in their own labelled columns (see below) and in analysis notes (`docs/EVIDENCE_RECONCILIATION.md`, `research/reconcile_evidence.py`).
+
+**No-answer split and the FLR-v1 diagnostic (offline analysis and Atlas).** `answers.analyze` and the Atlas answer-only tables/CSV split the strict non-answers into *explicit refusals / blocks*, *format-invalid replies with one final letter* (`format_invalid_recoverable`) and *ambiguous or missing* (conflicting standalone letters, prose only, empty, malformed). For the format-invalid replies only, the optional diagnostic `answers.extract_final_letter` (FLR-v1) reports the letter the reply settled on (`flr_v1_correct`/`_competing`/`_other_incorrect`). It is text-only and deterministic, never applies to refusals, rejects conflicting letters, never changes a stored or recomputed strict status or the strict columns, and produces no probability or confidence. On the saved pilots: Haiku RANDOM_OTHER 12 refusals; Sonnet 60 strict failures, of which COMPETING 32 (diagnostic: 2 correct / 30 competing).
 
 ## 3. Live runs and the budget
 ```
