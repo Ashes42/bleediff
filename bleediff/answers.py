@@ -26,6 +26,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import re
 from collections import Counter
 
 from . import CHOICES
@@ -287,6 +288,69 @@ def role_of(answer, item) -> str | None:
 
 
 # --------------------------------------------------------------------------------------
+# SECONDARY DIAGNOSTIC: final-letter recovery (FLR-v2). Never the primary metric.
+# --------------------------------------------------------------------------------------
+FLR_RULE = "FLR-v2"
+# FLR-v2 = the historical FLR-v1 (research/reconcile_evidence.py, unchanged) plus a conflict check; it differs from FLR-v1 on replies whose earlier lines hold a different standalone letter.
+FLR_NOTE = ("DIAGNOSTIC (post-hoc, FLR-v2): the last non-empty line of a format-invalid reply, with markdown emphasis stripped, is exactly one letter A-D. It credits replies "
+            "the prompt forbade, never changes a strict status, never applies to refusals, and is not a probability or a confidence.")
+_FLR_STRIP = re.compile(r"[\s*_`~]+")
+
+
+def visible_text(response, provider: str | None = None) -> str:
+    """The full visible reply text of a saved response (thinking blocks excluded), for the diagnostic only. '' when there is none."""
+    if not isinstance(response, dict):
+        return ""
+    provider = provider or detect_provider(response)
+    try:
+        if provider == "anthropic":
+            c = response.get("content")
+            return "".join(b["text"] for b in c if isinstance(b, dict) and b.get("type") == "text" and isinstance(b.get("text"), str)) if isinstance(c, list) else ""
+        if provider == "openai":
+            m = response["choices"][0]["message"]
+            return m["content"] if isinstance(m.get("content"), str) else ""
+        parts = response["candidates"][0]["content"]["parts"]
+        return "".join(p["text"] for p in parts if isinstance(p, dict) and isinstance(p.get("text"), str) and not p.get("thought"))
+    except (KeyError, IndexError, TypeError):
+        return ""
+
+
+def extract_final_letter(text) -> dict:
+    """Deterministic, text-only final-letter extraction (FLR-v2). Returns {"status": "extracted" | "conflict" | "none", "letter": A-D or None, "rule": FLR_RULE}.
+    extracted: the last non-empty line is, once whitespace and markdown emphasis (``*``, ``_``, backticks, ``~``) are removed, exactly one letter A-D, and no other line is a
+    standalone letter that differs from it. conflict: standalone letters on different lines disagree (nothing is picked). none: anything else (no letter, a letter inside prose,
+    'A or B', empty). It knows nothing about statuses: callers must not apply it to refusals (see ``diagnostic_class``)."""
+    lines = [ln for ln in (text if isinstance(text, str) else "").splitlines() if ln.strip()]
+    if not lines:
+        return {"status": "none", "letter": None, "rule": FLR_RULE}
+    stripped = [_FLR_STRIP.sub("", ln) for ln in lines]
+    standalone = [x if x in CHOICES else None for x in stripped]
+    if standalone[-1] is None:
+        return {"status": "conflict" if len({x for x in standalone if x}) > 1 else "none", "letter": None, "rule": FLR_RULE}
+    if len({x for x in standalone if x}) > 1:
+        return {"status": "conflict", "letter": None, "rule": FLR_RULE}
+    return {"status": "extracted", "letter": standalone[-1], "rule": FLR_RULE}
+
+
+def diagnostic_class(rec: dict) -> dict:
+    """Five-way reporting split of one normalised record, kept beside (never instead of) its strict status.
+    strict_valid (status ok; the strict answer is untouched) | refusal (status blocked: an explicit provider refusal or block, never reinterpreted) |
+    format_recovered (status invalid and FLR-v2 extracted one letter; ``flr_letter`` holds it) | ambiguous (invalid with conflicting standalone letters) |
+    missing (empty, malformed, error, or invalid with no standalone final letter)."""
+    st = rec.get("status")
+    if st == "ok":
+        return {"class": "strict_valid", "flr_letter": None}
+    if st == "blocked":
+        return {"class": "refusal", "flr_letter": None}
+    if st == "invalid":
+        f = extract_final_letter(visible_text(rec.get("response"), rec.get("provider")))
+        if f["status"] == "extracted":
+            return {"class": "format_recovered", "flr_letter": f["letter"]}
+        return {"class": "ambiguous" if f["status"] == "conflict" else "missing", "flr_letter": None}
+    return {"class": "missing", "flr_letter": None}
+
+
+# --------------------------------------------------------------------------------------
 # reading saved sessions (new format or the v0.8 pilot layout)
 # --------------------------------------------------------------------------------------
 def _split_name(name: str):
@@ -430,7 +494,8 @@ def read_session(path: str, prompts_path: str | None = None) -> dict:
 # analysis (answers only)
 # --------------------------------------------------------------------------------------
 def _blank():
-    return {"records": 0, "valid": 0, "correct": 0, "competing": 0, "other_incorrect": 0, "non_answers": 0}
+    return {"records": 0, "valid": 0, "correct": 0, "competing": 0, "other_incorrect": 0, "non_answers": 0,
+            "refusals": 0, "format_invalid_recoverable": 0, "ambiguous_or_missing": 0, "flr_correct": 0, "flr_competing": 0, "flr_other_incorrect": 0}
 
 
 def _pair_blank():
@@ -454,6 +519,14 @@ def analyze(records: list, prompts: dict) -> dict:
                 t[role_of(r["answer"], item)] += 1
             else:
                 t["non_answers"] += 1
+                d = diagnostic_class(r)      # reporting split only; the strict counts above are never touched
+                if d["class"] == "refusal":
+                    t["refusals"] += 1
+                elif d["class"] == "format_recovered":
+                    t["format_invalid_recoverable"] += 1
+                    t["flr_" + role_of(d["flr_letter"], item)] += 1
+                else:
+                    t["ambiguous_or_missing"] += 1
     for r in records:
         if r["condition"] == base:
             continue
@@ -516,6 +589,13 @@ def report_lines(analysis: dict, title: str = "") -> list[str]:
         tail = (f" |{v['pairs']:>6}{v['answer_changed']:>8}{v['induced_incorrect']:>8}{v['induced_to_competing']:>9}{v['recovered_to_correct']:>10}" if v else f" |{'(baseline)':>10}")
         L.append(f"  {cond:<14}{t['records']:>8}{t['correct']:>9}{t['competing']:>10}{t['other_incorrect']:>7}{t['non_answers']:>10}{tail}")
     L.append(f"  (pairs = same-pass comparisons with the clean baseline where both answers are valid; induced = the baseline answer was correct and the candidate's was not; '(->comp)' of those went to the competing answer)")
+    if any(t["non_answers"] for t in a["by_condition"].values()):
+        L.append(f"  no-answer split (strict statuses, unchanged) and the optional {FLR_RULE} diagnostic on the format-invalid replies:")
+        for cond, t in a["by_condition"].items():
+            if t["non_answers"]:
+                L.append(f"    {cond:<14}refusals {t['refusals']}, format-invalid with one final letter {t['format_invalid_recoverable']} "
+                         f"(diagnostic: correct {t['flr_correct']} / competing {t['flr_competing']} / other {t['flr_other_incorrect']}), ambiguous or missing {t['ambiguous_or_missing']}")
+        L.append(f"  {FLR_NOTE}")
     maps = sorted({k.split("|", 1)[1] for k in a["by_condition_mapping"]})
     if maps != ["-"]:
         L.append("  by answer mapping (correct / competing / other incorrect / no answer):")
@@ -605,7 +685,8 @@ def comparison_rows(hosted: list, local_cells: list) -> list:
 
 COMPARISON_COLUMNS = ["measurement_type", "source", "label", "n", "correct", "competing", "other_incorrect", "no_answer", "changed_vs_baseline", "induced_incorrect", "answer_basis"]
 ANSWER_ONLY_COLUMNS = ["measurement_type", "session_id", "model_id", "condition", "mapping", "records", "valid", "correct", "competing", "other_incorrect", "non_answers", "pairs", "pairs_unscored",
-                       "answer_changed", "induced_incorrect", "induced_to_competing", "induced_to_other", "recovered_to_correct", "baseline_incorrect_pairs"]
+                       "answer_changed", "induced_incorrect", "induced_to_competing", "induced_to_other", "recovered_to_correct", "baseline_incorrect_pairs",
+                       "refusals", "format_invalid_recoverable", "ambiguous_or_missing", "flr_v2_correct", "flr_v2_competing", "flr_v2_other_incorrect"]
 
 
 def answer_only_rows(hosted: list) -> list:
@@ -622,7 +703,9 @@ def answer_only_rows(hosted: list) -> list:
                          "correct": t["correct"], "competing": t["competing"], "other_incorrect": t["other_incorrect"], "non_answers": t["non_answers"], "pairs": v.get("pairs", ""),
                          "pairs_unscored": v.get("pairs_unscored", ""), "answer_changed": v.get("answer_changed", ""), "induced_incorrect": v.get("induced_incorrect", ""),
                          "induced_to_competing": v.get("induced_to_competing", ""), "induced_to_other": v.get("induced_to_other", ""), "recovered_to_correct": v.get("recovered_to_correct", ""),
-                         "baseline_incorrect_pairs": v.get("baseline_incorrect_pairs", "")})
+                         "baseline_incorrect_pairs": v.get("baseline_incorrect_pairs", ""),
+                         "refusals": t["refusals"], "format_invalid_recoverable": t["format_invalid_recoverable"], "ambiguous_or_missing": t["ambiguous_or_missing"],
+                         "flr_v2_correct": t["flr_correct"], "flr_v2_competing": t["flr_competing"], "flr_v2_other_incorrect": t["flr_other_incorrect"]})
     return rows
 
 
@@ -676,6 +759,14 @@ def atlas_markdown(block: dict, models: list | None = None) -> list[str]:
             v = a["versus_baseline"].get(cond) or {}
             L.append(_md_row(cond, t["records"], t["correct"], t["competing"], t["other_incorrect"], t["non_answers"], v.get("pairs", "(baseline)"), v.get("answer_changed", ""),
                              v.get("induced_incorrect", ""), v.get("induced_to_competing", ""), v.get("recovered_to_correct", "")))
+        if any(t["non_answers"] for t in a["by_condition"].values()):
+            L += ["", f"No-answer split. Strict statuses are unchanged; the last three columns are the optional **{FLR_RULE} diagnostic** on format-invalid replies only (not the primary metric).", "",
+                  _md_row("Condition", "No answer (strict)", "Explicit refusals / blocks", "Format-invalid, one final letter", "Ambiguous or missing", f"{FLR_RULE} correct", f"{FLR_RULE} competing", f"{FLR_RULE} other incorrect"),
+                  _md_row(*["---"] * 8)]
+            for cond, t in a["by_condition"].items():
+                if t["non_answers"]:
+                    L.append(_md_row(cond, t["non_answers"], t["refusals"], t["format_invalid_recoverable"], t["ambiguous_or_missing"], t["flr_correct"], t["flr_competing"], t["flr_other_incorrect"]))
+            L += ["", FLR_NOTE]
         maps = sorted({k.split("|", 1)[1] for k in a["by_condition_mapping"]})
         if maps != ["-"]:
             L += ["", _md_row("Answer mapping", *a["by_condition"].keys()), _md_row(*["---"] * (1 + len(a["by_condition"])))]
