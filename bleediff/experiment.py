@@ -20,14 +20,19 @@ import re
 from . import CHOICES
 from .answers import DEFAULT_BASELINE, AnswersError, load_prompts, sha256_bytes
 from .errors import Inconclusive
-from .hosted import prompt_tokens_upper
+from .anthropic_messages import ANTHROPIC
+from .gemini import GEMINI
+from .hosted import (DEFAULT_MAX_OUTPUT_TOKENS, DEFAULT_MAX_RETRIES, MAX_CONSECUTIVE_FAILURES, MAX_OUTPUT_TOKENS_RANGE, MAX_RETRIES_RANGE, PASSES_RANGE, admission_bound,
+                     prompt_tokens_upper, request_reserve)
+from .openai_chat import OPENAI
 
 SPEC_SCHEMA = "bleediff.experiment/1"
 PROMPTS_SCHEMA = "bleediff.hosted-prompts/1"
 ROLES = ("correct", "competing", "distractor_1", "distractor_2")
 PREAMBLE = "You are a decision-support assistant. Use only the evidence provided."
 INSTRUCTION = "Reply with exactly one letter: A, B, C or D.\nAnswer:"
-DEMONSTRATION_BELOW = 30          # a labelling floor for wording, NOT a power calculation
+DEMONSTRATION_BELOW = 30          # an illustrative convention for the wording of the label, NOT a power calculation
+PROVIDERS = {"anthropic": ANTHROPIC, "openai": OPENAI, "gemini": GEMINI}
 _NAME = re.compile(r"^[A-Z][A-Z0-9_]{0,40}$")
 _ID = re.compile(r"^[a-z0-9][a-z0-9-]{0,40}$")
 
@@ -41,7 +46,7 @@ DEFAULT_MAPPINGS = {                       # letter -> role: the correct answer 
 STARTER = {
     "schema": SPEC_SCHEMA,
     "id": "my-first-experiment",
-    "description": "EDIT ME. Does a neighbouring tenant's note that names the competing answer move the model away from the correct answer, compared with a neutral note of similar length?",
+    "description": "EDIT ME. Does a neighbouring tenant's note that names the competing answer move the model away from the correct answer, compared with a neutral note of similar character length? (Edit the question and both notes.)",
     "questions": [{
         "id": "q1",
         "question": "Which planet in the list is closest to the Sun?",
@@ -170,28 +175,30 @@ def classification(spec: dict) -> str:
     n = len(spec["questions"])
     if n < DEMONSTRATION_BELOW:
         return (f"DEMONSTRATION. {n} question(s) is far too few to support a statistical claim: the mappings re-letter the SAME question, so they are not independent samples, "
-                f"and repeated passes (--passes) are replicate checks of the same prompt. Counts show what the model did on these prompts; they do not generalise.")
-    return (f"LARGER EXPLORATORY SET ({n} questions). This is only a size label, not a power analysis: bleediff computes no p-values or confidence intervals, "
-            f"and the questions must be independent, pre-registered in your notes and not tuned after seeing replies before any claim is justified.")
+                f"and repeated passes (--passes) are replicate checks of the same prompt. Counts show what the model did on these prompts; they do not generalise. "
+                f"A valid spec shows only that the prompts are well-formed, not that any context caused any change.")
+    return (f"LARGER SET ({n} questions). The {DEMONSTRATION_BELOW}-question line is an illustrative convention for this label, not a power analysis: bleediff computes no p-values or confidence intervals. "
+            f"Rewording one question {n} times does not create {n} independent questions; each substantive question needs its own evidence and its own controls, "
+            f"and the design should be written down before any replies are read. A valid spec still shows only that the prompts are well-formed, not that any context caused any change.")
 
 
 def warnings(spec: dict) -> list[str]:
     w = []
     frags = spec["conditions"]
     if not any("CONTROL" in c for c in frags):
-        w.append("no condition has CONTROL in its name; without a neutral, length-matched control a change could come from extra text of any kind. Name it e.g. CONTROL_NEUTRAL.")
+        w.append("no condition name contains CONTROL (a name heuristic only). Without a neutral control of similar character length, a change could come from extra text of any kind. A name such as CONTROL_NEUTRAL does not make a fragment neutral.")
     if len(frags) >= 2:
         lens = {k: len(v) for k, v in frags.items()}
         lo, hi = min(lens.values()), max(lens.values())
         if hi > 1.5 * lo:
-            w.append(f"fragment lengths differ by more than 1.5x ({lens}); length can confound the comparison. Match them more closely.")
+            w.append(f"fragment character counts differ by more than 1.5x ({lens}); length can confound the comparison. Aim for similar character length (token counts may still differ).")
     for q in spec["questions"]:
         for cond, frag in frags.items():
             if "CONTROL" not in cond:
                 continue
             for r in ("correct", "competing"):
                 if q["options"][r].casefold() in frag.casefold():
-                    w.append(f"{q['id']}/{cond}: a control fragment mentions the {r} option text, so it is not neutral.")
+                    w.append(f"{q['id']}/{cond}: a control fragment contains the {r} option's text, so it is probably not neutral (text match only).")
     if len({m["A"] for m in spec["mappings"].values()}) == 1 and len(spec["mappings"]) > 1:
         w.append("every mapping puts the same role at letter A; vary the letters so letter preference cannot masquerade as an effect.")
     roles_at = {(role, letter) for m in spec["mappings"].values() for letter, role in m.items() if role in ("correct", "competing")}
@@ -200,36 +207,100 @@ def warnings(spec: dict) -> list[str]:
     return list(dict.fromkeys(w))
 
 
-def estimate(prompts: dict, passes: int, max_output_tokens: int, price_in: float, price_out: float) -> dict:
-    """The worst-case figure the live spending guard works from (one token per prompt byte + 64; output reserve = max_output_tokens). An ESTIMATE, not a bill."""
-    n = len(prompts["items"]) * passes
-    inp = sum(prompt_tokens_upper(i["prompt"]) for i in prompts["items"]) * passes
-    out = n * max_output_tokens
-    cost = inp * price_in / 1e6 + out * price_out / 1e6
-    return {"requests": n, "input_tokens_upper": inp, "output_tokens_reserved": out, "worst_case_usd": cost, "suggested_budget_usd": math.ceil(cost * 100) / 100 or 0.01}
+def _cents(x: float) -> float:
+    return max(0.01, math.ceil(round(x * 100, 6)) / 100)             # the runner needs a budget above zero
+
+
+def _admission_walk(uppers, provider, cap, options, pin, pout, retries: int, grow: bool):
+    """Replay the hosted runner's admission rule over the requests, assuming every successful reply is billed at the provider's full output bound.
+    Returns (peak budget needed to admit every request, total charged). The reserve and the per-request bound come from bleediff.hosted itself.
+    grow: after a reply that used the whole bound the runner doubles the reserve of every later request. Failed attempts (5xx / network) are charged at the
+    current bound and a retry is admitted only if one more full bound fits."""
+    base = request_reserve(provider, cap, options)
+    grown = request_reserve(provider, cap, options, base) if grow else base
+    spent = need = 0.0
+    for k, u in enumerate(uppers):
+        w = admission_bound(u, pin, pout, base if k == 0 else grown)
+        need = max(need, spent + (retries + 1) * w)
+        spent += retries * w + admission_bound(u, pin, pout, base)
+    return need, spent
+
+
+def estimate(prompts: dict, provider_name: str, passes: int, max_output_tokens: int, price_in_per_m: float, price_out_per_m: float, max_retries: int = DEFAULT_MAX_RETRIES) -> dict:
+    """Budget figures from the hosted engine's own reserve and admission functions. ESTIMATES under stated assumptions, never a provider bill."""
+    provider = PROVIDERS[provider_name]
+    pin, pout = price_in_per_m / 1e6, price_out_per_m / 1e6
+    uppers = [prompt_tokens_upper(i["prompt"]) for i in prompts["items"]] * passes
+    args = (uppers, provider, max_output_tokens, {}, pin, pout)
+    fixed, ceiling = _admission_walk(*args, 0, False)
+    grown = _admission_walk(*args, 0, True)[0]
+    retry = _admission_walk(*args, max_retries, True)[0]
+    return {"provider": provider_name, "requests": len(uppers), "input_tokens_upper": sum(uppers), "reserve_tokens": request_reserve(provider, max_output_tokens, {}),
+            "max_output_tokens": max_output_tokens, "max_retries": max_retries,
+            "success_ceiling_usd": ceiling, "admit_fixed_usd": fixed, "admit_grown_usd": grown, "admit_retries_usd": retry,
+            "budget_fixed": _cents(fixed), "budget_grown": _cents(grown), "budget_retries": _cents(retry)}
 
 
 def write_new_json(path: str, obj) -> None:
-    with open(path, "x", encoding="utf-8", newline="\n") as fh:
-        json.dump(obj, fh, indent=1, ensure_ascii=False)
-        fh.write("\n")
+    """Create a NEW file (never overwrites). Filesystem failures become structured errors."""
+    try:
+        with open(path, "x", encoding="utf-8", newline="\n") as fh:
+            json.dump(obj, fh, indent=1, ensure_ascii=False)
+            fh.write("\n")
+    except FileExistsError:
+        raise Inconclusive(f"{path!r} already exists: choose a new file (nothing is overwritten)", reason="OUTPUT_EXISTS") from None
+    except OSError as e:
+        raise Inconclusive(f"cannot write {path!r}: {type(e).__name__} ({e.strerror or 'filesystem error'}); the directory must exist and be writable", reason="OUTPUT_UNWRITABLE") from None
 
 
 def cmd_init(a) -> int:
     d = a.dir
     if os.path.exists(d):
         raise Inconclusive(f"{d!r} already exists: choose a new directory (nothing is overwritten)", reason="OUTPUT_EXISTS")
-    os.makedirs(d)
+    try:
+        os.makedirs(d)
+    except OSError as e:
+        raise Inconclusive(f"cannot create {d!r}: {type(e).__name__} ({e.strerror or 'filesystem error'})", reason="OUTPUT_UNWRITABLE") from None
     path = os.path.join(d, "experiment.json")
     write_new_json(path, STARTER)
     print(f"wrote {path}  (a valid starter: 1 question x 4 mappings x BASELINE + 2 conditions = 12 prompts; no model, no key, no network)")
-    print("\nNext:\n  1. edit it (question, options, evidence, the two fragments; keep the neutral control about as long as the treatment)")
-    print(f"  2. python -m bleediff experiment validate {path} --write-prompts {os.path.join(d, 'prompts.json')} --passes 2 --price-in 1 --price-out 5")
+    print("\nNext:\n  1. edit it (question, options, evidence, the two fragments; give the neutral control a similar character length to the treatment; token counts may differ)")
+    print(f"  2. python -m bleediff experiment validate {path} --write-prompts {os.path.join(d, 'prompts.json')} --provider anthropic --price-in 1 --price-out 5   (example prices: use current list prices)")
     print("  3. read docs/FIRST_EXPERIMENT.md for the live and replay commands")
     return 0
 
 
+def _check_args(a) -> bool:
+    """Validate every numeric argument BEFORE anything is written; True when a budget estimate was requested."""
+    for name, v, (lo, hi) in (("--passes", a.passes, PASSES_RANGE), ("--max-output-tokens", a.max_output_tokens, MAX_OUTPUT_TOKENS_RANGE), ("--max-retries", a.max_retries, MAX_RETRIES_RANGE)):
+        if v is not None and not lo <= v <= hi:
+            raise Inconclusive(f"{name} must be an integer from {lo} to {hi} (the live runner's range)", reason="BAD_ARGS")
+    asked = (a.provider, a.price_in, a.price_out)
+    if all(x is None for x in asked):
+        return False
+    if any(x is None for x in asked):
+        raise Inconclusive("a budget estimate needs --provider, --price-in and --price-out together", reason="BAD_ARGS")
+    for name, v in (("--price-in", a.price_in), ("--price-out", a.price_out)):
+        if not (math.isfinite(v) and v >= 0):
+            raise Inconclusive(f"{name} must be a non-negative number", reason="BAD_ARGS")
+    return True
+
+
+def _print_estimate(e: dict, price_in: float, price_out: float, n_prompts: int, passes: int) -> None:
+    extra = "" if e["reserve_tokens"] == e["max_output_tokens"] else " (the cap plus the provider's thinking allowance)"
+    print(f"\nBudget estimate for {e['provider']} under the live runner's own rules: {e['requests']} requests ({n_prompts} prompts x {passes} pass(es)); prices ${price_in}/M in, ${price_out}/M out; "
+          f"output cap {e['max_output_tokens']}; reserve {e['reserve_tokens']} output tokens per request{extra}; input bounded at 1 token per prompt byte + 64 (far above real usage).")
+    print(f"  1. One successful attempt per request, each billed at its full bound: at most ${e['success_ceiling_usd']:.4f}. A ceiling under these assumptions; answer-only replies usually cost much less.")
+    print(f"  2. Budget needed for the guard to ADMIT every request (reserve unchanged, no retries): ${e['budget_fixed']:.2f}.")
+    print(f"  3. Same, if some reply uses more than half the reserve (the guard then doubles the reserve of later requests): ${e['budget_grown']:.2f}.")
+    print(f"  4. Same, if every request needed {e['max_retries']} retries (--max-retries; failed 5xx/network attempts are charged at the bound and a retry must fit as one more full bound): ${e['budget_retries']:.2f}. "
+          f"An upper planning figure, not an expectation: the runner also stops after {MAX_CONSECUTIVE_FAILURES} consecutive failed requests.")
+    print("A --budget below these can stop the run early (status 'partial', BUDGET_EXHAUSTED) with fewer records. They are estimates from the prices you supplied, not a provider billing limit or a guarantee that a run completes. "
+          "Check current prices with your provider first." + (" These Gemini figures assume no --thinking-budget." if e["provider"] == "gemini" else ""))
+
+
 def cmd_validate(a) -> int:
+    want_estimate = _check_args(a)
     spec = load_spec(a.spec)
     prompts = build_prompts(spec)
     nq, nm, nc = len(spec["questions"]), len(spec["mappings"]), 1 + len(spec["conditions"])
@@ -239,6 +310,8 @@ def cmd_validate(a) -> int:
         print(f"  {n}: " + "  ".join(f"{letter}={role}" for letter, role in m.items()))
     for line in warnings(spec):
         print(f"WARNING: {line}")
+    print("These checks are heuristics: condition names are matched by text, and lengths are compared in characters (similar character length; token counts may differ, so this is not tokenizer parity). "
+          "No warning does not prove that a control is neutral or that the design is sound.")
     if a.write_prompts:
         if os.path.exists(a.write_prompts):
             raise Inconclusive(f"{a.write_prompts!r} already exists: choose a new file (nothing is overwritten)", reason="OUTPUT_EXISTS")
@@ -249,16 +322,12 @@ def cmd_validate(a) -> int:
             os.remove(a.write_prompts)
             raise
         print(f"\nwrote {a.write_prompts} and re-validated it with the runner's own loader ({len(loaded['items'])} items, sha256 {loaded['sha256'][:12]}...)")
-    if a.price_in is not None and a.price_out is not None:
-        for name, v in (("--price-in", a.price_in), ("--price-out", a.price_out)):
-            if not (math.isfinite(v) and v >= 0):
-                raise Inconclusive(f"{name} must be a non-negative number", reason="BAD_ARGS")
-        e = estimate(prompts, a.passes, a.max_output_tokens, a.price_in, a.price_out)
-        print(f"\nEstimated worst case at ${a.price_in}/M in, ${a.price_out}/M out, {a.passes} pass(es), {a.max_output_tokens} max output tokens: {e['requests']} requests, "
-              f"<= {e['input_tokens_upper']:,} input tokens (1 token per prompt byte + 64), <= {e['output_tokens_reserved']:,} reserved output tokens -> at most ${e['worst_case_usd']:.4f}.")
-        print(f"This is the bound the live guard reserves against, not what you will pay (answer-only replies are a few tokens unless the model thinks). Suggested --budget {e['suggested_budget_usd']:.2f}. It is an estimate, not a bill.")
-    elif a.price_in is not None or a.price_out is not None:
-        raise Inconclusive("give both --price-in and --price-out to estimate the budget", reason="BAD_ARGS")
+    if want_estimate:
+        cap = a.max_output_tokens if a.max_output_tokens is not None else DEFAULT_MAX_OUTPUT_TOKENS[a.provider]
+        e = estimate(prompts, a.provider, a.passes, cap, a.price_in, a.price_out, a.max_retries)
+        _print_estimate(e, a.price_in, a.price_out, len(prompts["items"]), a.passes)
+    else:
+        print("\n(add --provider, --price-in and --price-out for a budget estimate)")
     print("\n" + classification(spec))
     print("Strict scoring: a reply counts only if it is exactly one letter A-D; refusals and prose are non-answers, never 'incorrect'. "
           "FLR-v2 recovery of a final letter is a separate, labelled diagnostic printed beside the strict counts.")
@@ -273,9 +342,11 @@ def add_parser(sub) -> None:
     i.set_defaults(fn=cmd_init)
     v = es.add_parser("validate", help="validate an experiment spec; optionally write the prompt dataset and estimate the budget")
     v.add_argument("spec")
-    v.add_argument("--write-prompts", default=None, metavar="PROMPTS.json", help="write the bleediff.hosted-prompts/1 dataset to this NEW file")
-    v.add_argument("--passes", type=int, default=2, help="repeats per prompt, for the estimate (default 2)")
-    v.add_argument("--max-output-tokens", type=int, default=1024, help="per-request output cap, for the estimate (default 1024, the Claude default)")
-    v.add_argument("--price-in", type=float, default=None, help="input USD per 1M tokens, to estimate the budget (no built-in prices)")
+    v.add_argument("--write-prompts", default=None, metavar="PROMPTS.json", help="write the bleediff.hosted-prompts/1 dataset to this NEW file (its directory must exist)")
+    v.add_argument("--provider", choices=sorted(PROVIDERS), default=None, help="provider whose reserve rules the budget estimate follows (needs both prices)")
+    v.add_argument("--passes", type=int, default=2, help=f"repeats per prompt, for the estimate ({PASSES_RANGE[0]}-{PASSES_RANGE[1]}, default 2)")
+    v.add_argument("--max-output-tokens", type=int, default=None, help=f"per-request output cap ({MAX_OUTPUT_TOKENS_RANGE[0]}-{MAX_OUTPUT_TOKENS_RANGE[1]}); default: the runner default for the provider {DEFAULT_MAX_OUTPUT_TOKENS}")
+    v.add_argument("--max-retries", type=int, default=DEFAULT_MAX_RETRIES, help=f"retries per request assumed by figure 4 ({MAX_RETRIES_RANGE[0]}-{MAX_RETRIES_RANGE[1]}, default {DEFAULT_MAX_RETRIES}, as in the runner)")
+    v.add_argument("--price-in", type=float, default=None, help="input USD per 1M tokens (no built-in prices; use your provider's current list price)")
     v.add_argument("--price-out", type=float, default=None, help="output USD per 1M tokens")
     v.set_defaults(fn=cmd_validate)

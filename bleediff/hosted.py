@@ -43,6 +43,11 @@ from .meta import code_revision
 TRANSIENT_HTTP = frozenset({429, 500, 502, 503, 504, 529})          # 529 = Anthropic "overloaded"
 NON_RETRYABLE_QUOTA_CODES = frozenset({"insufficient_quota", "billing_not_active"})
 MAX_CONSECUTIVE_FAILURES = 3
+PASSES_RANGE = (1, 20)                                   # accepted by run_session; `bleediff experiment validate` checks the same ranges
+MAX_OUTPUT_TOKENS_RANGE = (1, 65536)
+MAX_RETRIES_RANGE = (0, 5)
+DEFAULT_MAX_RETRIES = 2
+DEFAULT_MAX_OUTPUT_TOKENS = {"anthropic": 1024, "openai": 512, "gemini": 512}      # the CLI defaults of --max-output-tokens
 _MODEL_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,80}$")
 _KEYLIKE = re.compile(r"AIza[0-9A-Za-z_\-]{10,}|sk-[A-Za-z0-9_\-]{16,}|(?i:x-goog-api-key[\"':= ]+[^\s\"',}]+)|(?i:[?&]key=[^\s&\"']+)|(?i:authorization[\"':= ]+(?:bearer )?[^\s\"',}]+)|(?i:bearer [A-Za-z0-9._\-]{12,})")
 
@@ -216,10 +221,20 @@ def prompt_tokens_upper(prompt: str) -> int:
     return len(prompt.encode("utf-8")) + 64
 
 
+def request_reserve(provider: Provider, max_output_tokens: int, options: dict, max_seen_out: int = 0) -> int:
+    """Output tokens the guard reserves for the next request: the provider's bound, raised to twice the largest output seen so far in the session."""
+    return max(provider.output_reserve(max_output_tokens, options), 2 * max_seen_out)
+
+
+def admission_bound(prompt_upper: int, price_in: float, price_out: float, reserve: int) -> float:
+    """Worst-case cost (USD; prices per token) of one request: the figure that must fit under the remaining budget before it is sent."""
+    return prompt_upper * price_in + reserve * price_out
+
+
 def billed_cost(usage: dict, price_in: float, price_out: float, prompt_upper: int, out_reserve: int):
     """(cost_usd, basis, usage_complete). Prices are USD per token. Missing or inconsistent usage metadata is charged at the worst-case bound."""
     pt, ct, th, tt = (usage.get(k) for k in ("promptTokenCount", "candidatesTokenCount", "thoughtsTokenCount", "totalTokenCount"))
-    worst = prompt_upper * price_in + out_reserve * price_out
+    worst = admission_bound(prompt_upper, price_in, price_out, out_reserve)
     if pt is None or (ct is None and th is None and tt is None) or (tt is not None and tt < pt):
         return worst, "upper_bound_missing_or_inconsistent_usage", False
     out = (ct or 0) + (th or 0)
@@ -244,20 +259,20 @@ def write_new(path: str, obj) -> None:
 
 def run_session(provider: Provider, *, prompts_path: str, model: str, out_dir: str, passes: int, budget: float, price_in_per_m: float, price_out_per_m: float, key: str,
                 post=None, sleep=time.sleep, max_output_tokens: int = 512, temperature=None, top_p=None, seed: int = 0, options: dict | None = None,
-                max_retries: int = 2, timeout: float = 120.0, log=lambda s: None) -> dict:
+                max_retries: int = DEFAULT_MAX_RETRIES, timeout: float = 120.0, log=lambda s: None) -> dict:
     post = post or (lambda url, body, k, t: http_post(provider, url, body, k, t))
     options = dict(options or {})
     model = normalise_model(model)
-    if not (isinstance(passes, int) and 1 <= passes <= 20):
+    if not (isinstance(passes, int) and PASSES_RANGE[0] <= passes <= PASSES_RANGE[1]):
         raise Inconclusive("--passes must be an integer from 1 to 20", reason="BAD_ARGS")
     for name, v in (("--budget", budget), ("--price-in", price_in_per_m), ("--price-out", price_out_per_m)):
         if not (isinstance(v, (int, float)) and math.isfinite(v) and v >= 0):
             raise Inconclusive(f"{name} must be a non-negative number", reason="BAD_ARGS")
     if budget <= 0:
         raise Inconclusive("--budget must be greater than zero (live runs need an explicit spending cap)", reason="BAD_ARGS")
-    if not (isinstance(max_retries, int) and 0 <= max_retries <= 5):
+    if not (isinstance(max_retries, int) and MAX_RETRIES_RANGE[0] <= max_retries <= MAX_RETRIES_RANGE[1]):
         raise Inconclusive("--max-retries must be an integer from 0 to 5", reason="BAD_ARGS")
-    if not (isinstance(max_output_tokens, int) and 1 <= max_output_tokens <= 65536):
+    if not (isinstance(max_output_tokens, int) and MAX_OUTPUT_TOKENS_RANGE[0] <= max_output_tokens <= MAX_OUTPUT_TOKENS_RANGE[1]):
         raise Inconclusive("--max-output-tokens must be an integer from 1 to 65536", reason="BAD_ARGS")
     if os.path.exists(out_dir):
         raise Inconclusive(f"{out_dir!r} already exists: choose a new session directory (evidence is never overwritten)", reason="OUTPUT_EXISTS")
@@ -285,8 +300,8 @@ def run_session(provider: Provider, *, prompts_path: str, model: str, out_dir: s
             for item in prompts["items"]:
                 name = f"{item['cell']}__{item['condition']}__pass{pas}"
                 upper_prompt = prompt_tokens_upper(item["prompt"])
-                reserve = max(provider.output_reserve(max_output_tokens, options), 2 * max_seen_out)
-                worst = upper_prompt * pin + reserve * pout
+                reserve = request_reserve(provider, max_output_tokens, options, max_seen_out)
+                worst = admission_bound(upper_prompt, pin, pout, reserve)
                 if spent + worst > budget:
                     status, stop_reason = "partial", f"BUDGET_EXHAUSTED: ${spent:.6f} spent (estimate); the worst case of the next request (${worst:.6f}) would exceed the ${budget:.2f} cap"
                     raise StopIteration
