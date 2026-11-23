@@ -25,6 +25,7 @@ permutation support and clearer labels) and a sanitized, offline-reproducible **
 | `bleediff atlas` | Cross-task, cross-model report over saved batch sessions: validated sources, paired category effects, correctness outcomes, filters. | **no** (reads saved results) |
 | `bleediff gemini`, `bleediff openai`, `bleediff anthropic` | ANSWER_ONLY runs on the Gemini / OpenAI / Anthropic APIs (hosted models without usable A-D probabilities), or `--replay` of saved evidence. | live: API key and budget; replay: **no** |
 | `calibrate`, `bounce`, `diff`, `inspect` | The v0.2.0 three-request fold research CLI (unchanged). | yes |
+| `bleed` | v0.2.0 helper: offline preview of the exact arena boundary displacement against the matched control (see `bleediff bleed --help`). | **no** |
 
 The v0.2.0 research fold (`M = (p1 + p2 + p3) / 3` against a clean baseline, `delta_contrast = R_B - R_A`), its equations, thresholds,
 trace schema and results are **unchanged**; see [Research findings from v0.2.0](#research-findings-from-v020) and
@@ -32,10 +33,46 @@ trace schema and results are **unchanged**; see [Research findings from v0.2.0](
 #3 of a frozen scenario, clean or with a fragment appended after its authorized context), so their values are not
 `delta_contrast`.
 
+## Install
+
+Requires **Python 3.11 or newer** and `git`. There are no third-party dependencies.
+
+```
+git clone https://github.com/Ashes42/bleediff.git
+cd bleediff
+python -m venv .venv
+```
+
+Activate the virtual environment (run **one** of these, for your platform, before installing, so Bleediff does not go into your system Python):
+
+Windows PowerShell:
+
+```
+.venv\Scripts\Activate.ps1
+```
+
+macOS/Linux:
+
+```
+source .venv/bin/activate
+```
+
+Then, with the environment active (your prompt usually shows `(.venv)`):
+
+```
+python -m pip install .
+bleediff --version        # prints: bleediff 0.5.0
+bleediff --help           # lists every command
+```
+
+`pip install .` is optional for the examples below: run from the repository root, `python -m bleediff ...` works without installing. All
+example paths (`examples/...`, `runs/...`) are relative to the repository root, which is also where the bundled example data lives (it is
+not installed into the venv).
+
 ## Quick start (no model needed)
 
 ```
-python -m unittest discover -s tests                 # mock llama-server; takes a few minutes
+python -m unittest discover -s tests                 # mock llama-server; takes several minutes (about 6 on one test machine)
 
 # the Atlas on the bundled example sessions (saved results of real runs; see examples/atlas/README.md)
 python -m bleediff atlas --manifest examples/atlas/pilot/atlas-input.json --out runs/atlas-pilot
@@ -54,7 +91,30 @@ python examples/hosted-comparison/verify_comparison.py
 
 `--out` directories must not exist; reports are never overwritten. Nothing here downloads or runs a model.
 
-## The three commands
+**About the test run.** The full suite takes several minutes. It can print `ResourceWarning` lines and one line starting `ERROR: ... provider message id(s) appear in more than one record`; that line is the expected output of a negative test (a deliberate duplicate-record check). What matters is the final `OK` from `unittest` (some tests are skipped by design).
+
+## What you can reproduce
+
+Not every number in this repository is reproducible in the same way. There are three tiers:
+
+1. **Recomputed offline from bundled records.** The Atlas runs, the four-mapping numbers (`verify_summary.py`) and the hosted-comparison tables
+   (`verify_comparison.py`) are recalculated from files in this repository, with no key, network or model. Run the Quick start commands above.
+2. **Archived model responses: replayed and hash-verified.** The hosted sessions under `examples/hosted-comparison/`, `examples/gemini-answer-only/`
+   and `examples/openai-answer-only/` are saved provider responses (with thinking signatures and reasoning text replaced by placeholders).
+   `--replay` re-reads and re-validates them (schemas, hashes) and recomputes the counts, and `examples/hosted-comparison/SHA256SUMS.txt` lists a
+   SHA-256 for each file. **Replay does not rerun model inference**: it shows that the saved records give the published tables, not that a model
+   would answer the same way today. A live rerun will not reproduce these records exactly.
+3. **Historical experiments that need material not in the repository.** The v0.2.0 fold and local-model measurements need your own GGUF files
+   and `llama-server` (expected model hashes are listed below), and a bit-identical rerun is only claimed for the tested setup. The exploratory
+   hosted refusal runs behind `docs/CASE_NOTE_HOSTED_REFUSALS_AND_FORMAT.md` are git-ignored raw runs that are **not published**; only their
+   per-request index (`docs/evidence/`) is public, so those counts can be inspected but not re-derived. The Gemini and OpenAI pilots were
+   converted from earlier pilot scripts that are not in the repository, and the native-template Llama check is not bundled.
+
+**Version labels.** Labels such as v0.7 to v0.15 in the docs and in some file comments name **internal research iterations** (pilots and
+follow-up runs). They are not published package versions. The released versions are 0.2.0 to 0.5.0 (see `CHANGELOG.md` and the `RELEASE_NOTES_v*.md` files; the
+0.1.x entries there are internal); the current package version is 0.5.0, as in [What is in v0.5.0](#what-is-in-v050).
+
+## Local and hosted commands
 
 The real-model commands below need **your own GGUF files and a llama.cpp `llama-server`** (the examples used build
 `b11963-39febd2ad`, CPU, `-c 4096 -ngl 0`). Without them only the test suite (mock server) and `atlas` run.
@@ -111,6 +171,20 @@ passes. It never produces probabilities, log-odds margins, confidence or a leade
 * **Provider refusals versus incorrect answers.** A refusal (for example Anthropic `stop_reason: refusal`) is a provider decision to return nothing. It is a non-answer, never counted as incorrect or competing, and its category label is provider metadata, not a measured cause.
 * **Strict parsing versus secondary diagnostics.** The primary parse accepts only a reply that is exactly one letter A-D; prose, `**B**` and empty replies are `invalid`/`empty` non-answers. Lenient readings (for example "last line is one letter") are separate, labelled and post-hoc, and never replace the strict result.
 * **Estimated budget enforcement versus provider billing.** `--budget` caps an estimate computed from the prices you supply and the usage reported, with a worst-case reserve checked before every request. It is not a guaranteed billing limit: every retry must fit under the remaining estimate as one more worst-case attempt, and a failed attempt that may have been billed (network error, HTTP 5xx) is charged at the worst-case bound, but caching, price tiers and the provider's real billing are not modelled.
+
+**Strict scoring versus FLR diagnostics (worked example).** The primary result is always the strict parse. FLR is an optional, post-hoc, labelled
+diagnostic on replies the strict parse rejected as `invalid`; neither version changes a primary classification or the strict columns.
+
+* **FLR-v1** (historical Final-Line Recovery): take the last non-empty line, strip markdown emphasis, accept one letter A-D. Used in the original reconciliation notes and tables (`research/reconcile_evidence.py`, unchanged).
+* **FLR-v2** (conflict-aware): the same, but if standalone letters on different lines disagree it reports a conflict and picks nothing. It is what `--replay` and the Atlas print. On the 61 format-invalid replies in the saved Haiku and Sonnet sessions (12 refusals excluded) v1 and v2 extract the same letter every time; none of those replies has conflicting letters, so the difference is not exercised by this data.
+* Neither applies to provider refusals, and neither produces a probability or confidence.
+
+The prompt says "Reply with exactly one letter". Claude Sonnet 5.5 instead wrote visible prose that ends in a letter in 60 of 160 requests,
+including all 32 COMPETING requests. Those are **format failures, not answers**: the strict parse scores them `invalid`, so the strict COMPETING
+row reads 0 correct / 0 competing / 0 other / 32 no answer. That does **not** mean Sonnet resisted the competing evidence, only that none of those
+replies followed the format. FLR-v2 reads the letter each reply ended on and reports 2 correct / 30 competing for those 32 replies (the same totals as GPT-4.1 mini); it
+describes the letter Sonnet settled on, was defined after the replies were read, and credits replies the prompt forbade. Haiku's 12 refusals are a different kind of non-answer and stay
+refusals. Details: [`docs/HOSTED_MODELS.md`](docs/HOSTED_MODELS.md) and [`examples/hosted-comparison/README.md`](examples/hosted-comparison/README.md).
 
 ```
 # offline, free: replay saved evidence (the v0.8 pilot, converted; see examples/gemini-answer-only/README.md)
@@ -306,7 +380,7 @@ Both Qwen models share the Qwen2.5 tokenizer, so every frozen text and control k
 * `bleediff/roles.py` (v0.4.0) the semantic answer-role scoring used by `track --arms` and the Atlas.
 * `examples/atlas/` small sanitized example datasets (saved batch sessions, candidate files, fixtures, atlas input manifests) that
   reproduce the v0.3.0 findings offline, and `mention_contrasts.py`.
-* `bleediff/answers.py`, `bleediff/hosted.py`, `bleediff/gemini.py`, `bleediff/openai_chat.py`, `bleediff/anthropic_messages.py` answer-only analysis, the shared hosted engine and the three provider adapters (feature branch).
+* `bleediff/answers.py`, `bleediff/hosted.py`, `bleediff/gemini.py`, `bleediff/openai_chat.py`, `bleediff/anthropic_messages.py` answer-only analysis, the shared hosted engine and the three provider adapters (v0.5.0).
 * `examples/gemini-answer-only/`, `examples/openai-answer-only/` the Gemini and GPT-4.1 mini pilots as replayable ANSWER_ONLY bundles; `examples/hosted-comparison/` the five-model comparison (Claude Haiku and Sonnet sessions, results table, `verify_comparison.py`).
 * `docs/HOSTED_MODELS.md` the hosted-model usage guide; `docs/EVIDENCE_RECONCILIATION.md`, `docs/CASE_NOTE_HOSTED_REFUSALS_AND_FORMAT.md` and `docs/evidence/` the reconciliation of the exploratory Claude runs (v0.10-v0.15), a short case note and a per-request index; `research/reconcile_evidence.py` regenerates the index.
 * `examples/four-mapping/` the sanitized four-mapping evidence bundle (48 sessions, SHA-256 list) and `verify_summary.py` (v0.4.0).
