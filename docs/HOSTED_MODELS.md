@@ -1,6 +1,6 @@
 # Hosted models: `bleediff gemini`, `bleediff openai`, `bleediff anthropic`
 
-Usage guide for the three hosted adapters (v0.5.0). They share one engine (`bleediff/hosted.py`); each provider module (`gemini.py`, `openai_chat.py`, `anthropic_messages.py`) holds only that API's request and
+Usage guide for the three hosted adapters (added in v0.5.0; the no-answer split and FLR-v2 diagnostic were added in v0.6.0). They share one engine (`bleediff/hosted.py`); each provider module (`gemini.py`, `openai_chat.py`, `anthropic_messages.py`) holds only that API's request and
 response shapes. Analysis is `bleediff/answers.py`. Everything here is exploratory and answer-level.
 
 ## 1. Two measurement types: DIRECT_PROBABILITY versus ANSWER_ONLY

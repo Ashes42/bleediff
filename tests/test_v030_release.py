@@ -67,8 +67,8 @@ class TestVersionAndDocs(unittest.TestCase):
         import tomllib
 
         with open(os.path.join(ROOT, "pyproject.toml"), "rb") as fh:
-            self.assertEqual(tomllib.load(fh)["project"]["version"], "0.5.0")
-        self.assertEqual(bleediff.__version__, "0.5.0")
+            self.assertEqual(tomllib.load(fh)["project"]["version"], "0.6.0")
+        self.assertEqual(bleediff.__version__, "0.6.0")
         cl = read(os.path.join(ROOT, "CHANGELOG.md"))
         self.assertLess(cl.index("## [0.4.0]"), cl.index("## [0.3.0]"))
         self.assertLess(cl.index("## [0.3.0]"), cl.index("## [0.2.0]"))
@@ -76,7 +76,7 @@ class TestVersionAndDocs(unittest.TestCase):
         self.assertNotIn("Pending for the next release", cl)
         self.assertIn("v0.3.0", read(os.path.join(ROOT, "RELEASE_NOTES_v0.3.0.md")).splitlines()[0])
         self.assertIn("v0.4.0", read(os.path.join(ROOT, "RELEASE_NOTES_v0.4.0.md")).splitlines()[0])
-        self.assertIn("**0.5.0**", read(os.path.join(ROOT, "README.md")))
+        self.assertIn("**0.6.0**", read(os.path.join(ROOT, "README.md")))
         self.assertTrue(os.path.isfile(os.path.join(ROOT, "RELEASE_NOTES_v0.2.0.md")))
 
     def test_readme_documents_the_three_commands_and_the_distinctions(self):
