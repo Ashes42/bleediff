@@ -33,6 +33,7 @@ from .protocol import (
 )
 from .client import DEFAULT_N_PROBS, LlamaClient
 from .errors import Inconclusive, TraceError
+from .experiment import add_parser as _add_experiment_parser
 from .fold import TRACE_SCHEMA, check_record, gate, read_traces, write_traces
 from .meta import (
     baseline_infos_from_baseline,
@@ -488,6 +489,7 @@ def build_parser() -> argparse.ArgumentParser:
     a.add_argument("--effect-marker", type=float, default=0.25, help="descriptive size in nats used for the 'at least' counts (default 0.25)")
     a.add_argument("--keep-going", action="store_true", help="exclude sources that fail validation and report them instead of stopping")
     a.set_defaults(fn=cmd_atlas)
+    _add_experiment_parser(sub)
     return p
 
 
