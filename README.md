@@ -158,7 +158,7 @@ passes. It never produces probabilities, log-odds margins, confidence or a leade
 diagnostic on replies the strict parse rejected as `invalid`; neither version changes a primary classification or the strict columns.
 
 * **FLR-v1** (historical Final-Line Recovery): take the last non-empty line, strip markdown emphasis, accept one letter A-D. Used in the original reconciliation notes and tables (`research/reconcile_evidence.py`, unchanged).
-* **FLR-v2** (conflict-aware): the same, but if standalone letters on different lines disagree it reports a conflict and picks nothing. It is what `--replay` and the Atlas print. On the saved Claude sessions v1 and v2 give the same numbers.
+* **FLR-v2** (conflict-aware): the same, but if standalone letters on different lines disagree it reports a conflict and picks nothing. It is what `--replay` and the Atlas print. On the 61 format-invalid replies in the saved Haiku and Sonnet sessions (12 refusals excluded) v1 and v2 extract the same letter every time; none of those replies has conflicting letters, so the difference is not exercised by this data.
 * Neither applies to provider refusals, and neither produces a probability or confidence.
 
 The prompt says "Reply with exactly one letter". Claude Sonnet 5.5 instead wrote visible prose that ends in a letter in 60 of 160 requests,
