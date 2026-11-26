@@ -33,6 +33,7 @@ from .protocol import (
 )
 from .client import DEFAULT_N_PROBS, LlamaClient
 from .errors import Inconclusive, TraceError
+from .behavior import add_parser as _add_behavior_parser
 from .experiment import add_parser as _add_experiment_parser
 from .hosted import DEFAULT_MAX_OUTPUT_TOKENS, DEFAULT_MAX_RETRIES
 from .fold import TRACE_SCHEMA, check_record, gate, read_traces, write_traces
@@ -491,6 +492,7 @@ def build_parser() -> argparse.ArgumentParser:
     a.add_argument("--keep-going", action="store_true", help="exclude sources that fail validation and report them instead of stopping")
     a.set_defaults(fn=cmd_atlas)
     _add_experiment_parser(sub)
+    _add_behavior_parser(sub)
     return p
 
 

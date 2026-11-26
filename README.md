@@ -34,6 +34,10 @@ trace schema and results are **unchanged**; see [Research findings from v0.2.0](
 #3 of a frozen scenario, clean or with a fragment appended after its authorized context), so their values are not
 `delta_contrast`.
 
+## Behavioral telemetry (feature branch, Phase 1)
+
+On the branch `feature/behavioral-telemetry-v07` (not released; the version is still 0.6.0), `bleediff behavior report|ingest` reads saved hosted sessions **offline** and reports answer behavior, provider-reported thinking, resource expenditure and format/refusal as four separate blocks, with explicit measurement states (observed zero, missing, unsupported, inconsistent, invalid) and explicitly paired contrasts; there is no composite score and no inference. Guide: [`docs/BEHAVIORAL_TELEMETRY.md`](docs/BEHAVIORAL_TELEMETRY.md); boundaries: [`docs/ARCHITECTURE_V07_BEHAVIOR.md`](docs/ARCHITECTURE_V07_BEHAVIOR.md).
+
 ## Install
 
 Requires **Python 3.11 or newer** and `git`. There are no third-party dependencies.

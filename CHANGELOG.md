@@ -3,6 +3,17 @@
 All notable changes. Versions identify the software that wrote a file, not an experiment or an algorithm; protocols and
 control algorithms have their own identifiers (see `docs/TECHNICAL.md`).
 
+## Behavioral telemetry, Phase 1 (feature branch `feature/behavioral-telemetry-v07`; not a release, the version stays 0.6.0)
+
+### Added
+- `bleediff behavior ingest|report` (`bleediff/behavior.py`, `bleediff/telemetry.py`): offline behavioral telemetry from saved hosted sessions. One observation per request with 13 measurements (answer outcome and role, format compliance, refusal, thinking tokens and activation, input/output/non-thinking/cache tokens, latency, estimated cost), each in exactly one explicit state: OBSERVED (zero is a legitimate value), MISSING, UNSUPPORTED, INCONSISTENT or INVALID. Absent thinking telemetry is never converted to zero.
+- Validated Anthropic adapter (against the published Research 002 evidence); OpenAI and Gemini adapters cover answers, format, refusal and input tokens only, with reasoning telemetry UNSUPPORTED.
+- Condition-level summaries in four separate blocks (answer behavior, provider-reported thinking, resources, format/refusal), unit-averaged beside pooled figures, and explicitly paired contrasts (same session, cell and pass; both records must be OBSERVED). No composite score and no inference.
+- `docs/BEHAVIORAL_TELEMETRY.md`, `docs/ARCHITECTURE_V07_BEHAVIOR.md`, `examples/behavior/r002_compat_check.py` (reproduces the published Research 002 condition-level and paired figures from the published records, read only), `tests/test_v070_behavior.py`.
+
+### Changed
+- `bleediff/cli.py`: registers the `behavior` command (two lines). No existing command, record format or output changes.
+
 ## [0.6.0] - experiment authoring, per-question conditions and hosted answer diagnostics (exploratory)
 
 Release notes: `RELEASE_NOTES_v0.6.0.md`. The authoring workflow has been exercised offline only (tests with mocked providers); no new measurements or live provider results are published, and historical research results are unchanged.
