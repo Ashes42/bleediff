@@ -1,4 +1,4 @@
-"""Offline behavioral reporting (v0.7 Phase 1): ingest saved evidence, summarise it by condition, and form explicitly PAIRED contrasts. No key, no network, no model.
+"""Offline behavioral reporting (v0.7.0): ingest saved evidence, summarise it by condition, and form explicitly PAIRED contrasts. No key, no network, no model.
 
 INGESTION. ``load_evidence`` reads a saved session directory (``session.json`` + ``records/`` + optional ``prompts.json``), the legacy pilot layout (a directory of
 ``<cell>__<condition>__pass<k>.json`` plus a prompt dataset) or an observations file written by ``bleediff behavior ingest``. It only READS: the evidence is never modified, every

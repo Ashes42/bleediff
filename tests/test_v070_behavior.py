@@ -1,4 +1,4 @@
-"""Behavioral telemetry, Phase 1 (bleediff.telemetry, bleediff.behavior, ``bleediff behavior``). All offline: no key, no network, no model.
+"""Behavioral telemetry, v0.7.0 (bleediff.telemetry, bleediff.behavior, ``bleediff behavior``). All offline: no key, no network, no model.
 
 Covers the five measurement states (legitimate zeros, missing, unsupported, inconsistent, invalid), the adapters, ingestion (including malformed evidence), condition summaries,
 explicitly paired contrasts, the CLI, backward compatibility, and a real-world validation fixture: the published Research 002 evidence (skipped, with a stated reason, when the
@@ -600,7 +600,7 @@ class TestCLI(unittest.TestCase):
 
     def test_existing_commands_and_version_are_unchanged(self):
         import bleediff
-        self.assertEqual(bleediff.__version__, "0.6.0")          # this feature branch does not change the version
+        self.assertEqual(bleediff.__version__, "0.7.0")
         from bleediff.cli import build_parser
         names = set(next(a for a in build_parser()._actions if getattr(a, "choices", None) and "calibrate" in a.choices).choices)
         self.assertTrue({"calibrate", "bleed", "bounce", "diff", "inspect", "track", "gemini", "openai", "anthropic", "atlas", "experiment", "behavior"} <= names)

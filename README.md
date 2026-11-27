@@ -7,12 +7,16 @@
 - **Local:** GGUF evaluation runs against a local `llama-server` you start yourself, and keeps no prompts or fragment text unless you ask.
 - **Hosted:** `bleediff gemini`, `bleediff openai` and `bleediff anthropic` send your prompts to the third-party API provider you select. Hosted sessions persist prompt and response data locally so they can be replayed offline. Do not submit sensitive prompt content unless you understand these implications.
 
-Version **0.6.0** is an **exploratory research toolkit** with measurements on three local models and, answer-level only, five hosted models. It is not a
+> **Published evidence.** The Research 002 study behind v0.7.0 is public: **[https://github.com/Ashes42/bleediff-research-002](https://github.com/Ashes42/bleediff-research-002)** (release v1.0.0: frozen protocol, sanitized run records, report, errata, provenance and offline reproduction commands). `bleediff behavior` reads its records offline and reproduces its published condition-level and paired figures; see [What is in v0.7.0](#what-is-in-v070).
+
+Version **0.7.0** is an **exploratory research toolkit** with measurements on three local models and, answer-level only, five hosted models. It is not a
 security scanner and has not demonstrated a vulnerability.
 
-## What is in v0.6.0
+## What is in v0.7.0
 
-v0.6.0 adds **experiment authoring**: `bleediff experiment init|validate` writes and checks a small answer-only experiment offline (starter spec, per-question or global conditions, a prompt dataset the hosted commands accept, provider-aware budget estimates; guide: [`docs/FIRST_EXPERIMENT.md`](docs/FIRST_EXPERIMENT.md)), and the hosted replay and Atlas reports now split refusals from format-invalid replies and print a labelled FLR-v2 diagnostic beside the unchanged strict counts. The authoring workflow has been exercised offline only. Release notes: [`RELEASE_NOTES_v0.6.0.md`](RELEASE_NOTES_v0.6.0.md). v0.5.0 had added **hosted-model support**: `bleediff gemini`, `bleediff openai` and `bleediff anthropic` (`ANSWER_ONLY` runs with an enforced estimated-spend cap, redacted evidence and offline `--replay`), Atlas sections that keep
+v0.7.0 adds **behavioral telemetry**: `bleediff behavior ingest|report` reads saved hosted sessions **offline** (no key, no network, no model) and reports four things separately, because Research 002 showed that a contextual change can sharply change how often a provider reports *thinking* while the *answer* barely moves: **answer behavior** (selection, correctness), **provider-reported thinking** (tokens, activation), **resource expenditure** (input/output/cache tokens, latency, estimated cost) and **format and refusal**. Every one of the 13 measurements carries exactly one of five validity states: **OBSERVED** (zero is a legitimate value), **MISSING**, **UNSUPPORTED**, **INCONSISTENT** or **INVALID**, and absent thinking telemetry is never converted to zero. Condition-level summaries sit beside unit-averaged ones, contrasts are explicitly paired, and there is no composite score and no inference. The Anthropic adapter is validated against the published Research 002 records; OpenAI and Gemini cover answers, format, refusal and input tokens only. Guide: [`docs/BEHAVIORAL_TELEMETRY.md`](docs/BEHAVIORAL_TELEMETRY.md); boundaries: [`docs/ARCHITECTURE_V07_BEHAVIOR.md`](docs/ARCHITECTURE_V07_BEHAVIOR.md); Research 002 compatibility demonstration: [`examples/behavior/r002_compat_check.py`](examples/behavior/r002_compat_check.py) against the [published repository](https://github.com/Ashes42/bleediff-research-002). Release notes: [`RELEASE_NOTES_v0.7.0.md`](RELEASE_NOTES_v0.7.0.md).
+
+v0.6.0 had added **experiment authoring**: `bleediff experiment init|validate` writes and checks a small answer-only experiment offline (starter spec, per-question or global conditions, a prompt dataset the hosted commands accept, provider-aware budget estimates; guide: [`docs/FIRST_EXPERIMENT.md`](docs/FIRST_EXPERIMENT.md)), and the hosted replay and Atlas reports now split refusals from format-invalid replies and print a labelled FLR-v2 diagnostic beside the unchanged strict counts. The authoring workflow has been exercised offline only. Release notes: [`RELEASE_NOTES_v0.6.0.md`](RELEASE_NOTES_v0.6.0.md). v0.5.0 had added **hosted-model support**: `bleediff gemini`, `bleediff openai` and `bleediff anthropic` (`ANSWER_ONLY` runs with an enforced estimated-spend cap, redacted evidence and offline `--replay`), Atlas sections that keep
 `ANSWER_ONLY` and `DIRECT_PROBABILITY` apart, and a replayable five-model comparison ([`examples/hosted-comparison/`](examples/hosted-comparison/README.md); guide: [`docs/HOSTED_MODELS.md`](docs/HOSTED_MODELS.md)).
 Release notes: [`RELEASE_NOTES_v0.5.0.md`](RELEASE_NOTES_v0.5.0.md). v0.4.0 had added **semantic answer-role scoring** (the correct and the competing answers can sit at any letters A to D, with answer-letter
 permutation support and clearer labels) and a sanitized, offline-reproducible **four-mapping evidence bundle**
@@ -25,6 +29,7 @@ permutation support and clearer labels) and a sanitized, offline-reproducible **
 | `bleediff atlas` | Cross-task, cross-model report over saved batch sessions: validated sources, paired category effects, correctness outcomes, filters. | **no** (reads saved results) |
 | `bleediff gemini`, `bleediff openai`, `bleediff anthropic` | ANSWER_ONLY runs on the Gemini / OpenAI / Anthropic APIs (hosted models without usable A-D probabilities), or `--replay` of saved evidence. | live: API key and budget; replay: **no** |
 | `calibrate`, `bounce`, `diff`, `inspect` | The v0.2.0 three-request fold research CLI (unchanged). | yes |
+| `bleediff behavior ingest / report` | Offline behavioral telemetry over saved hosted sessions: answer behavior, provider-reported thinking, resources and format/refusal as separate blocks, with explicit measurement states and paired contrasts. Guide: [`docs/BEHAVIORAL_TELEMETRY.md`](docs/BEHAVIORAL_TELEMETRY.md). | **no** |
 | `bleediff experiment init / validate` | Author your own small answer-only experiment: a starter spec, offline validation, a prompt dataset the hosted commands accept, and an estimated budget. Guide: [`docs/FIRST_EXPERIMENT.md`](docs/FIRST_EXPERIMENT.md). | **no** |
 | `bleed` | v0.2.0 helper: offline preview of the exact arena boundary displacement against the matched control (see `bleediff bleed --help`). | **no** |
 
@@ -33,10 +38,6 @@ trace schema and results are **unchanged**; see [Research findings from v0.2.0](
 [`docs/TECHNICAL.md`](docs/TECHNICAL.md). The three v0.3.0 commands are a different measurement: **one prompt per score** (request
 #3 of a frozen scenario, clean or with a fragment appended after its authorized context), so their values are not
 `delta_contrast`.
-
-## Behavioral telemetry (feature branch, Phase 1)
-
-On the branch `feature/behavioral-telemetry-v07` (not released; the version is still 0.6.0), `bleediff behavior report|ingest` reads saved hosted sessions **offline** and reports answer behavior, provider-reported thinking, resource expenditure and format/refusal as four separate blocks, with explicit measurement states (observed zero, missing, unsupported, inconsistent, invalid) and explicitly paired contrasts; there is no composite score and no inference. Guide: [`docs/BEHAVIORAL_TELEMETRY.md`](docs/BEHAVIORAL_TELEMETRY.md); boundaries: [`docs/ARCHITECTURE_V07_BEHAVIOR.md`](docs/ARCHITECTURE_V07_BEHAVIOR.md).
 
 ## Install
 
@@ -66,7 +67,7 @@ Then, with the environment active (your prompt usually shows `(.venv)`):
 
 ```
 python -m pip install .
-bleediff --version        # prints: bleediff 0.6.0
+bleediff --version        # prints: bleediff 0.7.0
 bleediff --help           # lists every command
 ```
 
@@ -116,8 +117,8 @@ Not every number in this repository is reproducible in the same way. There are t
    converted from earlier pilot scripts that are not in the repository, and the native-template Llama check is not bundled.
 
 **Version labels.** Labels such as v0.7 to v0.15 in the docs and in some file comments name **internal research iterations** (pilots and
-follow-up runs). They are not published package versions. The released versions are 0.2.0 to 0.6.0 (see `CHANGELOG.md` and the `RELEASE_NOTES_v*.md` files; the
-0.1.x entries there are internal); the current package version is 0.6.0, as in [What is in v0.6.0](#what-is-in-v060).
+follow-up runs; the internal "v0.7" frontier pilot is unrelated to the 0.7.0 release). They are not published package versions. The released versions are 0.2.0 to 0.7.0 (see `CHANGELOG.md` and the `RELEASE_NOTES_v*.md` files; the
+0.1.x entries there are internal); the current package version is 0.7.0, as in [What is in v0.7.0](#what-is-in-v070).
 
 ## Local and hosted commands
 
@@ -387,11 +388,12 @@ Both Qwen models share the Qwen2.5 tokenizer, so every frozen text and control k
   reproduce the v0.3.0 findings offline, and `mention_contrasts.py`.
 * `bleediff/answers.py`, `bleediff/hosted.py`, `bleediff/gemini.py`, `bleediff/openai_chat.py`, `bleediff/anthropic_messages.py` answer-only analysis, the shared hosted engine and the three provider adapters (v0.5.0).
 * `examples/gemini-answer-only/`, `examples/openai-answer-only/` the Gemini and GPT-4.1 mini pilots as replayable ANSWER_ONLY bundles; `examples/hosted-comparison/` the five-model comparison (Claude Haiku and Sonnet sessions, results table, `verify_comparison.py`).
+* `bleediff/telemetry.py`, `bleediff/behavior.py`, `docs/BEHAVIORAL_TELEMETRY.md`, `docs/ARCHITECTURE_V07_BEHAVIOR.md`, `examples/behavior/` offline behavioral telemetry (v0.7.0): the measurement schema and adapters, ingestion and reporting, and the Research 002 compatibility check.
 * `bleediff/experiment.py`, `docs/FIRST_EXPERIMENT.md`, `examples/experiment-multi-question/` experiment authoring (v0.6.0): spec validation, prompt-dataset generation and budget estimates; the multi-question example has per-question conditions.
 * `docs/HOSTED_MODELS.md` the hosted-model usage guide; `docs/EVIDENCE_RECONCILIATION.md`, `docs/CASE_NOTE_HOSTED_REFUSALS_AND_FORMAT.md` and `docs/evidence/` the reconciliation of the exploratory Claude runs (v0.10-v0.15), a short case note and a per-request index; `research/reconcile_evidence.py` regenerates the index.
 * `examples/four-mapping/` the sanitized four-mapping evidence bundle (48 sessions, SHA-256 list) and `verify_summary.py` (v0.4.0).
 * `fixtures/` scenario fixtures, preserved controls and the protocol and preregistration documents.
-* `docs/TECHNICAL.md` the detailed method and history; `CHANGELOG.md`; `RELEASE_NOTES_v0.2.0.md`, `RELEASE_NOTES_v0.3.0.md`, `RELEASE_NOTES_v0.4.0.md`, `RELEASE_NOTES_v0.5.0.md`, `RELEASE_NOTES_v0.6.0.md`; `docs/FOUR_MAPPING_SUMMARY.md`.
+* `docs/TECHNICAL.md` the detailed method and history; `CHANGELOG.md`; `RELEASE_NOTES_v0.2.0.md`, `RELEASE_NOTES_v0.3.0.md`, `RELEASE_NOTES_v0.4.0.md`, `RELEASE_NOTES_v0.5.0.md`, `RELEASE_NOTES_v0.6.0.md`, `RELEASE_NOTES_v0.7.0.md`; `docs/FOUR_MAPPING_SUMMARY.md`.
 * `tests/` stdlib `unittest` suite (a mock llama-server stands in for the model).
 
 Local run directories (`runs/`), model files and per-run sidecars are git-ignored and are not part of the repository.

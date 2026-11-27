@@ -3,7 +3,9 @@
 All notable changes. Versions identify the software that wrote a file, not an experiment or an algorithm; protocols and
 control algorithms have their own identifiers (see `docs/TECHNICAL.md`).
 
-## Behavioral telemetry, Phase 1 (feature branch `feature/behavioral-telemetry-v07`; not a release, the version stays 0.6.0)
+## [0.7.0] - behavioral telemetry: offline, descriptive, with explicit measurement states
+
+Release notes: `RELEASE_NOTES_v0.7.0.md`. Research 002 (published at https://github.com/Ashes42/bleediff-research-002) is the real-world validation fixture; no new measurements, live provider results or paid API calls are part of this release.
 
 ### Added
 - `bleediff behavior ingest|report` (`bleediff/behavior.py`, `bleediff/telemetry.py`): offline behavioral telemetry from saved hosted sessions. One observation per request with 13 measurements (answer outcome and role, format compliance, refusal, thinking tokens and activation, input/output/non-thinking/cache tokens, latency, estimated cost), each in exactly one explicit state: OBSERVED (zero is a legitimate value), MISSING, UNSUPPORTED, INCONSISTENT or INVALID. Absent thinking telemetry is never converted to zero.

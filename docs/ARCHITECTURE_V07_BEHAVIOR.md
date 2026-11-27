@@ -1,4 +1,4 @@
-# Architecture notes: behavioral telemetry (v0.7 Phase 1)
+# Architecture notes: behavioral telemetry (v0.7.0)
 
 Scope: how the new layer sits on the v0.6 code, and where each measurement boundary is drawn and why.
 
@@ -41,7 +41,7 @@ problems   record-level inconsistency codes (for example stored_usage_disagrees_
 2. **Three levels of "no value".** *Not provided by this provider/adapter* (UNSUPPORTED), *provided in principle, absent here* (MISSING), *present but unusable* (INVALID or INCONSISTENT). They answer different questions (is the instrument blind here, did the run lose data, can the data be trusted), so they are never merged and never defaulted to zero.
 3. **Observed behavior is not telemetry state.** A reply that is not one letter is an observed `no_answer` (OBSERVED), not a missing answer; an error record has no response, so its answer is MISSING.
 4. **Answer, thinking, resources and format are four blocks.** No function combines them; the report and JSON have no composite field, and a test searches the JSON for composite-score and probability-like keys. Cost and latency are shown beside, never inside, the thinking block.
-5. **Counter versus block.** The provider counter is the measure; the thinking block is corroboration that is reported, not enforced (Phase 1 has no evidence that it must always exist).
+5. **Counter versus block.** The provider counter is the measure; the thinking block is corroboration that is reported, not enforced (v0.7.0 has no evidence that it must always exist).
 6. **Per-provider semantics are declared, not assumed.** `Adapter.validation` states what each adapter's semantics rest on and `Adapter.thinking` gates whether thinking measurements exist at all.
 7. **Units.** Requests are the rows of evidence; prompts (by hash) and `--unit-field` units are counted next to them; unit-averaged figures weight units equally. Pairing is within a session and a cell, so repeated sessions are never merged into one pair.
 8. **Descriptive only.** There is no interval, test, weighting scheme or model; those belong to a design-specific analysis plan (Research 002's frozen analysis is the example).
@@ -52,7 +52,7 @@ Observations hold relative evidence paths (`session_dir/records/file.json`) and 
 
 ## Compatibility
 
-- v0.6.0 commands, evidence and the version string are unchanged (`bleediff --version` still 0.6.0); the full v0.6 test suite passes unchanged beside the new tests.
+- v0.6.0 commands, record formats and saved evidence are unchanged; the full v0.6 test suite passes unchanged beside the new tests (only the package-version assertions moved to 0.7.0).
 - Python 3.11+, standard library only (`ast.parse(..., feature_version=(3, 11))` is part of the tests; no third-party import).
 - The legacy pilot layout needs `--prompts` for the scoring key; its latency is UNSUPPORTED because that layout never recorded it.
 

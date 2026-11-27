@@ -1,4 +1,4 @@
-"""Behavioral telemetry (v0.7 Phase 1): ONE observation per saved request, with every measurement carrying an explicit measurement STATE.
+"""Behavioral telemetry (v0.7.0): ONE observation per saved request, with every measurement carrying an explicit measurement STATE.
 
 This module reads a saved hosted-answer record (``bleediff.hosted-answer/1``, the record every ``bleediff anthropic|openai|gemini`` run writes, and the legacy pilot layout) and
 produces a ``bleediff.behavior-observation/1``. It never contacts a provider, never needs a key and never modifies the evidence: the raw provider response stays in the record,
@@ -8,7 +8,7 @@ THE FIVE STATES (a measurement is always exactly one of them; only OBSERVED has 
 
     OBSERVED      the provider (or the harness) reported a valid value. ZERO IS A LEGITIMATE OBSERVED VALUE: ``thinking_tokens = 0`` means the provider said "0 thinking tokens".
     MISSING       the adapter defines this measurement for the provider, but the record does not contain it (field absent or null, no response, error record). Never converted to zero.
-    UNSUPPORTED   this adapter does not establish this measurement for this provider or layout (for example reasoning tokens of a provider whose semantics Phase 1 has not
+    UNSUPPORTED   this adapter does not establish this measurement for this provider or layout (for example reasoning tokens of a provider whose semantics v0.7.0 has not
                   validated, or latency in a layout that never recorded it). The raw provider field, if any, is preserved passively under ``provider_fields``.
     INCONSISTENT  values are present but contradict each other or a documented invariant (thinking tokens above the output tokens, a stored figure that disagrees with the saved
                   response). The conflicting value is kept in ``reported``; it is never used in an aggregate.
@@ -19,7 +19,7 @@ expenditure (token counts, latency, cost) are separate measurements. Nothing her
 
 ADAPTERS exist only where the semantics can be established. ``anthropic`` is validated against archived evidence (Research 002: 2,560 Messages-API records). ``openai`` and ``gemini``
 reuse the v0.6 answer parsers and the v0.6 usage mapping for answers, format, refusal and input tokens; their reasoning/thinking telemetry is UNSUPPORTED here: different providers do
-not expose equivalent reasoning measurements, and Phase 1 does not assume they do.
+not expose equivalent reasoning measurements, and v0.7.0 does not assume they do.
 
 ANSWER_ONLY: this layer derives no probabilities, margins, confidence or ranking.
 """
@@ -234,7 +234,7 @@ def _openai_usage(resp, params, ctx) -> dict:
         out = _blank_usage(st, why, resp, "response.usage")
         out["cache_read_tokens"] = unsupported("not_defined_for_this_adapter")
         out["cache_write_tokens"] = unsupported("not_defined_for_this_adapter")
-        out["thinking_tokens"] = unsupported("reasoning_telemetry_semantics_not_established_in_phase1")
+        out["thinking_tokens"] = unsupported("reasoning_telemetry_semantics_not_established")
         return out
     det = u.get("completion_tokens_details")
     if isinstance(det, dict) and det.get("reasoning_tokens") is not None:
@@ -243,13 +243,13 @@ def _openai_usage(resp, params, ctx) -> dict:
     return {"input_tokens": read_count(u, "prompt_tokens", "response.usage.prompt_tokens"),
             "cache_read_tokens": unsupported("not_defined_for_this_adapter"), "cache_write_tokens": unsupported("not_defined_for_this_adapter"),
             "output_tokens": read_count(u, "completion_tokens", "response.usage.completion_tokens"),
-            "thinking_tokens": unsupported("reasoning_telemetry_semantics_not_established_in_phase1")}
+            "thinking_tokens": unsupported("reasoning_telemetry_semantics_not_established")}
 
 
 def _gemini_usage(resp, params, ctx) -> dict:
     u, why, st = _usage_container(resp, "response", "usageMetadata")
-    unsup_think = unsupported("reasoning_telemetry_semantics_not_established_in_phase1")
-    unsup_out = unsupported("candidate_thought_split_semantics_not_established_in_phase1")
+    unsup_think = unsupported("reasoning_telemetry_semantics_not_established")
+    unsup_out = unsupported("candidate_thought_split_semantics_not_established")
     if u is None:
         out = _blank_usage(st, why, resp, "response.usageMetadata")
         out.update({"cache_read_tokens": unsupported("not_defined_for_this_adapter"), "cache_write_tokens": unsupported("not_defined_for_this_adapter"),
@@ -268,10 +268,10 @@ ADAPTERS = {
                          "validated against archived Research 002 evidence (2,560 Messages-API records, claude-haiku-5-5): usage.output_tokens_details.thinking_tokens is a subset of usage.output_tokens",
                          True, "max_tokens", _anthropic_usage, _anthropic_thinking_block),
     "openai": Adapter("openai-chat", "1", "openai",
-                      "answers, format, refusal and input tokens reuse the v0.6 parser; completion_tokens is read as the billed output total; reasoning telemetry is not established in Phase 1",
+                      "answers, format, refusal and input tokens reuse the v0.6 parser; completion_tokens is read as the billed output total; reasoning telemetry is not established in v0.7.0",
                       False, "length", _openai_usage, lambda r: None),
     "gemini": Adapter("gemini-generate", "1", "gemini",
-                      "answers, format, refusal and input tokens reuse the v0.6 parser; output/thought token split and reasoning telemetry are not established in Phase 1",
+                      "answers, format, refusal and input tokens reuse the v0.6 parser; output/thought token split and reasoning telemetry are not established in v0.7.0",
                       False, "MAX_TOKENS", _gemini_usage, lambda r: None),
 }
 
@@ -391,7 +391,7 @@ def observe_record(rec: dict, *, layout: str = "session", evidence: dict | None 
         cap_hit = None if not isinstance(resp, dict) or ctx["finish_reason"] is None else ctx["finish_reason"] == adapter.cap_finish
     th = meas["thinking_tokens"]
     if adapter is not None and not adapter.thinking:
-        meas["thinking_activation"] = unsupported("reasoning_telemetry_semantics_not_established_in_phase1")
+        meas["thinking_activation"] = unsupported("reasoning_telemetry_semantics_not_established")
         meas["non_thinking_output_tokens"] = unsupported("needs thinking_tokens")
     else:
         meas["thinking_activation"] = inherit([th], "thinking_tokens", value=(th["value"] or 0) > 0 if th["state"] == OBSERVED else None, source="derived: thinking_tokens > 0",

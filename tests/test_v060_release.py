@@ -32,16 +32,16 @@ def cli(*args):
 class TestVersionAndDocs(unittest.TestCase):
     def test_version_changelog_release_notes_and_readme_agree(self):
         with open(os.path.join(ROOT, "pyproject.toml"), "rb") as fh:
-            self.assertEqual(tomllib.load(fh)["project"]["version"], "0.6.0")
-        self.assertEqual(bleediff.__version__, "0.6.0")
+            self.assertEqual(tomllib.load(fh)["project"]["version"], "0.7.0")
+        self.assertEqual(bleediff.__version__, "0.7.0")
         cl = read("CHANGELOG.md")
         self.assertLess(cl.index("## [0.6.0]"), cl.index("## [0.5.0]"))
         self.assertLess(cl.index("## [0.5.0]"), cl.index("## [0.4.0]"))
         for stale in ("no version bump", "Unreleased", "Pending for the next release", "after 0.5.0"):
             self.assertNotIn(stale, cl, stale)
         readme = read("README.md")
-        self.assertIn("**0.6.0**", readme)
-        self.assertIn("bleediff 0.6.0", readme)
+        self.assertIn("**0.7.0**", readme)
+        self.assertIn("bleediff 0.7.0", readme)
         self.assertIn("RELEASE_NOTES_v0.6.0.md", readme)
         self.assertNotIn("bleediff 0.5.0", readme)
         self.assertTrue(read("RELEASE_NOTES_v0.6.0.md").startswith("# Bleediff v0.6.0 release notes"))
@@ -49,7 +49,7 @@ class TestVersionAndDocs(unittest.TestCase):
     def test_cli_reports_the_version(self):
         code, text = cli("--version")
         self.assertEqual(code, 0)
-        self.assertEqual(text.strip(), "bleediff 0.6.0")
+        self.assertEqual(text.strip(), "bleediff 0.7.0")
 
     def test_release_notes_separate_new_from_existing_and_do_not_overclaim(self):
         notes = " ".join(read("RELEASE_NOTES_v0.6.0.md").split())

@@ -1,6 +1,6 @@
-# Behavioral telemetry (v0.7 Phase 1)
+# Behavioral telemetry (v0.7.0)
 
-> Status: **feature branch `feature/behavioral-telemetry-v07`, cut from the v0.6.0 release. Not released; the package version is still 0.6.0.** Everything here runs offline.
+> Status: **released in v0.7.0** (see [`RELEASE_NOTES_v0.7.0.md`](../RELEASE_NOTES_v0.7.0.md)). Everything here runs offline: no key, no network, no model.
 
 Bleediff began as an answer-influence measurement tool. Research 002 showed why that is not enough: a contextual change can sharply change how often a model's provider reports
 *thinking* while leaving the *answer* almost unchanged. `bleediff behavior` measures these dimensions **separately**, from evidence you already saved:
@@ -70,11 +70,11 @@ Rules that follow from this:
 | Adapter | Answer / format / refusal | Input tokens | Output tokens | Thinking telemetry | Validation |
 |---|---|---|---|---|---|
 | `anthropic-messages` v1 | yes (v0.6 parser) | yes | yes | **yes** | validated against the archived Research 002 evidence (2,560 Messages-API records) |
-| `openai-chat` v1 | yes (v0.6 parser) | yes | yes (`completion_tokens`, billed total) | **UNSUPPORTED** | answers and usage only; reasoning semantics not established in Phase 1 |
+| `openai-chat` v1 | yes (v0.6 parser) | yes | yes (`completion_tokens`, billed total) | **UNSUPPORTED** | answers and usage only; reasoning semantics not established in v0.7.0 |
 | `gemini-generate` v1 | yes (v0.6 parser) | yes | **UNSUPPORTED** (candidate/thought split not established) | **UNSUPPORTED** | answers and input only |
 | any other provider | UNSUPPORTED | UNSUPPORTED | UNSUPPORTED | UNSUPPORTED | no adapter |
 
-Providers do not expose equivalent reasoning measurements, and Phase 1 does not assume they do. Adding a provider means writing an adapter that states its semantics and validating it against saved evidence.
+Providers do not expose equivalent reasoning measurements, and v0.7.0 does not assume they do. Adding a provider means writing an adapter that states its semantics and validating it against saved evidence.
 
 ## Condition summaries, units and paired contrasts
 
@@ -85,7 +85,7 @@ Providers do not expose equivalent reasoning measurements, and Phase 1 does not 
 
 ## Research 002 compatibility demonstration
 
-The published Research 002 evidence is the real-world validation fixture. The generic layer, with no Research 002 specific code, reproduces the published condition-level and paired figures:
+The published Research 002 evidence ([https://github.com/Ashes42/bleediff-research-002](https://github.com/Ashes42/bleediff-research-002), release v1.0.0) is the real-world validation fixture. The generic layer, with no Research 002 specific code, reproduces the published condition-level and paired figures:
 
 ```powershell
 python examples\behavior\r002_compat_check.py C:\path\to\bleediff-research-002-publication
@@ -97,7 +97,7 @@ One reconciliation worth knowing: the harness's recorded cost for the two reques
 
 Other archived evidence exercised (read only): the Haiku 5.5 and Sonnet 5.5 answer-only pilots (`runs/v0.10`, `v0.11`; session layout, thinking telemetry OBSERVED) and the Gemini pilot (`runs/v0.8`; legacy layout, needs `--prompts`; there thinking and output tokens are UNSUPPORTED and latency is UNSUPPORTED, while answers, format and input tokens are OBSERVED). In the Sonnet 5.5 pilot's COMPETING condition every reply is format-invalid, thinking telemetry is 0, and yet output tokens average about 289 per request: visible text, not provider-reported thinking, carried the expenditure, which is exactly why the dimensions are kept apart.
 
-## Remaining limitations (Phase 1)
+## Remaining limitations
 
 - **Anthropic only for thinking.** OpenAI and Gemini reasoning telemetry, and Gemini output-token totals, are UNSUPPORTED until their semantics are validated against saved evidence.
 - **No inference.** Contrasts are descriptive. Choosing a unit, an estimator and an interval for a given design is the analyst's job (Research 002's frozen analysis is the worked example and is unchanged).

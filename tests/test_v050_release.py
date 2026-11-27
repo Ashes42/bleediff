@@ -33,11 +33,11 @@ def read(*p):
 class TestVersionAndDocs(unittest.TestCase):
     def test_version_changelog_release_notes_and_readme_agree(self):
         with open(os.path.join(ROOT, "pyproject.toml"), "rb") as fh:
-            self.assertEqual(tomllib.load(fh)["project"]["version"], "0.6.0")
-        self.assertEqual(bleediff.__version__, "0.6.0")
+            self.assertEqual(tomllib.load(fh)["project"]["version"], "0.7.0")
+        self.assertEqual(bleediff.__version__, "0.7.0")
         cl = read("CHANGELOG.md")
         self.assertLess(cl.index("## [0.5.0]"), cl.index("## [0.4.0]"))
-        self.assertIn("**0.6.0**", read("README.md"))
+        self.assertIn("**0.7.0**", read("README.md"))
         self.assertIn("RELEASE_NOTES_v0.5.0.md", read("README.md"))
         self.assertIn("Not a security finding", read("RELEASE_NOTES_v0.5.0.md"))
 
